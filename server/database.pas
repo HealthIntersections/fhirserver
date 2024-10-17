@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_xml, fsl_crypto, fsl_collections, fsl_json,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_xml, fsl_crypto, fsl_collections, fsl_json, fsl_logging,
   fsl_versions,
   fdb_manager, fdb_dialects,
   fsl_http, fsl_graphql,
@@ -45,7 +45,7 @@ uses
   fhir_tx, fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
   ftx_service, tx_server, ftx_ucum_services,
   fsl_scim, scim_server,
-  indexing, session, subscriptions, security, obsservation_stats, bundlebuilder, time_tracker, search,
+  indexing, session, subscriptions, security, obsservation_stats, bundlebuilder,  search,
   closuremanager, graph_definition, tags, utilities,
   database_installer, mpi_search, server_context, storage, server_constants;
 
@@ -207,7 +207,7 @@ type
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; override;
     function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); override;
-    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
 
     procedure registerOperations; virtual; abstract;
     procedure adjustReferences(request : TFHIRRequest; resp : TFHIRResponse; te : TFHIRTransactionEntry; base : String; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList); virtual; abstract;
@@ -446,7 +446,6 @@ implementation
 
 uses
   IdMessage, IdSMTP,
-  fsl_logging,
   tx_manager, tx_operations;
 
 function chooseFile(fReal, fDev : String) : String;
@@ -3873,12 +3872,12 @@ var
   mem : TFslMemoryStream;
   comp : TFHIRComposer;
   m : TVCLStream;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   try
     req := factory.wrapBundle(request.resource.Link);
     resp := factory.wrapBundle(factory.makeResource('Bundle'));
-    tt := TTimeTracker.Create;
+    tt := TFslTimeTracker.Create;
     try
       resp.type_ := btBatchResponse;
       resp.id := NewGuidId;
@@ -3962,7 +3961,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 begin
   if request.OperationName = 'graphql' then
   begin
@@ -4862,7 +4861,7 @@ var
   request: TFHIRRequest;
   response : TFHIRResponse;
   context : TOperationContext;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   CreateIndexer;
   context := TOperationContext.create;
@@ -4871,7 +4870,7 @@ begin
     // cut us off from the external request
     request := TFHIRRequest.create(ServerContext.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
     response := TFHIRResponse.create(ServerContext.ValidatorContext.link);
-    tt := TTimeTracker.create;
+    tt := TFslTimeTracker.create;
     try
       for i := 0 to list.count - 1 do
       begin
@@ -5794,7 +5793,7 @@ procedure TFHIRNativeStorageService.DoExecuteOperation(request: TFHIRRequest; re
 var
   storage: TFHIRNativeOperationEngine;
   context : TOperationContext;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   if bWantSession then
     request.session := ServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.Globals.OwnerName, 'subscripion manager', systemInternal, true, false);
@@ -5804,7 +5803,7 @@ begin
     try
       storage.Connection.StartTransact;
       try
-        tt := TTimeTracker.create;
+        tt := TFslTimeTracker.create;
         try
           storage.Execute(context, request, response, tt);
         finally
@@ -5866,11 +5865,11 @@ begin
   try
     profile.limitedExpansion := allowIncomplete;
     if (vs <> nil) then
-      result := ServerContext.TerminologyServer.ExpandVS(vs, '', '', profile, '', dependencies, limit, count, offset, nil, false)
+      result := ServerContext.TerminologyServer.ExpandVS(vs, '', '', profile, '', dependencies, limit, count, offset, nil, false, false, nil)
     else
     begin
       if ServerContext.TerminologyServer.isKnownValueSet(ref, vs) then
-        result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false)
+        result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false, false, nil)
       else
       begin
         vs := ServerContext.TerminologyServer.getValueSetByUrl(ref, '');
@@ -5879,7 +5878,7 @@ begin
         if vs = nil then
           result := nil
         else
-          result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false)
+          result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false, false, nil)
       end;
     end;
   finally
@@ -7673,7 +7672,7 @@ begin
       prov := ServerContext.TerminologyServer.getProvider(system, version, params);
       try
         if prov <> nil then
-          result := prov.getDisplay(code, ServerContext.ValidatorContext.langList);
+          result := prov.getDisplay(nil, code, ServerContext.ValidatorContext.langList);
       finally
         prov.free;
       end;

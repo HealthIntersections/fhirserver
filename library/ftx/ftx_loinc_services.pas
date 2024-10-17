@@ -182,7 +182,7 @@ type
     FProperties : TDictionary<String, String>;
     FStatusKeys : TDictionary<String, String>;
     function commaListOfCodes(source: String): String;
-    function filterBySQL(c : TFDBConnection; d, sql, lsql : String; forExpansion : boolean) : TCodeSystemProviderFilterContext;
+    function filterBySQL(opContext : TTxOperationContext; c : TFDBConnection; d, sql, lsql : String; forExpansion : boolean) : TCodeSystemProviderFilterContext;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -195,37 +195,37 @@ type
 
     function description : String; override;
     function TotalCount : integer; override;
-    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
-    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
+    function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     //function findMAConcept(code : String) : Cardinal;
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
-    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
-    function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
-    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
-    function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
-    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
-    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
-    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
-    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
-    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
-    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
+    function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
+    function sameContext(opContext : TTxOperationContext; a, b : TCodeSystemProviderContext) : boolean; override;
+    function IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
+    function Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
+    procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); override;
+    function doesFilter(opContext : TTxOperationContext; prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    function getPrepContext(opContext : TTxOperationContext) : TCodeSystemProviderFilterPreparationContext; override;
+    function filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function FilterMore(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
+    function InFilter(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function locateIsA(opContext : TTxOperationContext; code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
+    function searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function buildValueSet(factory : TFHIRFactory; id : String) : TFhirValueSetW;
-    function getDefinition(code : String):String; override;
-    function Definition(context : TCodeSystemProviderContext) : string; override;
-    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    function getDefinition(opContext : TTxOperationContext; code : String):String; override;
+    function Definition(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function isNotClosed(opContext : TTxOperationContext; textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
-    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+    procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
 
 
     property DB : TFDBManager read FDB;
@@ -343,7 +343,7 @@ begin
   result := TLOINCServices(inherited Link);
 end;
 
-procedure TLOINCServices.defineFeatures(features: TFslList<TFHIRFeature>);
+procedure TLOINCServices.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
 begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SCALE_TYP:equals'));
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SCALE_TYP:equals'));
@@ -365,12 +365,12 @@ begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TYPE:equals'));
 end;
 
-function TLOINCServices.Definition(context: TCodeSystemProviderContext): string;
+function TLOINCServices.Definition(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := '';
 end;
 
-function TLOINCServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+function TLOINCServices.isNotClosed(opContext : TTxOperationContext; textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := false;
 end;
@@ -502,7 +502,7 @@ begin
   end;
 end;
 
-function TLOINCServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+function TLOINCServices.searchFilter(opContext : TTxOperationContext; filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
   raise Exception.create('Not done yet');
 end;
@@ -512,7 +512,7 @@ begin
   result := inherited sizeInBytesV(magic);
 end;
 
-procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
+procedure TLOINCServices.getCDSInfo(opContext : TTxOperationContext; card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   //b := TFslStringBuilder.Create;
   //try
@@ -714,7 +714,7 @@ begin
   end;
 end;
 
-function TLOINCServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
+function TLOINCServices.getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 var
   ctxt : TLoincProviderContext;
   c : TFDBConnection;
@@ -740,7 +740,7 @@ begin
 
 end;
 
-function TLOINCServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+function TLOINCServices.getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 var
   ctxt : TLoincIteratorContext;
   i, k : integer;
@@ -757,12 +757,12 @@ begin
   context.next;
 end;
 
-function TLOINCServices.Code(context: TCodeSystemProviderContext): string;
+function TLOINCServices.Code(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := (context as TLoincProviderContext).code;
 end;
 
-function TLOINCServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
+function TLOINCServices.Display(opContext : TTxOperationContext; context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 var
   displays : TFslList<TLoincDisplay>;
   c : TFDBConnection;
@@ -808,7 +808,7 @@ begin
   end;
 end;
 
-procedure TLOINCServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
+procedure TLOINCServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 var
   c : TFDBConnection;
   ctxt : TLoincProviderContext;
@@ -867,7 +867,7 @@ begin
   end;
 end;
 
-function TLOINCServices.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TLOINCServices.doesFilter(opContext : TTxOperationContext; prop: String; op: TFhirFilterOperator; value: String): boolean;
 var
   ts : TStringList;
   reg : TRegularExpression;
@@ -905,12 +905,12 @@ begin
     result := false;
 end;
 
-function TLOINCServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+function TLOINCServices.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
 begin
   result := TLOINCPrep.Create;
 end;
 
-procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TLOINCServices.extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   c : TFDBConnection;
 begin
@@ -966,12 +966,12 @@ begin
 end;
 
 
-function TLOINCServices.getDefinition(code: String): String;
+function TLOINCServices.getDefinition(opContext : TTxOperationContext; code: String): String;
 begin
   result := '';
 end;
 
-function TLOINCServices.getDisplay(code: String; langList : THTTPLanguageList): String;
+function TLOINCServices.getDisplay(opContext : TTxOperationContext; code: String; langList : THTTPLanguageList): String;
 var
   ctxt : TLoincProviderContext;
 begin
@@ -979,22 +979,22 @@ begin
   if (ctxt = nil) then
     result := ''
   else
-    result := Display(ctxt, langList);
+    result := Display(opContext, ctxt, langList);
 end;
 
-function TLOINCServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
+function TLOINCServices.IsAbstract(opContext : TTxOperationContext; context: TCodeSystemProviderContext): boolean;
 begin
   result := false; // loinc don't do abstract
 end;
 
-function TLOINCServices.locate(code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
+function TLOINCServices.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
 begin
   result := FCodes[code].link;
 end;
 
-function TLOINCServices.sameContext(a, b: TCodeSystemProviderContext): boolean;
+function TLOINCServices.sameContext(opContext : TTxOperationContext; a, b: TCodeSystemProviderContext): boolean;
 begin
-  Result:=inherited sameContext(a, b);
+  Result:=inherited sameContext(opContext, a, b);
 end;
 
 function TLOINCServices.systemUri: String;
@@ -1012,12 +1012,12 @@ begin
   result := FVersion;
 end;
 
-function TLOINCServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+function TLOINCServices.InFilter(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
   result := (ctxt as TLoincFilterHolder).HasKey((concept as TLoincProviderContext).Key);
 end;
 
-function TLOINCServices.filterBySQL(c : TFDBConnection; d, sql, lsql: String; forExpansion : boolean): TCodeSystemProviderFilterContext;
+function TLOINCServices.filterBySQL(opContext : TTxOperationContext; c : TFDBConnection; d, sql, lsql: String; forExpansion : boolean): TCodeSystemProviderFilterContext;
 var
   keys : TKeyArray;
   l : integer;
@@ -1042,6 +1042,7 @@ begin
     end;
     c.terminate;
     t := GetTickCount64-t;
+    opContext.log('LOINC filter: '+inttostr(l)+' rows for '+d+' ('+DescribePeriodMS(t)+', sql = '+sql+')');
     if (UnderDebugger) or (t > 1000) then
       Logging.log('LOINC filter: '+inttostr(l)+' rows for '+d+' ('+DescribePeriodMS(t)+', sql = '+sql+')');
   end;
@@ -1062,7 +1063,7 @@ begin
         CommaAdd(result, ''''+sqlWrapString(s)+'''')
 end;
 
-function TLOINCServices.filter(forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TLOINCServices.filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   c : TFDBConnection;
   ts : TStringList;
@@ -1075,47 +1076,47 @@ begin
   try
     if (FRelationships.ContainsKey(prop) and (op = foEqual)) then
       if FCodes.ContainsKey(value) then
-        result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by SourceKey ASC',
+        result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by SourceKey ASC',
           'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and SourceKey = ', forExpansion)
       else
-        result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) order by SourceKey ASC',
+        result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) order by SourceKey ASC',
           'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) and SourceKey = ', forExpansion)
     else if (FRelationships.ContainsKey(prop) and (op = foIn)) then
     begin
       s := commaListOfCodes(value);
-      result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+')) order by SourceKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+')) order by SourceKey ASC',
         'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+')) and SourceKey = ', forExpansion)
     end
     else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE order by CodeKey ASC',
         'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE and CodeKey = ', forExpansion)
     else if (FProperties.ContainsKey(prop) and (op = foIn)) then
     begin    
       s := commaListOfCodes(value);
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value in ('+s+') COLLATE NOCASE order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value in ('+s+') COLLATE NOCASE order by CodeKey ASC',
         'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value in ('+s+') COLLATE NOCASE and CodeKey = ', forExpansion)
     end
     else if (FRelationships.ContainsKey(prop) and (op = foExists)) then
       if FCodes.ContainsKey(value) then
-        result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
+        result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
           'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and SourceKey = ', forExpansion)
       else
-        result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) order by SourceKey ASC',
+        result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) order by SourceKey ASC',
           'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) and SourceKey = ', forExpansion)
     else if (FRelationships.ContainsKey(prop) and (op = foIn)) then
     begin
       s := commaListOfCodes(value);
-      result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code in ('+s+'))) order by SourceKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code in ('+s+'))) order by SourceKey ASC',
         'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code  in ('+sqlwrapString(value)+'))) and SourceKey = ', forExpansion)
     end
     else if (FProperties.ContainsKey(prop) and (op = foExists)) then
-      result := FilterBySQL(c, d, 'select distinct CodeKey as Key from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select distinct CodeKey as Key from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' order by CodeKey ASC',
         'select count(CodeKey) from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' and CodeKey = ', forExpansion)
     else if (prop = 'STATUS') and (op = foEqual)and (FStatusKeys.ContainsKey(value)) then
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Codes where StatusKey = '+FStatusKeys[value]+' order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where StatusKey = '+FStatusKeys[value]+' order by CodeKey ASC',
         'select count(CodeKey) from Codes where StatusKey = '+FStatusKeys[value]+' and CodeKey = ', forExpansion)
     else if (prop = 'LIST') and (op = foEqual) and (FCodes.ContainsKey(value)) then
-    result := FilterBySQL(c, d, 'select TargetKey as Key from Relationships where RelationshipTypeKey = '+FRelationships['Answer']+' and SourceKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
+    result := FilterBySQL(opContext, c, d, 'select TargetKey as Key from Relationships where RelationshipTypeKey = '+FRelationships['Answer']+' and SourceKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
       'select count(TargetKey) from Relationships where RelationshipTypeKey = '+FRelationships['Answer']+' and SourceKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and TargetKey = ', forExpansion)
     else if (FRelationships.ContainsKey(prop)) and (op = foRegex) then
     begin
@@ -1128,7 +1129,7 @@ begin
             if reg.IsMatch(c.ColStringByName['Description']) then
               ts.add(c.ColStringByName['Key']);
           c.terminate;
-          result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in ('+ts.CommaText+') order by SourceKey ASC',
+          result := FilterBySQL(opContext, c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in ('+ts.CommaText+') order by SourceKey ASC',
             'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+'  and TargetKey in ('+ts.CommaText+') and SourceKey = ', forExpansion)
         finally
           ts.free;
@@ -1148,7 +1149,7 @@ begin
             if reg.IsMatch(c.ColStringByName['Value']) then
               ts.add(c.ColStringByName['PropertyValueKey']);
           c.terminate;
-          result := FilterBySQL(c, d, 'select CodeKey as Key from Properties where PropertyTypeKey = '+FProperties[prop]+' and PropertyValueKey in ('+ts.CommaText+') order by CodeKey ASC',
+          result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Properties where PropertyTypeKey = '+FProperties[prop]+' and PropertyValueKey in ('+ts.CommaText+') order by CodeKey ASC',
             'select count(CodeKey) from Properties where PropertyTypeKey = '+FProperties[prop]+' and PropertyValueKey in ('+ts.CommaText+') and CodeKey = ', forExpansion)
         finally
           ts.free;
@@ -1158,22 +1159,22 @@ begin
       end;
     end
     else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
-      result := FilterBySQL(c, d, 'select DescendentKey as Key from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by DescendentKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select DescendentKey as Key from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by DescendentKey ASC',
         'select count(DescendentKey) from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and DescendentKey = ', forExpansion)
     else if (prop = 'concept') and (op in [foEqual]) then // work around for misuse in VSAC
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Codes where Code = '''+sqlwrapString(value)+''' order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where Code = '''+sqlwrapString(value)+''' order by CodeKey ASC',
         'select count(CodeKey) from Codes where Code = '''+sqlwrapString(value)+''' and CodeKey = ''', forExpansion)
     else if (prop = 'concept') and (op in [foIn]) then // work around for misuse in VSAC         
     begin
       s := commaListOfCodes(value);
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Codes where Code in ('+s+') order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where Code in ('+s+') order by CodeKey ASC',
         'select count(CodeKey) from Codes where Code in ('+s+') and CodeKey = ''', forExpansion)
     end
     else if (prop = 'copyright') and (op = foEqual) and (value = 'LOINC') then
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
         'select count(CodeKey) from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ', forExpansion)
     else if (prop = 'copyright') and (op = foEqual) and (value = '3rdParty') then
-      result := FilterBySQL(c, d, 'select CodeKey as Key from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
         'select count(CodeKey) from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ', forExpansion)
     else
       result := nil;
@@ -1188,7 +1189,7 @@ begin
   end;
 end;
 
-function TLOINCServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+function TLOINCServices.FilterConcept(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
   ndx : integer;
   context : TLoincFilterHolder;
@@ -1198,7 +1199,7 @@ begin
   result := FCodeList[ndx].link;
 end;
 
-function TLOINCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+function TLOINCServices.FilterMore(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): boolean;
 var
   context : TLoincFilterHolder;
 begin
@@ -1207,7 +1208,7 @@ begin
   result := context.FCursor <= Length(context.FKeys);
 end;
 
-function TLOINCServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;  
+function TLOINCServices.filterSize(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): integer;
 var
   context : TLoincFilterHolder;
 begin
@@ -1215,7 +1216,7 @@ begin
   result := Length(context.FKeys);
 end;
 
-function TLOINCServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
+function TLOINCServices.locateIsA(opContext : TTxOperationContext; code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   result := nil; // cause loinc don't do subsumption
 end;
@@ -1225,7 +1226,7 @@ begin
   result := 'LOINC';
 end;
 
-function TLOINCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
+function TLOINCServices.filterLocate(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 var
   ci : TLoincProviderContext;
   fi : TLoincFilterHolder;

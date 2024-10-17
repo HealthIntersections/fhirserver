@@ -186,7 +186,7 @@ begin
   b.Append('">');
   b.Append(id);
   b.Append('</a></b> ');
-  b.Append(FormatTextToXML(FSnomed.getDisplay(id, nil), xmlText));
+  b.Append(FormatTextToXML(FSnomed.getDisplay(nil, id, nil), xmlText));
   b.append('.');
   b.Append(inttostr(length(alldesc)));
   b.AppendLine(' rows</td></tr>');

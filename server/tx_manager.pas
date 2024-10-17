@@ -576,7 +576,7 @@ begin
 
   prov := getProvider(cs, nil);
   try
-    result := prov.subsumesTest(codeA.code, codeB.code);
+    result := prov.subsumesTest(nil, codeA.code, codeB.code);
   finally
     prov.free;
   end;
@@ -1536,7 +1536,7 @@ begin
     if prov <> nil then
     begin
       try
-        loc := prov.locateIsA(code2, code1);
+        loc := prov.locateIsA(nil, code2, code1);
         result := Loc <> nil;
         loc.free;
       finally
@@ -1586,32 +1586,32 @@ var
   sp : TSnomedProvider;
 begin
   if FLoinc <> nil then
-    FLoinc.defineFeatures(features);
+    FLoinc.defineFeatures(nil, features);
   if FDefSnomed <> nil then
   begin
     sp := TSnomedProvider.Create(FDefSnomed.link, FI18n.link, nil);
     try
-      sp.defineFeatures(features);
+      sp.defineFeatures(nil, features);
     finally
       sp.free;
     end;
   end;
   if FUcum <> nil then
-    FUcum.defineFeatures(features);
+    FUcum.defineFeatures(nil, features);
   if FRxNorm <> nil then
-    FRxNorm.defineFeatures(features);
+    FRxNorm.defineFeatures(nil, features);
   if FUnii <> nil then
-    FUnii.defineFeatures(features);
+    FUnii.defineFeatures(nil, features);
   if FCPT <> nil then
-    FCPT.defineFeatures(features);
+    FCPT.defineFeatures(nil, features);
   if FOMOP <> nil then
-    FOMOP.defineFeatures(features);
+    FOMOP.defineFeatures(nil, features);
   if FACIR <> nil then
-    FACIR.defineFeatures(features);
+    FACIR.defineFeatures(nil, features);
   if FNDFRT <> nil then
-    FNDFRT.defineFeatures(features);
+    FNDFRT.defineFeatures(nil, features);
   if FNDC <> nil then
-    FNDC.defineFeatures(features);
+    FNDC.defineFeatures(nil, features);
 end;
 
 destructor TCommonTerminologies.Destroy;

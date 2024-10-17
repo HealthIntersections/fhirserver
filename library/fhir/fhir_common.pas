@@ -1003,9 +1003,12 @@ type
     function concepts : TFhirCodeSystemConceptListW; virtual; abstract;
   end;
 
+  { TFhirValueSetW }
+
   TFhirValueSetW =  class (TFHIRMetadataResourceW)
   public
     function link : TFhirValueSetW; overload;
+    function clone : TFhirValueSetW; overload;
     function source : String; virtual; abstract;
 
     function checkCompose(place, role : String) : boolean; virtual; abstract;
@@ -2264,6 +2267,11 @@ end;
 function TFhirValueSetW.link: TFhirValueSetW;
 begin
   result := TFhirValueSetW(inherited link);
+end;
+
+function TFhirValueSetW.clone: TFhirValueSetW;
+begin
+  result := TFhirValueSetW(inherited clone);
 end;
 
 { TFhirValueSetComposeIncludeFilterW }

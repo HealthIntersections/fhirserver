@@ -42,7 +42,7 @@ uses
   fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads, fsl_i18n, fsl_logging,
   fhir_objects, fhir_icao, fsl_web_stream,
   fhir4_factory, fhir4_ips,
-  utilities, server_config, time_tracker, storage, server_stats,
+  utilities, server_config,  storage, server_stats,
   web_base, endpoint, healthcard_generator;
 
 type
@@ -76,8 +76,8 @@ type
     function description : String; override;
     function logId : string; override;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
   end;
 
   { TICAOWebEndPoint }
@@ -466,7 +466,7 @@ begin
   result := 'SC';
 end;
 
-function TICAOWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
+function TICAOWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TFslTimeTracker): String;
 var
   path, tgt : String;
 begin
@@ -551,7 +551,7 @@ begin
   end;
 end;
 
-function TICAOWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TICAOWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TFslTimeTracker): String;
 var
   s : TStream;
   params, ct : String;

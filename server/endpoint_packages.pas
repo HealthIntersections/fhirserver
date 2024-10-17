@@ -42,7 +42,7 @@ uses
 
   server_config, utilities,
   database_installer, telnet_server,
-  tx_manager, time_tracker, kernel_thread, server_stats,
+  tx_manager,  kernel_thread, server_stats,
   web_event, web_base, endpoint, session;
 
 type
@@ -113,8 +113,8 @@ type
     property scanning : boolean read FScanning write SetScanning;
     property SystemToken : String read FSystemToken write FSystemToken;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
     function logId : string; override;
   end;
 
@@ -1465,7 +1465,7 @@ begin
   end;
 end;
 
-function TFHIRPackageWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
+function TFHIRPackageWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, false);
@@ -1627,7 +1627,7 @@ begin
   FCrawlerLog['status'] := 'No crawl has completed yet';
 end;
 
-function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, true);

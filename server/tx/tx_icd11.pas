@@ -67,24 +67,24 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
-    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
+    function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
+    function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
-    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
-    function locate(code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; override;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
-    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
+    function IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
-    function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
+    function Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function itemWeight(context : TCodeSystemProviderContext) : string; override;
-    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
-    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
+    function doesFilter(opContext : TTxOperationContext; prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
@@ -205,7 +205,7 @@ begin
   result := '';
 end;
 
-function TICD11Provider.getDisplay(code: String; langList : THTTPLanguageList): String;
+function TICD11Provider.getDisplay(opContext : TTxOperationContext; code: String; langList : THTTPLanguageList): String;
 begin
   result := '';
 end;

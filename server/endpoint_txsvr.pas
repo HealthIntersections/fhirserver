@@ -51,7 +51,7 @@ uses
   fhir_indexing, search_base, database_installer,
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
-  utilities, security, indexing, server_factory, subscriptions, time_tracker,
+  utilities, security, indexing, server_factory, subscriptions, 
   telnet_server, kernel_thread, server_stats, xig_provider,
   web_server, web_base, endpoint, endpoint_storage;
 
@@ -896,7 +896,7 @@ var
   oplist : TStringList;
   s : String;
   i : integer;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
   start : UInt64;
 begin
   start := GetTickCount64;
@@ -909,7 +909,7 @@ begin
       begin
         req := factory.wrapBundle(request.resource.Link);
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
-        tt := TTimeTracker.create;
+        tt := TFslTimeTracker.create;
         try
           resp.type_ := btBatchResponse;
           resp.id := NewGuidId;

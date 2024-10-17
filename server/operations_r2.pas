@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_json, fsl_lang,
+  fsl_base, fsl_utilities, fsl_json, fsl_lang, fsl_logging,
   fsl_http,
   fdb_manager,
   fhir_objects, fhir_factory, fhir_common,  fhir_xhtml, fhir_validator, fhir_parser, fhir_utilities, fhir_uris,
@@ -44,7 +44,7 @@ uses
   fhir_codegen, fhir_diff,
   tx_operations, ftx_ucum_services,
   operations,
-  session, tags, storage, database, obsservation_stats, time_tracker,
+  session, tags, storage, database, obsservation_stats, 
   bundlebuilder, validator_r2, security, subscriptions, search;
 
 type
@@ -77,7 +77,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
@@ -89,7 +89,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
@@ -101,7 +101,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
 
@@ -114,7 +114,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirQuestionnaireGenerationOperation = class (TFhirNativeOperationR2)
@@ -125,7 +125,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirEverythingOperation = class (TFhirNativeOperationR2)
@@ -133,7 +133,7 @@ type
     function resourceName : String; virtual; abstract;
     function isPrimaryResource(request: TFHIRRequest; rtype, id : String) : boolean; virtual;
   public
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirPatientEverythingOperation = class (TFhirEverythingOperation)
@@ -186,7 +186,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirValidationOperation = class (TFhirNativeOperationR2)
@@ -197,7 +197,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function formalURL : String; override;
   end;
 
@@ -209,7 +209,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirGenerateSnapshotOperation = class (TFhirNativeOperationR2)
@@ -220,7 +220,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirGenerateTemplateOperation = class (TFhirNativeOperationR2)
@@ -231,7 +231,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirGenerateNarrativeOperation = class (TFhirNativeOperationR2)
@@ -242,7 +242,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirSuggestKeyWordsOperation = class (TFhirNativeOperationR2)
@@ -253,7 +253,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
   end;
 
   TFhirGetMetaDataOperation = class (TFhirNativeOperationR2)
@@ -264,7 +264,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function formalURL : String; override;
   end;
 
@@ -276,7 +276,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function formalURL : String; override;
   end;
 
@@ -288,7 +288,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function formalURL : String; override;
   end;
 
@@ -300,7 +300,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function formalURL : String; override;
   end;
 
@@ -312,7 +312,7 @@ type
     function Name : String; override;
     function Types : TArray<String>; override;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; override;
     function formalURL : String; override;
   end;
 
@@ -770,7 +770,7 @@ begin
   result := nil;
 end;
 
-function TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 begin
   result := '??qa';
 end;
@@ -807,7 +807,7 @@ begin
   result := nil;
 end;
 
-function TFhirGenerateJWTOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateJWTOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   jwt : String;
   pIn : TFhirParameters;
@@ -887,7 +887,7 @@ begin
   result := nil;
 end;
 
-function TFhirGenerateCodeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateCodeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   res : TFHIRResourceV;
   codegen : TFHIRCodeGenerator;
@@ -978,7 +978,7 @@ begin
   result := nil;
 end;
 
-function TFhirHandleQAPostOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirHandleQAPostOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 begin
   result := 'Handle QA Post';
 end;
@@ -1010,7 +1010,7 @@ begin
   result := nil;
 end;
 
-function TFhirQuestionnaireGenerationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirQuestionnaireGenerationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   profile : TFHirStructureDefinition;
   op : TFHIROperationOutcomeW;
@@ -1155,7 +1155,7 @@ begin
   result := nil;
 end;
 
-function TFhirValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirValidationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 type TValidationOperationMode = (vomGeneral, vomCreate, vomUpdate, vomDelete);
 var
   outcome : TFHIROperationOutcomeW;
@@ -1272,7 +1272,7 @@ end;
 
 { TFhirEverythingOperation }
 
-function TFhirEverythingOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirEverythingOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   bundle : TFHIRBundleBuilder;
   entry : TFHIRBundleEntryW;
@@ -1412,7 +1412,7 @@ begin
   result := nil;
 end;
 
-function TFhirProcessClaimOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirProcessClaimOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   resourceKey, versionKey : integer;
   params : TFhirParametersW;
@@ -1510,7 +1510,7 @@ begin
   result := nil;
 end;
 
-function TFhirGenerateSnapshotOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateSnapshotOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   params : TFhirParameters;
   sdParam, sdBase : TFhirStructureDefinition;
@@ -1623,7 +1623,7 @@ begin
   result := nil;
 end;
 
-function TFhirGenerateTemplateOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateTemplateOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   profile : TFHirStructureDefinition;
   resourceKey, versionKey : integer;
@@ -1726,7 +1726,7 @@ begin
   result := nil;
 end;
 
-function TFhirGenerateNarrativeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateNarrativeOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   narr : TFHIRNarrativeGenerator;
   r : TFHIRResourceV;
@@ -1791,7 +1791,7 @@ begin
   result := nil;
 end;
 
-function TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 begin
   result := 'Key Words';
   raise EFHIRException.CreateLang('NOT_DONE_YET', request.langList);
@@ -1824,7 +1824,7 @@ begin
   result := nil
 end;
 
-function TFhirGetMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGetMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   ok : boolean;
   meta : TFHIRMeta;
@@ -1965,7 +1965,7 @@ begin
   result := nil;
 end;
 
-function TFhirAddMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirAddMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   resourceKey : Integer;
   resourceVersionKey : Integer;
@@ -2131,7 +2131,7 @@ begin
   result := nil;
 end;
 
-function TFhirDeleteMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirDeleteMetaDataOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   resourceKey : Integer;
   resourceVersionKey : Integer;
@@ -2302,7 +2302,7 @@ begin
   result := nil;
 end;
 
-function TFhirDiffOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirDiffOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   resourceKey : Integer;
   versionKey : Integer;
@@ -2398,7 +2398,7 @@ begin
   result := nil;
 end;
 
-function TFhirConvertOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirConvertOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 begin
   result := 'Convert Op';
   try
@@ -2709,7 +2709,7 @@ begin
   result := nil
 end;
 
-function TFhirGenerateDocumentOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirGenerateDocumentOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   composition : TFhirComposition;
   bundle : TFHIRBundle;

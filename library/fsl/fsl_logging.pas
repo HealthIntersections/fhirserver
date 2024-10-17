@@ -190,6 +190,24 @@ Type
 var
   Logging : TLogging;
 
+type
+
+    { TFslTimeTracker }
+
+    TFslTimeTracker = class (TFslObject)
+    private
+      FStart : int64;
+      FLast : Int64;
+      FLog : TFslStringBuilder;
+    public
+      constructor Create; override;
+      destructor Destroy; override;
+      function link : TFslTimeTracker; overload;
+
+      procedure step(name : String);
+      function total : integer;
+      function log : String;
+    end;
 
 implementation
 
@@ -826,6 +844,49 @@ begin
   inc(result, FListeners.sizeInBytes(magic));
   inc(result, (FWorkingLine.length * sizeof(char)) + 12);
 end;
+
+
+{ TFslTimeTracker }
+
+constructor TFslTimeTracker.Create;
+begin
+  inherited;
+  FStart := GetTickCount64;
+  FLast := FStart;
+  FLog := TFslStringBuilder.create;
+  Flog.append('0 0 : start'#13#10);
+end;
+
+destructor TFslTimeTracker.Destroy;
+begin
+  FLog.free;
+  inherited;
+end;
+
+function TFslTimeTracker.link: TFslTimeTracker;
+begin
+  result := TFslTimeTracker(inherited Link);
+end;
+
+function TFslTimeTracker.log : String;
+begin
+  result := Flog.AsString;
+end;
+
+procedure TFslTimeTracker.step(name: String);
+var
+  t : int64;
+begin
+  t := GetTickCount64;
+  Flog.append(inttostr(t-FStart)+' '+inttostr(t - FLast)+': '+name+#13#10);
+  FLast := t;
+end;
+
+function TFslTimeTracker.total: integer;
+begin
+  result := GetTickCount64 - FStart;
+end;
+
 
 Initialization
   Logging := TLogging.Create;

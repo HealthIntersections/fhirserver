@@ -61,7 +61,7 @@ uses
   scim_server, telnet_server, session, security, jwt,
   database_installer, server_version, server_config, utilities, bundlebuilder, html_builder, server_constants,
   server_context, auth_manager,
-  storage, database, time_tracker, kernel_thread, server_stats,
+  storage, database,  kernel_thread, server_stats,
   server_factory, indexing, subscriptions,
   web_base, endpoint, endpoint_storage;
 
@@ -484,7 +484,7 @@ var
   Context: TOperationContext;
   op: TFHIROperationEngine;
   t: UInt64;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   Context := TOperationContext.Create(mode, logLevel);
   try
@@ -500,7 +500,7 @@ begin
 
       // GJSHost.registry := FContext.EventScriptRegistry.link;
       resp := TFHIRResponse.Create(FServerContext.ValidatorContext.link);
-      tt := TTimeTracker.create;
+      tt := TFslTimeTracker.create;
       try
         t := GetTickCount64;
         req.internalRequestId := FServerContext.Globals.nextRequestId;
@@ -1222,13 +1222,13 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
   Context: TOperationContext;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   request := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   Context := TOperationContext.Create;
   try
     response := TFHIRResponse.Create(self.Context.ValidatorContext.link);
-    tt := TTimeTracker.Create;
+    tt := TFslTimeTracker.Create;
     try
       request.Session := Session.link;
       request.ResourceName := rtype;
@@ -1480,7 +1480,7 @@ var
   request: TFHIRRequest;
   response: TFHIRResponse;
   Context: TOperationContext;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   request := TFHIRRequest.Create(self.Context.ValidatorContext.link, roRest, self.Context.Indexes.Compartments.link);
   response := TFHIRResponse.Create(self.Context.ValidatorContext.link);
@@ -1503,7 +1503,7 @@ begin
       request.SubId := ver;
     end;
     Context := TOperationContext.Create;
-    tt := TTimeTracker.create;
+    tt := TFslTimeTracker.create;
     try
       ProcessRequest(Context, request, response, tt);
     finally
@@ -1651,7 +1651,7 @@ var
   p: THTTPParameters;
   prsr: TFHIRParser;
   Context: TOperationContext;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   StringSplit(request.id, '/', typ, s);
   StringSplit(s, '/', id, ver);
@@ -1672,7 +1672,7 @@ begin
       try
         s := p['source'];
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
-        tt := TTimeTracker.create;
+        tt := TFslTimeTracker.create;
         try
           prsr.Parse;
           request.resource := prsr.resource.link;
