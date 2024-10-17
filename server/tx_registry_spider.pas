@@ -45,8 +45,8 @@ uses
   server_config;
 
 const                                                        
-  //MASTER_URL = 'https://fhir.github.io/ig-registry/tx-servers.json';
-  MASTER_URL = 'file:/Users/grahamegrieve/work/ig-registry/tx-servers.json';
+  MASTER_URL = 'https://fhir.github.io/ig-registry/tx-servers.json';
+  //MASTER_URL = 'file:/Users/grahamegrieve/work/ig-registry/tx-servers.json';
   EMAIL_DAYS_LIMIT = 7;
 
 Type
@@ -123,7 +123,10 @@ constructor TTxRegistryScanner.Create(zulip: TZulipTracker; admin : TFHIRServerC
 begin
   inherited Create;
   FZulip := zulip;
-  FAddress := MASTER_URL;
+  if (admin['tx-reg'].value <> '') then
+    FAddress := admin['tx-reg'].value
+  else
+    FAddress := MASTER_URL;
   FLogFileName := FilePath(['[tmp]', 'tx-registry-spider.log']);
   FAdmin := admin;
 end;

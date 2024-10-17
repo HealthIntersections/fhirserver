@@ -76,7 +76,6 @@ type
     FNextScan : TDateTIme;
     FScanning: boolean;
     FInfo : TServerRegistries; 
-    FAddress : String;
 
     procedure populate(json: TJsonObject; srvr: TServerInformation; ver: TServerVersionInformation);
     function status : String;
@@ -147,7 +146,7 @@ var
   s : String;
 begin
   inherited Create(config, settings, nil, common, nil, i18n);
-  s := config['folder'].value;
+  s := settings.Ini.admin['tx-reg'].value;
   FAddress := s;
   if (FAddress = '') then
     FAddress := MASTER_URL;
