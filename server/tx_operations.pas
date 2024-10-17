@@ -38,7 +38,7 @@ uses
   fdb_manager,
   fhir_objects,  fhir_utilities, fhir_common, fhir_factory,
   fhir_tx, fhir_valuesets,
-  session, storage, ftx_service, tx_manager, tx_server, closuremanager, time_tracker;
+  session, storage, ftx_service, tx_manager, tx_server, closuremanager;
 
 type
   TLoadCodedType = (lctCS, lctVS, lctCMSrc, lctCMTgt);
