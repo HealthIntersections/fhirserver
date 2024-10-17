@@ -215,6 +215,7 @@ var
   sct : TFHIRServerConfigSection;
   ep, o : TJsonObject;
   lwi, mode : String;
+  ts : TStringList;
 begin
   rn := 1;
   if FileExists(fn) then
@@ -258,6 +259,15 @@ begin
     cfg.service['langfile'].value := partnerFile('lang.dat');
     cfg.service['package-cache'].value := ExtractFilePath(fn);
     cfg.admin['scim-salt'].value := NewGuidId;
+
+    ts := TStringList.create;
+    try
+      local.ReadSection('server-auth', ts);
+      for n in ts do
+        cfg.admin[n].value := local.ReadString('server-auth', n, '');
+    finally
+      ts.free;
+    end;
 
     for n in FFiles.Keys do
     begin

@@ -40,7 +40,7 @@ uses
   tx_registry_spider, tx_registry_model,
 
   server_config, utilities, telnet_server,
-  tx_manager, time_tracker, kernel_thread, server_stats,
+  tx_manager,  kernel_thread, server_stats,
   web_event, web_base, endpoint, session;
 
 const
@@ -100,8 +100,8 @@ type
     property NextScan : TDateTime read FNextScan write FNextScan;
     property scanning : boolean read FScanning write SetScanning;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
     function logId : string; override;
   end;
 
@@ -303,7 +303,7 @@ var
   upd : TTxRegistryScanner;
   new, existing : TServerRegistries;
 begin
-  upd := TTxRegistryScanner.Create(FZulip.link);
+  upd := TTxRegistryScanner.Create(FZulip.link, FEndPoint.Settings.Ini.admin.link);
   try
     upd.address := FEndPoint.FAddress;
     upd.OnSendEmail := doSendEmail;
@@ -769,7 +769,7 @@ begin
   result := 'TXR';
 end;
 
-function TFHIRTxRegistryWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
+function TFHIRTxRegistryWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, false);
@@ -832,7 +832,7 @@ begin
   end;
 end;
 
-function TFHIRTxRegistryWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TFHIRTxRegistryWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, true);
