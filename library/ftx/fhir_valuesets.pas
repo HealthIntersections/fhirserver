@@ -3503,6 +3503,7 @@ begin
       begin
         //Logging.log('Processing '+vsId+', import value set '+s);
         deadCheck('processCodes#2');
+        FOpContext.log('import value set '+s);
         ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
         try
           checkCanonicalStatus(expansion, ivs.FValueSet, FValueSet);
@@ -3535,6 +3536,7 @@ begin
             //Logging.log(' ...import value set '+s);
             deadCheck('processCodes#3');
             f := nil;
+            FOpContext.log('import2 value set '+s);
             // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
             // this saves lots of overhead we don't need. But it does require simple cases (though they are common). So we have a look
             // at the value set, and see whether we can short cut it. If we can, it's just another filter (though we can't iterate on it)
@@ -3555,6 +3557,7 @@ begin
           begin
             if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion and filters.Empty then
             begin
+              FOpContext.log('import special value set '+s);
               base := expandValueSet(cs.SpecialEnumeration, '', filter.filter, dependencies, notClosed);
               try
                 expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
@@ -3566,6 +3569,7 @@ begin
             end
             else if filter.Null then // special case - add all the code system
             begin
+              FOpContext.log('add whole code system');
               if cs.isNotClosed(FOpContext, filter) then
                 if cs.SpecialEnumeration <> '' then
                   raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
@@ -3595,6 +3599,7 @@ begin
             end
             else
             begin
+              FOpContext.log('prepare filters');
               NoTotal;
               if cs.isNotClosed(FOpContext, filter) then
                 notClosed := true;
@@ -3603,6 +3608,7 @@ begin
                 ctxt := cs.searchFilter(FOpContext, filter, prep, false);
                 try
                   cs.prepare(FOpContext, prep);
+                  FOpContext.log('iterate filters');
                   while cs.FilterMore(FOpContext, ctxt) do
                   begin
                     deadCheck('processCodes#4');
@@ -3623,6 +3629,7 @@ begin
                       c.free;
                     end;
                   end;
+                  FOpContext.log('iterate filters done');
                 finally
                   ctxt.free;
                 end;
@@ -3634,6 +3641,7 @@ begin
 
           if (cset.hasConcepts) then
           begin
+            FOpContext.log('iterate concepts');
             cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
             try
               tcount := 0;
@@ -3666,10 +3674,12 @@ begin
             finally
               cds.free;
             end;
+            FOpContext.log('iterate concepts done');
           end;
 
           if cset.hasFilters then
           begin
+            FOpContext.log('prepare filters');
             fcl := cset.filters;
             try
               prep := cs.getPrepContext(FOpContext);
@@ -3706,6 +3716,7 @@ begin
 
                 inner := cs.prepare(FOpContext, prep);
                 count := 0;
+                FOpContext.log('iterate filters');
                 While cs.FilterMore(FOpContext, filters[0]) do
                 begin
                   deadCheck('processCodes#5');
@@ -3742,6 +3753,7 @@ begin
               finally
                 prep.free;
               end;
+              FOpContext.log('iterate filters done');
             finally
               fcl.free;
             end;

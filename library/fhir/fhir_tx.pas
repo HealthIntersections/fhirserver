@@ -335,7 +335,7 @@ procedure TTerminologyOperationContext.log(note: String);
 var
   s : string;
 begin
-  s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+note;
+  s := inttostr(GetTickCount64 - FStartTime)+'ms '+note;
   if UnderDebugger then
     Logging.log(s);
   FTimeTracker.step(s);
@@ -345,7 +345,7 @@ procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note : Strin
 var
   s : string;
 begin
-  s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+vs.vurl+': '+note;
+  s := inttostr(GetTickCount64 - FStartTime)+'ms '+vs.vurl+': '+note;
   if UnderDebugger then
     Logging.log(s);
   FTimeTracker.step(s);
