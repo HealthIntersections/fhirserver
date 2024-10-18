@@ -43,12 +43,19 @@ jobs:
           -e MYSQL_DATABASE=test \
           -d mysql:8
 
-    # Step 5: Build the Docker image and tag it for GitHub Container Registry (GHCR)
+    # Step 5: Convert repository owner and name to lowercase
+    - name: Convert repository owner and name to lowercase
+      id: vars
+      run: |
+        echo "org_name=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        echo "repo_name=$(basename ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+    # Step 6: Build the Docker image and tag it for GitHub Container Registry (GHCR)
     - name: Docker Build
       run: |
-        docker build --tag ghcr.io/${{ github.repository_owner }}/fhirserver:nightly .
+        docker build --tag ghcr.io/${{ env.org_name }}/fhirserver:nightly .
 
-    # Step 6: Prepare ini file for your FHIR Server with environment variables
+    # Step 7: Prepare ini file for your FHIR Server with environment variables
     - name: Prepare ini file
       env:
         FHIRSERVER_LOCATIONS_CLONE_PATH: /work/fhirserver
@@ -66,14 +73,14 @@ jobs:
       run: |
         cat fixtures/test-settings.ini.template | envsubst > ~/test-settings.ini
 
-    # Step 7: Ensure SNOMED cache is present
+    # Step 8: Ensure SNOMED cache is present
     - name: Ensure SNOMED cache is present
       run: |
         mkdir -p ~/terminology/fhir-server
         wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache || true
         ls ~/terminology/fhir-server/snomed.test.cache
 
-    # Step 8: Push the Docker image to GitHub Container Registry (GHCR)
+    # Step 9: Push the Docker image to GitHub Container Registry (GHCR)
     - name: Push Docker image to GHCR
       run: |
-        docker push ghcr.io/${{ github.repository_owner }}/fhirserver:nightly
+        docker push ghcr.io/${{ env.org_name }}/fhirserver:nightly
