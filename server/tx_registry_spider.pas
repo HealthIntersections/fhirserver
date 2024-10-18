@@ -41,10 +41,12 @@ uses
   fhir3_client, fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
   fhir4_client, fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_resources_canonical, fhir4_utilities,
   fhir5_client, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_resources_canonical, fhir5_enums, fhir5_utilities,
-  tx_registry_model;
+  tx_registry_model,
+  server_config;
 
 const                                                        
   MASTER_URL = 'https://fhir.github.io/ig-registry/tx-servers.json';
+  //MASTER_URL = 'file:/Users/grahamegrieve/work/ig-registry/tx-servers.json';
   EMAIL_DAYS_LIMIT = 7;
 
 Type
@@ -81,22 +83,24 @@ Type
     FIni : TIniFile;
     FZulip : TZulipTracker;
     FLogFileName : String;
+    FAdmin : TFHIRServerConfigSection;
 
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
     function fetchUrl(url, mimetype : string) : TBytes;
     function fetchJson(url : string) : TJsonObject;
+    function makeHTTP(url, code : String) : TFHIRHTTPCommunicator;
 
-    procedure processServerVersionR3(version, source, url : String; ver : TServerVersionInformation);
-    procedure processServerVersionR4(version, source, url : String; ver : TServerVersionInformation);
-    procedure processServerVersionR5(version, source, url : String; ver : TServerVersionInformation);
+    procedure processServerVersionR3(version, source, url, code : String; ver : TServerVersionInformation);
+    procedure processServerVersionR4(version, source, url, code : String; ver : TServerVersionInformation);
+    procedure processServerVersionR5(version, source, url, code : String; ver : TServerVersionInformation);
     procedure processServerVersion(source : String; srvr: TServerInformation; obj : TJsonObject; ver : TServerVersionInformation);
     procedure processServer(source : String; obj : TJsonObject; srvr : TServerInformation);
     procedure processRegistry(obj : TJsonObject; reg : TServerRegistry);
 
   public
-    constructor Create(zulip : TZulipTracker);
+    constructor Create(zulip : TZulipTracker; admin : TFHIRServerConfigSection);
     destructor Destroy; override;
 
     procedure update(name : String; info : TServerRegistries);
@@ -115,17 +119,22 @@ end;
 
 { TTxRegistryScanner }
 
-constructor TTxRegistryScanner.Create(zulip: TZulipTracker);
+constructor TTxRegistryScanner.Create(zulip: TZulipTracker; admin : TFHIRServerConfigSection);
 begin
   inherited Create;
   FZulip := zulip;
-  FAddress := MASTER_URL;
+  if (admin['tx-reg'].value <> '') then
+    FAddress := admin['tx-reg'].value
+  else
+    FAddress := MASTER_URL;
   FLogFileName := FilePath(['[tmp]', 'tx-registry-spider.log']);
+  FAdmin := admin;
 end;
 
 destructor TTxRegistryScanner.Destroy;
 begin
   FZulip.free;
+  FAdmin.free;
   inherited;
 end;
 
@@ -161,6 +170,29 @@ end;
 function TTxRegistryScanner.fetchJson(url: string): TJsonObject;
 begin
   result := TJSONParser.Parse(fetchUrl(url, 'application/json'));
+end;
+
+function TTxRegistryScanner.makeHTTP(url, code: String): TFHIRHTTPCommunicator;
+var
+  s : String;
+begin
+  result := TFHIRHTTPCommunicator.Create(url);
+  try
+    s := FAdmin[url].value;
+    if (s = '') then
+      s := FAdmin[code].value;
+
+    if (s <> '') then
+    begin
+      if (s.startsWith('apikey:')) then
+        result.ApiKey := s.subString(7)
+      else
+        raise EFslException.create('unable to understand '+s);
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 procedure TTxRegistryScanner.log(msg, source: String; error : boolean);
@@ -339,9 +371,9 @@ begin
     v := TSemanticVersion.fromString(obj.str['version']);
     try
       case v.Major of
-        3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
-        4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
-        5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
+        3: processServerVersionR3(obj.str['version'], source, obj.str['url'], srvr.Code, ver);
+        4: processServerVersionR4(obj.str['version'], source, obj.str['url'], srvr.Code, ver);
+        5: processServerVersionR5(obj.str['version'], source, obj.str['url'], srvr.Code, ver);
       else
         log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
       end;
@@ -363,7 +395,7 @@ begin
   end;
 end;
 
-procedure TTxRegistryScanner.processServerVersionR4(version, source, url : String; ver : TServerVersionInformation);
+procedure TTxRegistryScanner.processServerVersionR4(version, source, url, code: String; ver : TServerVersionInformation);
 var
   client : TFhirClient4;
   cs : fhir4_resources_canonical.TFhirCapabilityStatement;
@@ -377,7 +409,7 @@ var
   vs : fhir4_resources.TFHIRValueSet;
 begin
   try
-    client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
+    client := TFhirClient4.Create(nil, nil, makeHTTP(url, code));
     try
       client.Logger := TTextFileLogger.create(FLogFileName);
       client.format := ffJson;
@@ -391,16 +423,28 @@ begin
               for cc in csr.security.serviceList do
               begin
                 if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'OAuth')) then
-                  ver.Security := ver.Security + [ssOAuth]
-                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR')) then
-                  ver.Security := ver.Security + [ssSmart]
-                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Basic')) then
-                  ver.Security := ver.Security + [ssPassword]
-                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Certificates')) then
-                  ver.Security := ver.Security + [ssCert]
-                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Token')) then
-                  ver.Security := ver.Security + [ssToken]
-                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Open')) then
+                  ver.Security := ver.Security + [ssOAuth];
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR')) then
+                  ver.Security := ver.Security + [ssSmart];
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Basic')) then
+                  ver.Security := ver.Security + [ssPassword];
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Certificates')) then
+                  ver.Security := ver.Security + [ssCert];
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Token')) then
+                  ver.Security := ver.Security + [ssToken];
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Open')) then
+                  ver.Security := ver.Security + [ssOpen];
+                if (cc.hasCode('http://terminology.hl7.org/CodeSystem/restful-security-service', 'OAuth')) then
+                  ver.Security := ver.Security + [ssOAuth];
+                if (cc.hasCode('http://terminology.hl7.org/CodeSystem/restful-security-service', 'SMART-on-FHIR')) then
+                  ver.Security := ver.Security + [ssSmart];
+                if (cc.hasCode('http://terminology.hl7.org/CodeSystem/restful-security-service', 'Basic')) then
+                  ver.Security := ver.Security + [ssPassword];
+                if (cc.hasCode('http://terminology.hl7.org/CodeSystem/restful-security-service', 'Certificates')) then
+                  ver.Security := ver.Security + [ssCert];
+                if (cc.hasCode('http://terminology.hl7.org/CodeSystem/restful-security-service', 'Token')) then
+                  ver.Security := ver.Security + [ssToken];
+                if (cc.hasCode('http://terminology.hl7.org/CodeSystem/restful-security-service', 'Open')) then
                   ver.Security := ver.Security + [ssOpen];
               end;
           end;
@@ -439,7 +483,7 @@ begin
   end;
 end;
 
-procedure TTxRegistryScanner.processServerVersionR5(version, source, url : String; ver : TServerVersionInformation);
+procedure TTxRegistryScanner.processServerVersionR5(version, source, url, code : String; ver : TServerVersionInformation);
 var
   client : TFhirClient5;
   cs : fhir5_resources_canonical.TFhirCapabilityStatement;
@@ -452,7 +496,7 @@ var
   be : fhir5_resources.TFhirBundleEntry;
   vs : fhir5_resources.TFHIRValueSet;
 begin
-  client := TFhirClient5.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
+  client := TFhirClient5.Create(nil, nil, makeHTTP(url, code));
   try                    
     client.Logger := TTextFileLogger.create(FilePath(['[tmp]', 'tx-registry-spider.log']));
     client.format := ffJson;
@@ -510,7 +554,7 @@ begin
   end;
 end;
 
-procedure TTxRegistryScanner.processServerVersionR3(version, source, url : String; ver : TServerVersionInformation);
+procedure TTxRegistryScanner.processServerVersionR3(version, source, url, code : String; ver : TServerVersionInformation);
 var
   client : TFhirClient3;
   cs : fhir3_resources_canonical.TFhirCapabilityStatement;
@@ -524,7 +568,7 @@ var
   vs : fhir3_resources.TFHIRValueSet;
   n : String;
 begin
-  client := TFhirClient3.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
+  client := TFhirClient3.Create(nil, nil, makeHTTP(url, code));
   try     
     client.Logger := TTextFileLogger.create(FilePath(['[tmp]', 'tx-registry-spider.log']));
     client.format := ffJson;

@@ -134,7 +134,11 @@ var
   oFtp : TIdFTP;
 begin
   if StringStartsWith(url, 'file:') Then
+  begin
+    if (url.contains('?')) then
+      url := url.substring(0, url.indexof('?'));
     FBuffer.LoadFromFileName(Copy(url, 6, $FFFF))
+  end
   else
   Begin
     oUri := TIdURI.Create(url);

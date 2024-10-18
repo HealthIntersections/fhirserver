@@ -77,34 +77,34 @@ type
     function description : String; override;
 
     function TotalCount : integer;  override;
-    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
-    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
+    function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
-    function getDefinition(code : String):String; override;
-    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
-    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
-    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
-    function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
-    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
-    function Definition(context : TCodeSystemProviderContext) : string; override;
+    function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
+    function getDefinition(opContext : TTxOperationContext; code : String):String; override;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
+    function locateIsA(opContext : TTxOperationContext; code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
+    function IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
+    function Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
+    procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); override;
+    function Definition(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
 
-    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
-    function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
+    function getPrepContext(opContext : TTxOperationContext) : TCodeSystemProviderFilterPreparationContext; override;
+    function prepare(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
 
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;    
-    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    function searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
+    function filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
+    function FilterMore(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
+    function InFilter(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function isNotClosed(opContext : TTxOperationContext; textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
 
-    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+    procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
   end;
 
 const
@@ -115,7 +115,7 @@ implementation
 
 { TIETFLanguageCodeServices }
 
-procedure TIETFLanguageCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
+procedure TIETFLanguageCodeServices.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
 var
   s : string;
 begin
@@ -138,12 +138,12 @@ begin
   result := URI_BCP47;
 end;
 
-function TIETFLanguageCodeServices.getDefinition(code: String): String;
+function TIETFLanguageCodeServices.getDefinition(opContext : TTxOperationContext; code: String): String;
 begin
   result := '';
 end;
 
-function TIETFLanguageCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
+function TIETFLanguageCodeServices.getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String;
 var
   c : TIETFLang;
   msg : String;
@@ -164,12 +164,12 @@ begin
   end;
 end;
 
-function TIETFLanguageCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+function TIETFLanguageCodeServices.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
 end;
 
-procedure TIETFLanguageCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
+procedure TIETFLanguageCodeServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
@@ -200,7 +200,7 @@ begin
 end;
 
 
-function TIETFLanguageCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
+function TIETFLanguageCodeServices.locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 var
   info : TIETFLang;
 begin
@@ -212,12 +212,12 @@ begin
 end;
 
 
-function TIETFLanguageCodeServices.Code(context : TCodeSystemProviderContext) : string;
+function TIETFLanguageCodeServices.Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string;
 begin
   result := TIETFLanguageCodeConcept(context).FInfo.code;
 end;
 
-function TIETFLanguageCodeServices.Definition(context: TCodeSystemProviderContext): string;
+function TIETFLanguageCodeServices.Definition(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := '';
 end;
@@ -228,7 +228,7 @@ begin
 end;
 
 
-function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
+function TIETFLanguageCodeServices.Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 var
   ctxt : TIETFLanguageCodeConcept;
 begin
@@ -236,15 +236,15 @@ begin
   if (ctxt.FInfo = nil) then
     result := ''
   else
-    result := getDisplay(ctxt.FInfo.code, langList);
+    result := getDisplay(opContext, ctxt.FInfo.code, langList);
 end;
 
-function TIETFLanguageCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
+function TIETFLanguageCodeServices.IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean;
 begin
   result := false;  // IETFLanguageCode doesn't do abstract
 end;
 
-function TIETFLanguageCodeServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+function TIETFLanguageCodeServices.isNotClosed(opContext : TTxOperationContext; textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := true;
 end;
@@ -264,17 +264,17 @@ begin
   end;
 end;
 
-function TIETFLanguageCodeServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
+function TIETFLanguageCodeServices.getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
-function TIETFLanguageCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+function TIETFLanguageCodeServices.getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyTodo.create('TIETFLanguageCodeServices.getcontext');
 end;
 
-function TIETFLanguageCodeServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
+function TIETFLanguageCodeServices.locateIsA(opContext : TTxOperationContext; code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
   result := nil; // no subsumption
 end;
@@ -285,17 +285,17 @@ begin
   result := 'IETF langauge';
 end;
 
-function TIETFLanguageCodeServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
+function TIETFLanguageCodeServices.prepare(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   result := false;
 end;
 
-function TIETFLanguageCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
+function TIETFLanguageCodeServices.searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyTodo.create('TIETFLanguageCodeServices.searchFilter');
 end;
 
-function TIETFLanguageCodeServices.filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+function TIETFLanguageCodeServices.filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   i : integer;
 begin
@@ -306,7 +306,7 @@ begin
     raise ETerminologyError.Create('Not a supported filter', itInvalid);
 end;
 
-function TIETFLanguageCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
+function TIETFLanguageCodeServices.filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 var
   cc : TIETFLanguageCodeConcept;
   filter : TIETFLanguageCodeFilter;
@@ -342,22 +342,22 @@ begin
   end;
 end;
 
-function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+function TIETFLanguageCodeServices.FilterMore(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
   raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
 end;
 
-function TIETFLanguageCodeServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+function TIETFLanguageCodeServices.filterSize(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
 end;
 
-function TIETFLanguageCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+function TIETFLanguageCodeServices.FilterConcept(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
   raise ETerminologyTodo.create('TIETFLanguageCodeServices.FilterConcept');
 end;
 
-function TIETFLanguageCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
+function TIETFLanguageCodeServices.InFilter(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
   raise ETerminologyTodo.create('TIETFLanguageCodeServices.InFilter');
 end;

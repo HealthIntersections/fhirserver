@@ -215,6 +215,7 @@ var
   sct : TFHIRServerConfigSection;
   ep, o : TJsonObject;
   lwi, mode : String;
+  ts : TStringList;
 begin
   rn := 1;
   if FileExists(fn) then
@@ -246,6 +247,7 @@ begin
     cfg.web['telnet-password'].value := def(local.ReadString('config', 'telnet-pword', NewGuidId), cfg.web['telnet-password'].value, '');
     cfg.web['robots.txt'].value := def(local.ReadString('web', 'robots.txt', ''), cfg.web['robots.txt'].value, '');
     cfg.admin['log-folder'].value := def(local.ReadString('web', 'logFolder', ''), cfg.admin['log-folder'].value, '');
+    cfg.admin['tx-reg'].value := def(local.ReadString('web', 'tx-reg', ''), cfg.admin['tx-reg'].value, '');
     cfg.admin['email'].value := def(local.ReadString('config', 'email', ''), cfg.admin['email'].value, 'noone@fhir.org');
     cfg.admin['ownername'].value := def(local.ReadString('config', 'user', ''), cfg.admin['ownername'].value, 'Local User');
     cfg.service['max-memory'].value := def(local.ReadString('config', 'max-memory', ''), cfg.service['max-memory'].value, '0');
@@ -258,6 +260,15 @@ begin
     cfg.service['langfile'].value := partnerFile('lang.dat');
     cfg.service['package-cache'].value := ExtractFilePath(fn);
     cfg.admin['scim-salt'].value := NewGuidId;
+
+    ts := TStringList.create;
+    try
+      local.ReadSection('server-auth', ts);
+      for n in ts do
+        cfg.admin[n].value := local.ReadString('server-auth', n, '');
+    finally
+      ts.free;
+    end;
 
     for n in FFiles.Keys do
     begin

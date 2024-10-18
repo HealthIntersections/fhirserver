@@ -40,7 +40,7 @@ uses
   ftx_service, ftx_sct_services, ftx_sct_publisher, ftx_sct_analysis, ftx_sct_expressions,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server, time_tracker, server_stats,
+  tx_manager, telnet_server,  server_stats,
   web_base, endpoint;
 
 type
@@ -58,8 +58,8 @@ type
     function logId : string; override;
 
     function description : String; override;
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
   end;
 
   { TSnomedWebEndPoint }
@@ -322,7 +322,7 @@ begin
   result := 'SN';
 end;
 
-function TSnomedWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
+function TSnomedWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, false);
@@ -342,7 +342,7 @@ begin
   end;
 end;
 
-function TSnomedWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TSnomedWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, true);

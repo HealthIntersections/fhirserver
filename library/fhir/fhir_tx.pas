@@ -20,7 +20,7 @@ uses
 
   { TTerminologyOperationContext }
 
-  TTerminologyOperationContext = class (TFslObject)
+  TTerminologyOperationContext = class (TTxOperationContext)
   private
     FId : String;
     FStartTime : UInt64;
@@ -28,22 +28,23 @@ uses
     FLangList : THTTPLanguageList;
     FI18n : TI18nSupport;
     FTimeLimit : Cardinal;
-    FNotes : TStringList;
-    FOwnsNotes : boolean;
     FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
+    FTimeTracker: TFslTimeTracker;
+    procedure SetTimeTracker(AValue: TFslTimeTracker);
   public
-    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
+    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent; tt : TFslTimeTracker);
     destructor Destroy; override;
 
     property reqId : String read FId;
+    property TimeTracker : TFslTimeTracker read FTimeTracker write SetTimeTracker;
     function copy : TTerminologyOperationContext;
     function deadCheck(var time : integer) : boolean;
     procedure seeContext(vurl : String);
     procedure clearContexts;
 
+    procedure log(note : String); override;
     procedure addNote(vs : TFHIRValueSetW; note : String);
-    function notes : String;
-    function hasNotes : boolean;
+    function diagnostics : String;
     property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
 
     class function renderCoded(system : TCodeSystemProvider) : String; overload;
@@ -223,7 +224,7 @@ uses
     function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
     procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
-    procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
+    procedure checkSupplements(opContext : TTxOperationContext; cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;     
@@ -234,7 +235,7 @@ uses
 
   TFHIRCodeSystemInformationProvider = class (TTerminologyWorker)
   public
-    procedure lookupCode(coding : TFHIRCodingW; profile : TFHIRTxOperationParams; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+    procedure lookupCode(opContext : TTxOperationContext; coding : TFHIRCodingW; profile : TFHIRTxOperationParams; props : TArray<String>; resp : TFHIRLookupOpResponseW);
   end;
 
 const
@@ -246,7 +247,13 @@ implementation
 
 { TTerminologyOperationContext }
 
-constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
+procedure TTerminologyOperationContext.SetTimeTracker(AValue: TFslTimeTracker);
+begin
+  FTimeTracker.free;
+  FTimeTracker:=AValue;
+end;
+
+constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent; tt : TFslTimeTracker);
 begin
   inherited create;
   FI18n := i18n;
@@ -256,28 +263,27 @@ begin
   FStartTime := GetTickCount64;
   FOnGetCurrentRequestCount := getRequestCount;
   FTimeLimit := timeLimit;
-  FNotes := TStringList.create;
-  FOwnsNotes := true;
+  if (tt = nil) then
+    FTimeTracker := TFslTimeTracker.create
+  else
+    FTimeTracker := tt;
+  FTimeTracker.step('tx-op');
 end;
 
 destructor TTerminologyOperationContext.Destroy;
 begin
-  if FOwnsNotes then
-    FNotes.free;
   FLangList.free;
   FI18n.free;
   FContexts.free;
+  FTimeTracker.free;
   inherited Destroy;
 end;
 
 function TTerminologyOperationContext.copy: TTerminologyOperationContext;
 begin
-  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FTimeLimit, OnGetCurrentRequestCount);
+  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FTimeLimit, OnGetCurrentRequestCount, FTimeTracker.link);
   result.FContexts.assign(FContexts);
   result.FStartTime := FStartTime;
-  result.FNotes.free;
-  result.FOwnsNotes := false;
-  result.FNotes := FNotes;
 end;
 
 function TTerminologyOperationContext.deadCheck(var time : integer): boolean;
@@ -325,24 +331,29 @@ begin
   FContexts.clear;
 end;
 
-procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note: String);
+procedure TTerminologyOperationContext.log(note: String);
+var
+  s : string;
+begin
+  s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+note;
+  if UnderDebugger then
+    Logging.log(s);
+  FTimeTracker.step(s);
+end;
+
+procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note : String);
 var
   s : string;
 begin
   s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+vs.vurl+': '+note;
-  if false and UnderDebugger then
+  if UnderDebugger then
     Logging.log(s);
-  FNotes.add(s);
+  FTimeTracker.step(s);
 end;
 
-function TTerminologyOperationContext.notes: String;
+function TTerminologyOperationContext.diagnostics: String;
 begin
-  result := FNotes.Text;
-end;
-
-function TTerminologyOperationContext.hasNotes: boolean;
-begin
-  result := FNotes.Count > 0;
+  result := FTimeTracker.log;
 end;
 
 class function TTerminologyOperationContext.renderCoded(system: TCodeSystemProvider): String;
@@ -525,7 +536,7 @@ end;
 
 function TTerminologyWorker.costDiags(e: ETooCostly): ETooCostly;
 begin
-  e.diagnostics := FOpContext.notes;
+  e.diagnostics := FOpContext.diagnostics;
   result := e;
 end;
 
@@ -596,22 +607,22 @@ begin
   end;
 end;
 
-procedure TTerminologyWorker.checkSupplements(cs : TCodeSystemProvider; src : TFHIRXVersionElementWrapper);
+procedure TTerminologyWorker.checkSupplements(opContext : TTxOperationContext; cs : TCodeSystemProvider; src : TFHIRXVersionElementWrapper);
 var
   ext : TFHIRExtensionW;
   i : integer;
 begin
   for ext in src.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
-    if not cs.hasSupplement(ext.valueAsString) then
+    if not cs.hasSupplement(opContext, ext.valueAsString) then
       raise ETerminologyError.create('ValueSet depends on supplement '''+ext.valueAsString+''' on '+cs.systemUri+' that is not known', itBusinessRule);
   for i := FRequiredSupplements.count - 1 downto 0 do
-    if cs.hasSupplement(FRequiredSupplements[i]) then
+    if cs.hasSupplement(opContext, FRequiredSupplements[i]) then
       FRequiredSupplements.delete(i);
 end;
 
 { TFHIRCodeSystemInformationProvider }
 
-procedure TFHIRCodeSystemInformationProvider.lookupCode(coding: TFHIRCodingW; profile: TFHIRTxOperationParams; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TFHIRCodeSystemInformationProvider.lookupCode(opContext : TTxOperationContext; coding: TFHIRCodingW; profile: TFHIRTxOperationParams; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   provider : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -637,12 +648,12 @@ begin
       s := provider.version;
       if (s <> '') then
         resp.version := s;
-      ctxt := provider.locate(coding.code);
+      ctxt := provider.locate(opContext, coding.code);
       try
         if ctxt = nil then
           raise ETerminologyError.Create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s, itInvalid);
 
-        if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
+        if (hasProp('abstract', true) and provider.IsAbstract(opContext, ctxt)) then
         begin
           p := resp.addProp('abstract');
           p.value := FFactory.makeBoolean(true);
@@ -650,16 +661,16 @@ begin
         if (hasProp('inactive', true)) then
         begin
           p := resp.addProp('inactive');
-          p.value := FFactory.makeBoolean(provider.IsInactive(ctxt));
+          p.value := FFactory.makeBoolean(provider.IsInactive(opContext, ctxt));
         end;
-        if hasProp('definition', true) and (provider.Definition(ctxt) <> '') then
+        if hasProp('definition', true) and (provider.Definition(opContext, ctxt) <> '') then
         begin
           p := resp.addProp('definition');
-          p.value := FFactory.makeString(provider.Definition(ctxt));
+          p.value := FFactory.makeString(provider.Definition(opContext, ctxt));
         end;
         resp.code := coding.code;
-        resp.display := provider.Display(ctxt, FlangList);
-        provider.extendLookup(FFactory, ctxt, FlangList, props, resp);
+        resp.display := provider.Display(opContext, ctxt, FlangList);
+        provider.extendLookup(opContext, FFactory, ctxt, FlangList, props, resp);
       finally
         ctxt.free;
       end;

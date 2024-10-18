@@ -61,6 +61,7 @@ type
     FTerminated : boolean;
     FTimeout: cardinal;
     FBytesToTransfer: Int64;
+    FApiKey : String;
 
     indy : TIdHTTP;
     ssl : TIdOpenSSLIOHandlerClient;
@@ -110,6 +111,7 @@ type
     property username : String read FUsername write FUsername;
     property password : String read FPassword write FPassword;
     property timeout : cardinal read FTimeout write SetTimeout;
+    property ApiKey : String read FApiKey write FApiKey;
 
     function address : String; override;
 
@@ -350,6 +352,8 @@ begin
           raise EFHIRException.Create('Unable to process proxy "'+proxy+'" - use address:port');
         end;
       end;
+      if FApiKey <> '' then
+        indy.Request.CustomHeaders.add('Api-Key: '+FApiKey);
       ssl := TIdOpenSSLIOHandlerClient.Create(nil);
       indy.IOHandler := ssl;
       ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;

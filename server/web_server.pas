@@ -96,7 +96,7 @@ Uses
   scim_server,
   auth_manager, reverse_client, cds_hooks_server, web_source, analytics, bundlebuilder, server_factory,
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
-  subscriptions, twilio, time_tracker,
+  subscriptions, twilio, 
   web_base, endpoint, endpoint_storage;
 
 Type
@@ -224,7 +224,7 @@ Type
 
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure logOutput(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : string; tt : TTimeTracker; secure : boolean; epn, summ : string);
+    Procedure logOutput(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : string; tt : TFslTimeTracker; secure : boolean; epn, summ : string);
 
     Procedure StartServer();
     Procedure StopServer;
@@ -745,7 +745,7 @@ end;
 
 procedure TFhirWebServer.logOutput(AContext: TIdContext;
   request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: string;
-  tt: TTimeTracker; secure: boolean; epn, summ: string);
+  tt: TFslTimeTracker; secure: boolean; epn, summ: string);
   function mimeType(mt : String) : String;
   var
     f : TFHIRFormat;
@@ -802,7 +802,7 @@ var
   ep : TFhirWebServerEndpoint;
   ok : boolean;
   epn, cid, ip : String;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
   ci : TFHIRHTTPConnectionInfo;
 begin
   ci := TFHIRHTTPConnectionInfo.create(request, AContext);
@@ -821,7 +821,7 @@ begin
     begin
       ip := getClientIP(AContext, request);
       ci.FClientIP := ip;
-      tt := TTimeTracker.Create;
+      tt := TFslTimeTracker.Create;
       try
         InterlockedIncrement(GCounterWebRequests);
         SetThreadStatus('Processing '+request.Document);
@@ -993,7 +993,7 @@ procedure TFhirWebServer.SecureRequest(AContext: TIdContext;
 var
   cert: TIdOpenSSLX509;
   id, summ : String;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
   ok : boolean;
   ep: TFhirWebServerEndpoint;
   epn, ip: String;
@@ -1013,7 +1013,7 @@ begin
     begin
       ip := getClientIP(AContext, request);
       ci.FClientIP := ip;
-      tt := TTimeTracker.Create;
+      tt := TFslTimeTracker.Create;
       try
         InterlockedIncrement(GCounterWebRequests);
         cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
