@@ -38,7 +38,7 @@ uses
   fsl_base, fsl_utilities, fsl_json, fsl_i18n, fsl_http, fsl_html, fsl_fetcher, fsl_logging, fsl_threads,
   fhir_objects, fhir_xhtml,
   fdb_manager, fdb_sqlite3,
-  utilities, server_config, tx_manager, time_tracker, kernel_thread,
+  utilities, server_config, tx_manager,  kernel_thread,
   web_base, endpoint, server_stats;
 
 type
@@ -126,8 +126,8 @@ type
     function link  : TFHIRXIGWebServer; overload;
     function description : String; override;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
     function logId : string; override;
   end;
 
@@ -1501,7 +1501,7 @@ begin
   result := 'xig';
 end;
 
-function TFHIRXIGWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
+function TFHIRXIGWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, false);
@@ -1551,7 +1551,7 @@ begin
   end;
 end;
 
-function TFHIRXIGWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TFHIRXIGWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   result := doRequest(AContext, request, response, id, true);

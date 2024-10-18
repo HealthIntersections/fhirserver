@@ -42,7 +42,7 @@ uses
   fhir_client, fhir_cdshooks,
   session,
   fhir_indexing, fhir_graphql, fhir_features,
-  html_builder, subscriptions, utilities, server_constants, indexing, bundlebuilder, time_tracker,
+  html_builder, subscriptions, utilities, server_constants, indexing, bundlebuilder, 
   client_cache_manager, tx_version;
 
 Type
@@ -97,7 +97,7 @@ type
     function Types : TArray<String>; virtual;
     function HandlesRequest(request : TFHIRRequest) : boolean; virtual;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; virtual;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; virtual;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; virtual;
     function formalURL : String; virtual;
   end;
 
@@ -225,7 +225,7 @@ type
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
     function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
-    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; virtual;
+    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String; virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
     constructor Create(Storage : TFHIRStorageService; ServerContext : TFslObject; langList : THTTPLanguageList);
@@ -246,7 +246,7 @@ type
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
     function check(response : TFHIRResponse; test : boolean; code : Integer; langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType) : Boolean; virtual;
-    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String;  virtual;
+    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TFslTimeTracker) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual; abstract;
     function getResourcesByParam(aType : string; name, value : string; var needSecure : boolean): TFslList<TFHIRResourceV>; virtual;
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; virtual;
@@ -731,7 +731,7 @@ begin
 end;
 
 
-function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker): String;
+function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker): String;
 begin
   InterlockedIncrement(GCounterFHIRRequests);
   try
@@ -1174,7 +1174,7 @@ begin
   raise EFHIRException.Create('This server does not implement the "History" function');
 end;
 
-function TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   i : integer;
   op : TFhirOperation;
@@ -1825,7 +1825,7 @@ begin
   inherited;
 end;
 
-function TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 begin
   result := '';
   // nothing

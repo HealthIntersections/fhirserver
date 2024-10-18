@@ -42,7 +42,7 @@ uses
   fdb_manager,
   fhir_objects,
   server_config, utilities, server_constants,
-  tx_manager, telnet_server, time_tracker, server_stats,
+  tx_manager, telnet_server,  server_stats,
   web_base, endpoint;
 
 type
@@ -64,8 +64,8 @@ type
     function description : String; override;
     function logId : string; override;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
   end;
 
   { TFolderWebEndPoint }
@@ -240,7 +240,7 @@ begin
   result := 'FF';
 end;
 
-function TFolderWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TTimeTracker): String;
+function TFolderWebServer.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   if request.CommandType <> hcGET then
@@ -249,7 +249,7 @@ begin
     result := doRequest(AContext, request, response, id, false);
 end;
 
-function TFolderWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
+function TFolderWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TFslTimeTracker): String;
 begin
   countRequest;
   if request.CommandType = hcPUT then

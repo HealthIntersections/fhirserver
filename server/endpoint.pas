@@ -38,11 +38,11 @@ Uses
   {$ENDIF}
   SysUtils, Classes, Generics.Collections,
   IdCustomHTTPServer, IdContext, IdOpenSSLX509,
-  fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache, fsl_i18n,
+  fsl_base, fsl_threads, fsl_crypto, fsl_stream, fsl_utilities, fsl_http, fsl_json, fsl_npm_cache, fsl_i18n, fsl_logging,
   fdb_manager,
   fhir_objects,
   server_config, utilities, session, tx_manager, kernel_thread,
-  web_event, web_base, web_cache, time_tracker, server_stats;
+  web_event, web_base, web_cache,  server_stats;
 
 type
   TFHIRWebServerClientInfo = class(TFslObject)
@@ -114,8 +114,8 @@ type
     property OnReturnFileSource : TWebReturnDirectFileEvent read FOnReturnFileSource write FOnReturnFileSource;
     property OnProcessFile : TWebProcessFileEvent read FOnProcessFile write FOnProcessFile;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; virtual; abstract;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; virtual; abstract;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; virtual; abstract;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; virtual; abstract;
     function description : string; virtual; abstract;
 
   end;

@@ -235,33 +235,33 @@ Type
 
     function description : String; override;
     function TotalCount : integer; override;
-    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
-    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
+    function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
-    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
-    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
-    function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
-    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
-    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
-    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
-    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
-    function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
-    function getDefinition(code : String):String; override;
-    function Definition(context : TCodeSystemProviderContext) : string; override;
-    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
+    function IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
+    function Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
+    procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); override;
+    function filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function FilterMore(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
+    function locateIsA(opContext : TTxOperationContext; code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
+    function InFilter(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
+    function getPrepContext(opContext : TTxOperationContext) : TCodeSystemProviderFilterPreparationContext; override;
+    function specialFilter(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
+    function searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
+    function getDefinition(opContext : TTxOperationContext; code : String):String; override;
+    function Definition(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function isNotClosed(opContext : TTxOperationContext; textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
-    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+    procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
     //function subsumes(codeA, codeB : String) : String; override;
   End;
 
@@ -447,12 +447,12 @@ begin
   FHandlers.Register;
 end;
 
-procedure TUcumServices.defineFeatures(features: TFslList<TFHIRFeature>);
+procedure TUcumServices.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
 begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'canonical:equals'));
 end;
 
-function TUcumServices.Definition(context: TCodeSystemProviderContext): string;
+function TUcumServices.Definition(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := '';
 end;
@@ -525,7 +525,7 @@ begin
   End;
 end;
 
-procedure TUcumServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
+procedure TUcumServices.getCDSInfo(opContext : TTxOperationContext; card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   s : String;
   b : TFslStringBuilder;
@@ -564,7 +564,7 @@ begin
   End;
 end;
 
-function TUcumServices.getDefinition(code: String): String;
+function TUcumServices.getDefinition(opContext : TTxOperationContext; code: String): String;
 begin
   result := '';
 end;
@@ -580,7 +580,7 @@ begin
     oList.Assign(p.CommonUnits);
 end;
 
-function TUcumServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+function TUcumServices.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
 end;
@@ -629,7 +629,7 @@ begin
   End;
 end;
 
-function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
+function TUcumServices.searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.Create('to do', itException);
 end;
@@ -860,12 +860,12 @@ begin
   inc(result, FDefinition.sizeInBytes(magic));
 end;
 
-function TUcumServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
+function TUcumServices.getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
-function TUcumServices.Code(context: TCodeSystemProviderContext): string;
+function TUcumServices.Code(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   if context = nil then
     result := ''
@@ -873,23 +873,23 @@ begin
     result := TUCUMContext(context).concept.code;
 end;
 
-function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+function TUcumServices.getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   raise ETerminologyError.Create('not safe', itInvalid);
 //  result := nil;
 end;
 
-function TUcumServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
+function TUcumServices.Display(opContext : TTxOperationContext; context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
   if context = nil then
     result := ''
   else
-    result := getDisplay(TUCUMContext(context).concept.code, langList);
+    result := getDisplay(opContext, TUCUMContext(context).concept.code, langList);
 end;
 
-procedure TUcumServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
+procedure TUcumServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', Code(context).Trim);
+  list.addDesignation(true, true, '', Code(opContext, context).Trim);
 end;
 
 function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
@@ -915,7 +915,7 @@ begin
   End;
 end;
 
-function TUcumServices.getDisplay(code: String; langList : THTTPLanguageList): String;
+function TUcumServices.getDisplay(opContext : TTxOperationContext; code: String; langList : THTTPLanguageList): String;
 var
   inc : TFhirValueSetComposeIncludeW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -1001,7 +1001,7 @@ begin
   end;
 end;
 
-function TUcumServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+function TUcumServices.InFilter(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 var
   code : String;
   context : TUcumFilterContext;
@@ -1011,17 +1011,17 @@ begin
   result := validateCanonicalUnits(code, context.canonical) = '';
 end;
 
-function TUcumServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
+function TUcumServices.IsAbstract(opContext : TTxOperationContext; context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
 end;
 
-function TUcumServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+function TUcumServices.isNotClosed(opContext : TTxOperationContext; textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := true;
 end;
 
-function TUcumServices.locate(code: String; altOpt : TAlternateCodeOptions; var message : String): TCodeSystemProviderContext;
+function TUcumServices.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions; var message : String): TCodeSystemProviderContext;
 var
   s : String;
 begin
@@ -1035,7 +1035,7 @@ begin
   end;
 end;
 
-function TUcumServices.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+function TUcumServices.specialFilter(opContext : TTxOperationContext; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
   result := TUcumFilterContext.create('')
 end;
@@ -1051,7 +1051,7 @@ begin
   result := 0;
 end;
 
-function TUcumServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TUcumServices.filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   if (prop = 'canonical') and (op in [foEqual]) then
     result := TUcumFilterContext.create(value)
@@ -1059,7 +1059,7 @@ begin
     result := nil;
 end;
 
-function TUcumServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+function TUcumServices.FilterConcept(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
   context : TUcumFilterContext;
 begin
@@ -1067,7 +1067,7 @@ begin
   result := TUCUMContext.create(FCommonUnitList[context.FCursor].link);
 end;
 
-function TUcumServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+function TUcumServices.FilterMore(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): boolean;
 var
   context : TUcumFilterContext;
 begin
@@ -1076,17 +1076,17 @@ begin
   result := context.FCursor < FCommonUnitList.count;
 end;
 
-function TUcumServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+function TUcumServices.filterSize(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   result := FCommonUnitList.count;
 end;
 
-function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
+function TUcumServices.filterLocate(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;
 begin
   result := nil;
 end;
 
-function TUcumServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
+function TUcumServices.locateIsA(opContext : TTxOperationContext; code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   result := nil;
 end;

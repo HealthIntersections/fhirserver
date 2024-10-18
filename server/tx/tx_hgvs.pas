@@ -58,43 +58,43 @@ type
 
     function description : String; override;
     function TotalCount : integer;  override;
-    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
-    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
+    function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
-    function getDefinition(code : String):String; override;
-    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
-    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
-    function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
-    function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
-    function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
-    function Definition(context : TCodeSystemProviderContext) : string; override;
-    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
-    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
+    function getDefinition(opContext : TTxOperationContext; code : String):String; override;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
+    function locateIsA(opContext : TTxOperationContext; code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
+    function IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
+    function IsInactive(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
+    function Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
+    function Definition(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
+    procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
+    function doesFilter(opContext : TTxOperationContext; prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
 
-    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
-    function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override; // true if the underlying provider collapsed multiple filters
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
-    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
-    function subsumesTest(codeA, codeB : String) : String; override;
+    function getPrepContext(opContext : TTxOperationContext) : TCodeSystemProviderFilterPreparationContext; override;
+    function searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
+    function specialFilter(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
+    function filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function prepare(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext) : boolean; override; // true if the underlying provider collapsed multiple filters
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
+    function FilterMore(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : integer; override;
+    function FilterConcept(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
+    function InFilter(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
+    function isNotClosed(opContext : TTxOperationContext; textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
+    procedure extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    function subsumesTest(opContext : TTxOperationContext; codeA, codeB : String) : String; override;
 
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
-     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+     procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
  end;
 
 implementation
@@ -102,21 +102,21 @@ implementation
 { THGVSProvider }
 
 
-procedure THGVSProvider.defineFeatures(features: TFslList<TFHIRFeature>);
+procedure THGVSProvider.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
 begin
 end;
 
-function THGVSProvider.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
+function THGVSProvider.getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
-function THGVSProvider.Code(context: TCodeSystemProviderContext): string;
+function THGVSProvider.Code(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := (Context as THGVSCode).code;
 end;
 
-function THGVSProvider.Definition(context: TCodeSystemProviderContext): string;
+function THGVSProvider.Definition(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := '';
 end;
@@ -131,98 +131,98 @@ begin
   result := 'HGVS codes';
 end;
 
-function THGVSProvider.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
+function THGVSProvider.Display(opContext : TTxOperationContext; context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
-  result := Code(Context);
+  result := Code(opContext, Context);
 end;
 
-procedure THGVSProvider.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
+procedure THGVSProvider.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', code(context));
+  list.addDesignation(true, true, '', code(opContext, context));
 end;
 
-function THGVSProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function THGVSProvider.doesFilter(opContext : TTxOperationContext; prop: String; op: TFhirFilterOperator; value: String): boolean;
 begin
   result := false;
 end;
 
-procedure THGVSProvider.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure THGVSProvider.extendLookup(opContext : TTxOperationContext; factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 begin
   // nothing
 end;
 
-function THGVSProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function THGVSProvider.filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+function THGVSProvider.FilterConcept(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+function THGVSProvider.filterLocate(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
+function THGVSProvider.filterLocate(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+function THGVSProvider.FilterMore(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+function THGVSProvider.filterSize(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-procedure THGVSProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
+procedure THGVSProvider.getCDSInfo(opContext : TTxOperationContext; card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   // nothing
 end;
 
-function THGVSProvider.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+function THGVSProvider.getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
   result := nil;
   context.next;
 end;
 
-function THGVSProvider.getDefinition(code: String): String;
+function THGVSProvider.getDefinition(opContext : TTxOperationContext; code: String): String;
 begin
   result := '';
 end;
 
-function THGVSProvider.getDisplay(code: String; langList : THTTPLanguageList): String;
+function THGVSProvider.getDisplay(opContext : TTxOperationContext; code: String; langList : THTTPLanguageList): String;
 begin
   result := code;
 end;
 
-function THGVSProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+function THGVSProvider.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
 end;
 
-function THGVSProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
+function THGVSProvider.InFilter(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
+function THGVSProvider.IsAbstract(opContext : TTxOperationContext; context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
 end;
 
-function THGVSProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
+function THGVSProvider.IsInactive(opContext : TTxOperationContext; context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
 end;
 
-function THGVSProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
+function THGVSProvider.isNotClosed(opContext : TTxOperationContext; textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := false;
 end;
@@ -232,7 +232,7 @@ begin
   result := THGVSProvider(inherited link);
 end;
 
-function THGVSProvider.locate(code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
+function THGVSProvider.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
 var
   json, o : TJsonObject;
 begin
@@ -260,7 +260,7 @@ begin
   end;
 end;
 
-function THGVSProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
+function THGVSProvider.locateIsA(opContext : TTxOperationContext; code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
 begin
   result := nil;
 end;
@@ -270,12 +270,12 @@ begin
   result := 'HGVS';
 end;
 
-function THGVSProvider.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
+function THGVSProvider.prepare(opContext : TTxOperationContext; prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+function THGVSProvider.searchFilter(opContext : TTxOperationContext; filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
@@ -285,12 +285,12 @@ begin
   result := '';
 end;
 
-function THGVSProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+function THGVSProvider.specialFilter(opContext : TTxOperationContext; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.subsumesTest(codeA, codeB: String): String;
+function THGVSProvider.subsumesTest(opContext : TTxOperationContext; codeA, codeB: String): String;
 begin
   raise ETerminologyError.Create('Subsumption is not supported for HGVS', itNotSupported);
 end;

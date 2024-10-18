@@ -47,11 +47,11 @@ uses
   ftx_service,
   server_config, utilities, bundlebuilder, reverse_client, security, html_builder,
   storage, user_manager, session, auth_manager, server_context, server_constants,
-  tx_manager, tx_webserver, telnet_server, time_tracker, server_stats,
+  tx_manager, tx_webserver, telnet_server,  server_stats,
   web_base, web_cache, endpoint;
 
 const
-  POST_SIZE_LIMIT = 20; // MB
+  POST_SIZE_LIMIT = 50; // MB
 
 type
   TStorageEndPoint = class;
@@ -157,7 +157,7 @@ type
     {$ENDIF}
     procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker) : String;
+    function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TFslTimeTracker) : String;
     procedure ReturnSecureFile(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual, logid: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
@@ -168,7 +168,7 @@ type
     function readVersion(mt : String) : TFHIRVersion;
     function BuildRequest(const langList : THTTPLanguageList; sBaseURL, sHost, sRawHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
-      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker): TFHIRRequest;
+      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TFslTimeTracker): TFHIRRequest;
     Procedure ProcessOutput(start : UInt64; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; langList : THTTPLanguageList; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; diagnostics : String = '');
     function processProvenanceHeader(header : String; langList : THTTPLanguageList): TFhirProvenanceW;
@@ -195,7 +195,7 @@ type
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); virtual; abstract;
     Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; virtual; abstract;
     function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; virtual; abstract;
-    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+    function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 
     procedure returnContent(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure : boolean; title, content : String); overload;
     function processContent(path: String; secure : boolean; title, content : String) : String;
@@ -218,8 +218,8 @@ type
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     procedure CheckAsyncTasks;
 
-    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
-    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TTimeTracker) : String; override;
+    function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String; override;
+    function SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert : TIdOpenSSLX509; id : String; tt : TFslTimeTracker) : String; override;
   end;
 
   { TStorageEndPoint }
@@ -516,7 +516,7 @@ var
   req : TFHIRRequest;
   resp : TFHIRResponse;
   dummy : integer;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
   l, r : String;
 begin
   ctxt := TOperationContext.Create(opmInternal);
@@ -533,7 +533,7 @@ begin
       req.resource := resource.link;
 
       resp := TFHIRResponse.Create(FEndPoint.Context.ValidatorContext.link);
-      tt := TTimeTracker.Create;
+      tt := TFslTimeTracker.Create;
       try
         FEndPoint.ProcessRequest(ctxt, req, resp, tt);
         result := resp.Resource.link;
@@ -599,7 +599,7 @@ var
   t: UInt64;
   us, cs: String;
   ctxt : TOperationContext;
-  tt : TTimeTracker;
+  tt : TFslTimeTracker;
 begin
   t := 0;
 
@@ -624,7 +624,7 @@ begin
       status(atsProcessing, 'Processing');
       Logging.log('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
       op := FServer.Context.Storage.createOperationContext(request.langList.link);
-      tt := TTimeTracker.Create;
+      tt := TFslTimeTracker.Create;
       try
         try
           op.OnPopulateConformance := FServer.PopulateConformance;
@@ -843,7 +843,7 @@ begin
   FTerminologyWebServer := Value;
 end;
 
-function TStorageWebEndpoint.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String;
+function TStorageWebEndpoint.PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TFslTimeTracker) : String;
 var
   Session: TFHIRSession;
   c: integer;
@@ -982,7 +982,7 @@ end;
 
 function TStorageWebEndpoint.SecureRequest(AContext: TIdContext; ip: String;
   request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
-  cert: TIdOpenSSLX509; id: String; tt: TTimeTracker): String;
+  cert: TIdOpenSSLX509; id: String; tt: TFslTimeTracker): String;
 var
   Session: TFHIRSession;
   check: boolean;
@@ -1207,7 +1207,7 @@ begin
   end;
 end;
 
-function TStorageWebEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker) : String;
+function TStorageWebEndpoint.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TFslTimeTracker) : String;
 var
   sHost, sRawHost, token, url: string;
   oRequest: TFHIRRequest;
@@ -1738,7 +1738,7 @@ begin
     self.Context.SessionManager.EndSession(Session.Cookie, ip);
 end;
 
-function TStorageWebEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
+function TStorageWebEndpoint.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
 var
   op: TFHIROperationEngine;
   t: UInt64;
@@ -1796,7 +1796,7 @@ function TStorageWebEndpoint.BuildRequest(const langList: THTTPLanguageList; sBa
   var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage; bAuth,
   secure: boolean; out relativeReferenceAdjustment: integer;
   var style: TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509;
-  tt: TTimeTracker): TFHIRRequest;
+  tt: TFslTimeTracker): TFHIRRequest;
 Var
   sURL, Msg: String;
   oRequest: TFHIRRequest;

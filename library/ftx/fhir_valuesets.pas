@@ -130,7 +130,7 @@ Type
 
     function dispWarning : TIssueSeverity;
     function determineSystemFromExpansion(code: String): String;
-    function determineSystem(code : String) : String;
+    function determineSystem(opContext : TTxOperationContext; code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
     function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string; unkCodes, messages : TStringList; out defLang : TIETFLang) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
@@ -475,7 +475,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.determineSystem(code: String): String;
+function TValueSetChecker.determineSystem(opContext : TTxOperationContext; code: String): String;
 var
   vsi : TFhirValueSetComposeIncludeW;
   cs : TCodeSystemProvider;
@@ -527,7 +527,7 @@ begin
         end
         else
         begin
-          loc := cs.locate(code, nil, msg);
+          loc := cs.locate(opContext, code, nil, msg);
           if loc <> nil then
           begin
             loc.free;
@@ -555,6 +555,7 @@ end;
 function TValueSetChecker.determineVersion(path, systemURI, versionVS, versionCoding: String; op : TFhirOperationOutcomeW; var message : String): string;
 var
   v : string;
+  cs : TCodeSystemProvider;
 begin
   // version might come from multiple places
   v := FParams.getVersionForRule(systemURI, fvmOverride);
@@ -571,9 +572,21 @@ begin
     result := versionVS
   else
   begin
-    message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
-    op.addIssue(isError, itInvalid, addToPath(path, 'version'), message, oicVSProcessing);
-    exit('');
+    cs := FOthers.matches[systemUri] as TCodeSystemProvider;
+    if (cs = nil) then
+      cs := FOthers.matches[systemUri+'|'+versionVS] as TCodeSystemProvider;
+    if (cs = nil) then
+      cs := FOthers.matches[systemUri+'|'+versionCoding] as TCodeSystemProvider;
+    if (cs <> nil) and (cs.versionIsMoreDetailed(versionVS, versionCoding)) then
+      result := versionCoding
+    else if (cs <> nil) and (cs.versionIsMoreDetailed(versionCoding, versionVS)) then
+      result := versionVS
+    else
+    begin
+      message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
+      op.addIssue(isError, itInvalid, addToPath(path, 'version'), message, oicVSProcessing);
+      exit('');
+    end;
   end;
   if result = '' then
     result := FParams.getVersionForRule(systemURI, fvmDefault);
@@ -706,14 +719,14 @@ begin
   begin
     FOpContext.addNote(FValueSet, 'CodeSystem found: "'+TTerminologyOperationContext.renderCoded(cs)+'"');
     for i := FRequiredSupplements.count - 1 downto 0 do
-      if cs.hasSupplement(FRequiredSupplements[i]) then
+      if cs.hasSupplement(FOpContext, FRequiredSupplements[i]) then
         FRequiredSupplements.delete(i);
     for ccf in cc.filters.forEnum do
     begin
       deadCheck('prepareConceptSet#2');
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
       if not (('concept' = ccf.prop) and (ccf.Op in [foIsA, foDescendentOf])) then
-        if not cs.doesFilter(ccf.prop, ccf.Op, ccf.value) then
+        if not cs.doesFilter(FOpContext, ccf.prop, ccf.Op, ccf.value) then
           raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '"  from the value set '+FValueSet.url+' was not understood in the context of ' + cs.systemUri, itNotSupported);
     end;
   end
@@ -885,7 +898,7 @@ begin
           checkCanonicalStatus(path, op, cs, FValueSet);
           ver := cs.version;
           contentMode := cs.contentMode;
-          ctxt := cs.locate(code, nil, msg);
+          ctxt := cs.locate(FOpContext, code, nil, msg);
           if (ctxt = nil) then
           begin
             msg := '';
@@ -913,9 +926,9 @@ begin
           begin
             try
               if vcc <> nil then
-                vcc.addCoding(cs.systemUri, cs.version, cs.code(ctxt), cs.display(ctxt, FParams.Workinglanguages));
+                vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, ctxt), cs.display(FOpContext, ctxt, FParams.Workinglanguages));
               cause := itNull;
-              if not (abstractOk or not cs.IsAbstract(ctxt)) then
+              if not (abstractOk or not cs.IsAbstract(FOpContext, ctxt)) then
               begin
                 result := bFalse;
                 FLog := 'Abstract code when not allowed';
@@ -924,7 +937,7 @@ begin
                 messages.add(msg);
                 op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
-              else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
+              else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(FOpContext, ctxt)) then
               begin
                 result := bFalse;
                 FLog := 'Inactive code when not allowed';
@@ -937,18 +950,18 @@ begin
               begin
                 FLog := 'found OK';
                 result := bTrue;
-                if (cs.Code(ctxt) <> code) then
+                if (cs.Code(FOpContext, ctxt) <> code) then
                 begin
-                  msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(ctxt), cs.systemUri]);
+                  msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(FOpContext, ctxt), cs.systemUri]);
                   messages.add(msg);
                   op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
                 end; 
                 msg := cs.incompleteValidationMessage(ctxt, FParams.HTTPLanguages);
                 if (msg <> '') then
                   op.addIssue(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
-                inactive := cs.IsInactive(ctxt);
+                inactive := cs.IsInactive(FOpContext, ctxt);
                 if (inactive) then
-                  vstatus := cs.getCodeStatus(ctxt);
+                  vstatus := cs.getCodeStatus(FOpContext, ctxt);
               end;
               if (displays <> nil) then
                 listDisplays(displays, cs, ctxt);
@@ -995,7 +1008,7 @@ begin
           checkCanonicalStatus(path, op, cs, FValueSet);
           ver := cs.version;
           contentMode := cs.contentMode;
-          ctxt := cs.locate(code);
+          ctxt := cs.locate(FOpContext, code);
           if (ctxt = nil) then
           begin
             unkCodes.add(system+'|'+version+'#'+code);
@@ -1022,7 +1035,7 @@ begin
           begin
             try
               cause := itNull;
-              if not (abstractOk or not cs.IsAbstract(ctxt)) then
+              if not (abstractOk or not cs.IsAbstract(FOpContext, ctxt)) then
               begin
                 result := bFalse;
                 FLog := 'Abstract code when not allowed';
@@ -1031,7 +1044,7 @@ begin
                 messages.add(msg);
                 op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
-              else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
+              else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(FOpContext, ctxt)) then
               begin
                 result := bFalse;
                 FLog := 'Inactive code when not allowed';
@@ -1060,7 +1073,7 @@ begin
       // todo: we can never get here?
       if (system = '') and inferSystem then
       begin
-        system := determineSystem(code);
+        system := determineSystem(FOpContext, code);
         if (system = '') then
         begin
           message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.HTTPLanguages, [code, FValueSet.vurl]);
@@ -1162,7 +1175,7 @@ begin
               FOpContext.addNote(FValueSet, 'CodeSystem found: '+TTerminologyOperationContext.renderCoded(cs)+' for '+TTerminologyOperationContext.renderCoded(cc.systemUri, v));
               checkCanonicalStatus(path, op, cs, FValueSet);
               ver := cs.version;
-              checkSupplements(cs, cc);
+              checkSupplements(FOpContext, cs, cc);
               contentMode := cs.contentMode;
 
               if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, inactive, normalForm, vstatus, op, vcc) then
@@ -1208,7 +1221,7 @@ begin
               if (cs = nil) then
                 raise ETerminologyError.Create('No Match for '+cc.systemUri+'|'+cc.version+' in '+FOthers.AsText, itUnknown);
               checkCanonicalStatus(path, op, cs, FValueSet);
-              checkSupplements(cs, cc);
+              checkSupplements(FOpContext, cs, cc);
               ver := cs.version;
               contentMode := cs.contentMode;
               excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, inactive, normalForm, vstatus, op, vcc);
@@ -1721,7 +1734,7 @@ begin
                else
                begin
                  checkCanonicalStatus(path, op, prov, FValueSet);
-                 ctxt := prov.locate(c.code, FAllAltCodes, message);
+                 ctxt := prov.locate(FOpContext, c.code, FAllAltCodes, message);
                  try
                    if ctxt = nil then
                    begin
@@ -1999,7 +2012,7 @@ begin
   result := false;
   if (not cset.hasConcepts) and (not cset.hasFilters) then
   begin
-    loc := cs.locate(code, FParams.altCodeRules, message);
+    loc := cs.locate(FOpContext, code, FParams.altCodeRules, message);
     try
       result := false;
       if loc = nil then
@@ -2008,13 +2021,13 @@ begin
         if (not FParams.membershipOnly) then
           op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
       end
-      else if not (abstractOk or not cs.IsAbstract(loc)) then
+      else if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
         if (not FParams.membershipOnly) then
           op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
       end
-      else if FValueSet.excludeInactives and cs.IsInactive(loc) then
+      else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
@@ -2023,40 +2036,40 @@ begin
         begin
           inactive := true;
           if (inactive) then
-            vstatus := cs.getCodeStatus(loc);
+            vstatus := cs.getCodeStatus(FOpContext, loc);
         end;
       end
-      else if FParams.activeOnly and cs.IsInactive(loc) then
+      else if FParams.activeOnly and cs.IsInactive(FOpContext, loc) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
         result := false;
         inactive := true;
-        vstatus := cs.getCodeStatus(loc);
+        vstatus := cs.getCodeStatus(FOpContext, loc);
         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
       end
       else
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
         result := true;
-        if (cs.Code(loc) <> code) then
+        if (cs.Code(FOpContext, loc) <> code) then
         begin
           if (cs.version <> '') then
-            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(loc), cs.systemUri+'|'+cs.version])
+            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(FOpContext, loc), cs.systemUri+'|'+cs.version])
           else
-            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(loc), cs.systemUri]);
+            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(FOpContext, loc), cs.systemUri]);
           op.addIssue(isInformation, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
-          normalForm := cs.Code(loc);
+          normalForm := cs.Code(FOpContext, loc);
         end;
         msg := cs.incompleteValidationMessage(loc, FParams.HTTPLanguages);
         if (msg <> '') then
           op.addIssue(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
         listDisplays(displays, cs, loc);
-        inactive := cs.IsInactive(loc);
+        inactive := cs.IsInactive(FOpContext, loc);
         if (inactive) then
-          vstatus := cs.getCodeStatus(loc);
+          vstatus := cs.getCodeStatus(FOpContext, loc);
 
         if vcc <> nil then
-          vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
+          vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
         exit;
       end;
     finally
@@ -2070,31 +2083,31 @@ begin
     c := cc.code;
     if (code = c) then
     begin
-      loc := cs.locate(code, FAllAltCodes);
+      loc := cs.locate(FOpContext, code, FAllAltCodes);
       try
         if Loc <> nil then
         begin
           FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
           listDisplays(displays, cs, loc);
           listDisplays(displays, cc, vs);
-          if not (abstractOk or not cs.IsAbstract(loc)) then
+          if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
           begin
             if (not FParams.membershipOnly) then
               op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
           end
-          else if FValueSet.excludeInactives and cs.IsInactive(loc) then
+          else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
           begin
             result := false;
             if (not FParams.membershipOnly) then
             begin
               inactive := true;
-              vstatus := cs.getCodeStatus(loc);
+              vstatus := cs.getCodeStatus(FOpContext, loc);
             end
           end
           else
           begin
             if vcc <> nil then
-              vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
+              vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
             result := true;
             exit;
           end;
@@ -2112,49 +2125,49 @@ begin
     cfl := cset.filters;
     try
       SetLength(filters, cfl.count);
-      prep := cs.getPrepContext;
+      prep := cs.getPrepContext(FOpContext);
       try
         i := 0;
         for fc in cfl do
         begin
           deadCheck('checkConceptSet#2');
           // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
-          f := cs.filter(false, fc.prop, fc.Op, fc.value, prep);
+          f := cs.filter(FOpContext, false, false, fc.prop, fc.Op, fc.value, prep);
           if f = nil then
             raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vs.vurl+' was not understood in the context of '+cs.systemUri, itNotSupported);
           f.summary := '"'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'"';
           filters[i] := f;
           inc(i);
         end;
-        if cs.prepare(prep) then // all are together, just query the first filter
+        if cs.prepare(FOpContext, prep) then // all are together, just query the first filter
         begin
           ctxt := filters[0];
-          loc := cs.filterLocate(ctxt, code);
+          loc := cs.filterLocate(FOpContext, ctxt, code);
           try
             if Loc <> nil then
             begin
               listDisplays(displays, cs, loc);
-              if not (abstractOk or not cs.IsAbstract(loc)) then
+              if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
               begin
                 OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                 if (not FParams.membershipOnly) then
                   op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
               end
-              else if FValueSet.excludeInactives and cs.IsInactive(loc) then
+              else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
               begin
                 result := false;
                 OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
                 if (not FParams.membershipOnly) then
                 begin
                   inactive := true;
-                  vstatus := cs.getCodeStatus(loc);
+                  vstatus := cs.getCodeStatus(FOpContext, loc);
                 end
               end
               else
               begin  
                 OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                 if vcc <> nil then
-                  vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
+                  vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                 result := true;
                 exit;
               end;
@@ -2174,12 +2187,12 @@ begin
             deadCheck('checkConceptSet#3');
             if ('concept' = fc.prop) and (fc.Op in [foIsA, foDescendentOf]) then
             begin
-              loc := cs.locateIsA(code, fc.value, fc.Op = foDescendentOf);
+              loc := cs.locateIsA(FOpContext, code, fc.value, fc.Op = foDescendentOf);
               try
                 if Loc <> nil then
                 begin
                   listDisplays(displays, cs, loc);
-                  if not (abstractOk or not cs.IsAbstract(loc)) then
+                  if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                   begin
                     OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                     if (not FParams.membershipOnly) then
@@ -2189,7 +2202,7 @@ begin
                   begin    
                     OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                     if vcc <> nil then
-                      vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
+                      vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                     result := true;
                     exit;
                   end;
@@ -2205,36 +2218,36 @@ begin
             end
             else if ('concept' = fc.prop) and (fc.Op = foIsNotA) then
             begin
-              loc := cs.locateIsA(code, fc.value);
+              loc := cs.locateIsA(FOpContext, code, fc.value);
               try
                 result := (loc = nil);
                 if (result) then
                 begin
-                  loc := cs.locate(code, nil, msg);
+                  loc := cs.locate(FOpContext, code, nil, msg);
                   if Loc <> nil then
                   begin
                     listDisplays(displays, cs, loc);
-                    if not (abstractOk or not cs.IsAbstract(loc)) then
+                    if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                     begin
                       OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                       if (not FParams.membershipOnly) then
                         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                     end
-                    else if FValueSet.excludeInactives and cs.IsInactive(loc) then
+                    else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                     begin
                       OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
                       result := false;
                       if (not FParams.membershipOnly) then
                       begin
                         inactive := true;
-                        vstatus := cs.getCodeStatus(loc);
+                        vstatus := cs.getCodeStatus(FOpContext, loc);
                       end;
                     end
                     else
                     begin   
                       OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                       if vcc <> nil then
-                        vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
+                        vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                       result := true;
                       exit;
                     end;
@@ -2250,34 +2263,34 @@ begin
             begin
               ctxt := filters[i];
               result := false;
-              loc := cs.filterLocate(ctxt, code, msg);
+              loc := cs.filterLocate(FOpContext, ctxt, code, msg);
               try
                 if (loc = nil) and (message = '') then
                   message := msg;
                 if Loc <> nil then
                 begin
                   listDisplays(displays, cs, loc);
-                  if not (abstractOk or not cs.IsAbstract(loc)) then
+                  if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                   begin
                     OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                     if (not FParams.membershipOnly) then
                       op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
-                  else if FValueSet.excludeInactives and cs.IsInactive(loc) then
+                  else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                   begin
                     OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
                     result := false;
                     if (not FParams.membershipOnly) then
                     begin
                       inactive := true;
-                      vstatus := cs.getCodeStatus(loc);
+                      vstatus := cs.getCodeStatus(FOpContext, loc);
                     end;
                   end
                   else
                   begin       
                     OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                     if vcc <> nil then
-                      vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
+                      vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                     result := true;
                     exit;
                   end;
@@ -2310,7 +2323,7 @@ var
   loc :  TCodeSystemProviderContext;
 begin
   result := false;
-  loc := cs.locate(code, nil, message);
+  loc := cs.locate(FOpContext, code, nil, message);
   try
     result := false;
     if loc = nil then
@@ -2318,7 +2331,7 @@ begin
       if (not FParams.membershipOnly) then
         op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
     end
-    else if not (abstractOk or not cs.IsAbstract(loc)) then
+    else if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
     begin
       if (not FParams.membershipOnly) then
         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
@@ -2326,9 +2339,9 @@ begin
     else
     begin
       result := true;
-      inactive := cs.IsInactive(loc);
+      inactive := cs.IsInactive(FOpContext, loc);
       if (inactive) then
-        vstatus := cs.getCodeStatus(loc);
+        vstatus := cs.getCodeStatus(FOpContext, loc);
       listDisplays(displays, cs, loc);
       exit;
     end;
@@ -2483,6 +2496,7 @@ begin
     if (count > 0) and (offset = -1) then
       offset := 0;
 
+    opContext.log('start working');
     DeadCheck('expand');
     try
       ics := source.inlineCS;
@@ -2540,6 +2554,7 @@ begin
       end;
     end;
 
+    opContext.log('finish up');
     if notClosed then
     begin
       exp.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-unclosed', FFactory.makeBoolean(true));
@@ -2700,7 +2715,7 @@ begin
       begin
         for cf in inc.filters.forEnum do // will only cycle once
         begin
-          exit(cs.filter(false, cf.prop, cf.op, cf.value, nil));
+          exit(cs.filter(FOpContext, true, false, cf.prop, cf.op, cf.value, nil));
         end;
       end
       else
@@ -2709,7 +2724,7 @@ begin
         for cc in inc.concepts.forEnum do
         begin
           deadCheck('makeFilterForValueSet#2');
-          TSpecialProviderFilterContextConcepts(result).add(cs.locate(cc.code, nil, message));
+          TSpecialProviderFilterContextConcepts(result).add(cs.locate(FOpContext, cc.code, nil, message));
         end;
         exit;
       end;
@@ -2736,6 +2751,7 @@ begin
       vs.free;
     end;
   end;
+  opContext.log('compose #1');
 
   for c in source.includes.forEnum do
   begin
@@ -2748,6 +2764,7 @@ begin
     FHasExclusions := true;
     checkSource(c, expansion, filter, source.url);
   end;
+  opContext.log('compose #1');
 
   for c in source.excludes.forEnum do
   begin
@@ -2791,7 +2808,7 @@ end;
 procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext);
 begin
   // list all known language displays
-  cs.Designations(c, displays);
+  cs.Designations(FOpContext, c, displays);
   displays.source := cs.link;
 end;
 
@@ -3055,7 +3072,7 @@ begin
       begin
         ts := TStringList.create;
         try
-          cs.listSupplements(ts);
+          cs.listSupplements(FOpContext, ts);
           for vs in ts do
           begin
             if not expansion.hasParam('used-supplement', vs) then
@@ -3253,7 +3270,7 @@ begin
     begin
       ts := TStringList.create;
       try
-        cs.listSupplements(ts);
+        cs.listSupplements(FOpContext, ts);
         for vs in ts do
         begin
           if not expansion.hasParam('used-supplement', vs) then
@@ -3402,7 +3419,7 @@ begin
         end
         else if filter.Null then // special case - add all the code system
         begin
-          if cs.isNotClosed(filter) then
+          if cs.isNotClosed(FOpContext, filter) then
             if cs.SpecialEnumeration <> '' then
               raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
             else
@@ -3459,12 +3476,12 @@ var
       begin
         ok := false;
         for t in (f as TSpecialProviderFilterContextConcepts).FList do
-          if cs.sameContext(t, c) then
+          if cs.sameContext(FOpContext, t, c) then
             ok := true;
         result := result and ok;
       end
       else
-        result := result and cs.InFilter(f, c);
+        result := result and cs.InFilter(FOpContext, f, c);
     end;
   end;
 begin
@@ -3505,7 +3522,7 @@ begin
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
-          checkSupplements(cs, cset);
+          checkSupplements(FOpContext, cs, cset);
           checkCanonicalStatus(expansion, cs, FValueSet);
           sv := canonical(cs.systemUri, cs.version);
           if not expansion.hasParam('used-codesystem', sv) then
@@ -3549,13 +3566,13 @@ begin
             end
             else if filter.Null then // special case - add all the code system
             begin
-              if cs.isNotClosed(filter) then
+              if cs.isNotClosed(FOpContext, filter) then
                 if cs.SpecialEnumeration <> '' then
                   raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
                 else
                   raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
 
-              iter := cs.getIterator(nil);
+              iter := cs.getIterator(FOpContext, nil);
               try
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
                   raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)])));
@@ -3563,7 +3580,7 @@ begin
                 while iter.more do
                 begin                
                   deadCheck('processCodes#3a');
-                  c := cs.getNextContext(iter);
+                  c := cs.getNextContext(FOpContext, iter);
                   try
                     if passesFilters(c, 0) then
                       inc(tcount, includeCodeAndDescendants(cs, c, expansion, valueSets, nil, excludeInactive, vsSrc.url));
@@ -3579,25 +3596,25 @@ begin
             else
             begin
               NoTotal;
-              if cs.isNotClosed(filter) then
+              if cs.isNotClosed(FOpContext, filter) then
                 notClosed := true;
-              prep := cs.getPrepContext;
+              prep := cs.getPrepContext(FOpContext);
               try
-                ctxt := cs.searchFilter(filter, prep, false);
+                ctxt := cs.searchFilter(FOpContext, filter, prep, false);
                 try
-                  cs.prepare(prep);
-                  while cs.FilterMore(ctxt) do
+                  cs.prepare(FOpContext, prep);
+                  while cs.FilterMore(FOpContext, ctxt) do
                   begin
                     deadCheck('processCodes#4');
-                    c := cs.FilterConcept(ctxt);
+                    c := cs.FilterConcept(FOpContext, ctxt);
                     try
                       if passesFilters(c, 0) then
                       begin
                         cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                         try
                           listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                          includeCode(cs, nil, cs.systemUri, cs.version, cs.code(c),  cs.isAbstract(c), cs.isInactive(c), cs.deprecated(c),
-                          cds, cs.definition(c), cs.itemWeight(c), expansion, valueSets, cs.getExtensions(c), nil, cs.getProperties(c), nil, excludeInactive, vsSrc.url);
+                          includeCode(cs, nil, cs.systemUri, cs.version, cs.code(FOpContext, c),  cs.isAbstract(FOpContext, c), cs.isInactive(FOpContext, c), cs.deprecated(FOpContext, c),
+                          cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, valueSets, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
                         finally
                           cds.free;
                         end;
@@ -3625,9 +3642,9 @@ begin
                 deadCheck('processCodes#3');
                 cds.Clear;
                 FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
-                cctxt := cs.locate(cc.code, FAllAltCodes);
+                cctxt := cs.locate(FOpContext, cc.code, FAllAltCodes);
                 try
-                  if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(cctxt)) and passesFilters(cctxt, 0) then
+                  if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(FOpContext, cctxt)) and passesFilters(cctxt, 0) then
                   begin
                     listDisplays(cds, cs, cctxt);
                     listDisplays(cds, cc, vsSrc);
@@ -3636,9 +3653,9 @@ begin
                       inc(tcount);
                       ov := cc.itemWeight;
                       if ov = '' then
-                        ov := cs.itemWeight(cctxt);
-                      includeCode(cs, nil, cs.systemUri, cs.version, cc.code, cs.isAbstract(cctxt), cs.isInactive(cctxt), cs.deprecated(cctxt), cds,
-                           cs.Definition(cctxt), ov, expansion, valueSets, cs.getExtensions(cctxt), cc.getAllExtensionsW, cs.getProperties(cctxt), nil, excludeInactive, vsSrc.url);
+                        ov := cs.itemWeight(FOpContext, cctxt);
+                      includeCode(cs, nil, cs.systemUri, cs.version, cc.code, cs.isAbstract(FOpContext, cctxt), cs.isInactive(FOpContext, cctxt), cs.deprecated(FOpContext, cctxt), cds,
+                           cs.Definition(FOpContext, cctxt), ov, expansion, valueSets, cs.getExtensions(FOpContext, cctxt), cc.getAllExtensionsW, cs.getProperties(FOpContext, cctxt), nil, excludeInactive, vsSrc.url);
                     end;
                   end;
                 finally
@@ -3655,18 +3672,18 @@ begin
           begin
             fcl := cset.filters;
             try
-              prep := cs.getPrepContext;
+              prep := cs.getPrepContext(FOpContext);
               try
                 offset := 0;
                 if not filter.null then
                 begin
-                  filters.Insert(0, cs.searchFilter(filter, prep, true)); // this comes first, because it imposes order
+                  filters.Insert(0, cs.searchFilter(FOpContext, filter, prep, true)); // this comes first, because it imposes order
                   inc(offset);
                 end;
 
                 if cs.specialEnumeration <> '' then
                 begin
-                  filters.Insert(offset, cs.specialFilter(prep, true));
+                  filters.Insert(offset, cs.specialFilter(FOpContext, prep, true));
                   expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                   notClosed := true;
                 end;
@@ -3675,44 +3692,44 @@ begin
                   deadCheck('processCodes#4a');
                   fc := fcl[i];
                   ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
+                  f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
                   if f = nil then
                     raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
                   filters.Insert(offset, f);
-                  if cs.isNotClosed(filter, f) then
+                  if cs.isNotClosed(FOpContext, filter, f) then
                     notClosed := true;
                   if (cset.filterCount = 1) and (not excludeInactive) and not FParams.activeOnly then
-                    AddToTotal(cs.filterSize(f));
+                    AddToTotal(cs.filterSize(FOpContext, f));
                   //else
                     //NoTotal;
                 end;
 
-                inner := cs.prepare(prep);
+                inner := cs.prepare(FOpContext, prep);
                 count := 0;
-                While cs.FilterMore(filters[0]) do
+                While cs.FilterMore(FOpContext, filters[0]) do
                 begin
                   deadCheck('processCodes#5');
-                  c := cs.FilterConcept(filters[0]);
+                  c := cs.FilterConcept(FOpContext, filters[0]);
                   try
-                    ok := (not FParams.activeOnly or not cs.IsInactive(c)) and (inner or passesFilters(c, 1));
+                    ok := (not FParams.activeOnly or not cs.IsInactive(FOpContext, c)) and (inner or passesFilters(c, 1));
                     if ok then
                     begin
                       inc(count);
                       cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                       try
-                        if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
+                        if passesImports(valueSets, cs.systemUri, cs.code(FOpContext, c), 0) then
                         begin
                           listDisplays(cds, cs, c);
                           if cs.canParent then
-                            parent := FMap[key(cs.systemUri, cs.parent(c))]
+                            parent := FMap[key(cs.systemUri, cs.parent(FOpContext, c))]
                           else
                           begin
                             FCanBeHierarchy := false;
                             parent := nil;
                           end;
-                          for code in cs.listCodes(c, FParams.altCodeRules) do
-                            includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(c), cs.IsInactive(c),
-                              cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, excludeInactive, vsSrc.url);
+                          for code in cs.listCodes(FOpContext, c, FParams.altCodeRules) do
+                            includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, c), cs.IsInactive(FOpContext, c),
+                              cs.deprecated(FOpContext, c), cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, nil, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
                         end;
                       finally
                         cds.free;
@@ -3780,12 +3797,12 @@ var
       begin
         ok := false;
         for t in (f as TSpecialProviderFilterContextConcepts).FList do
-          if cs.sameContext(t, c) then
+          if cs.sameContext(FOpContext, t, c) then
             ok := true;
         result := result and ok;
       end
       else
-        result := result and cs.InFilter(f, c);
+        result := result and cs.InFilter(FOpContext, f, c);
     end;
   end;
 begin
@@ -3830,7 +3847,7 @@ begin
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
-          checkSupplements(cs, cset);
+          checkSupplements(FOpContext, cs, cset);
           checkCanonicalStatus(expansion, cs, FValueSet);
           sv := canonical(cs.systemUri, cs.version);
           if not expansion.hasParam('used-codesystem', sv) then
@@ -3861,6 +3878,7 @@ begin
 
           if (not cset.hasConcepts) and (not cset.hasFilters) then
           begin
+            FOpContext.log('handle system');
             if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion and filters.Empty then
             begin
               base := expandValueSet(cs.SpecialEnumeration, '', filter.filter, dependencies, notClosed);
@@ -3874,20 +3892,20 @@ begin
             end
             else if filter.Null then // special case - add all the code system
             begin
-              if cs.isNotClosed(filter) then
+              if cs.isNotClosed(FOpContext, filter) then
                 if cs.SpecialEnumeration <> '' then
                   raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
                 else
                   raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
 
-              iter := cs.getIterator(nil);
+              iter := cs.getIterator(FOpContext, nil);
               try
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
                   raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)])));
                 while iter.more do
                 begin
                   deadCheck('processCodes#3a');
-                  c := cs.getNextContext(iter);
+                  c := cs.getNextContext(FOpContext, iter);
                   try
                     if passesFilters(c, 0) then
                       excludeCodeAndDescendants(cs, c, expansion, valueSets, excludeInactive, vsSrc.url);
@@ -3902,23 +3920,23 @@ begin
             else
             begin
               NoTotal;
-              if cs.isNotClosed(filter) then
+              if cs.isNotClosed(FOpContext, filter) then
                 notClosed := true;
-              prep := cs.getPrepContext;
+              prep := cs.getPrepContext(FOpContext);
               try
-                ctxt := cs.searchFilter(filter, prep, false);
+                ctxt := cs.searchFilter(FOpContext, filter, prep, false);
                 try
-                  cs.prepare(prep);
-                  while cs.FilterMore(ctxt) do
+                  cs.prepare(FOpContext, prep);
+                  while cs.FilterMore(FOpContext, ctxt) do
                   begin
                     deadCheck('processCodes#4');
-                    c := cs.FilterConcept(ctxt);
+                    c := cs.FilterConcept(FOpContext, ctxt);
                     try
                       if passesFilters(c, 0) then
                       begin
                         cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                         try
-                          excludeCode(cs, cs.systemUri, cs.version, cs.code(c),  expansion, valueSets, vsSrc.url);
+                          excludeCode(cs, cs.systemUri, cs.version, cs.code(FOpContext, c),  expansion, valueSets, vsSrc.url);
                         finally
                           cds.free;
                         end;
@@ -3937,7 +3955,8 @@ begin
           end;
 
           if (cset.hasConcepts) then
-          begin
+          begin                          
+            FOpContext.log('iterate concepts');
             cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
             try
               for cc in cset.concepts.forEnum do
@@ -3945,15 +3964,15 @@ begin
                 deadCheck('processCodes#3');
                 cds.Clear;
                 FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
-                cctxt := cs.locate(cc.code, FAllAltCodes);
+                cctxt := cs.locate(FOpContext, cc.code, FAllAltCodes);
                 try
-                  if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(cctxt)) and passesFilters(cctxt, 0) then
+                  if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(FOpContext, cctxt)) and passesFilters(cctxt, 0) then
                   begin
                     if filter.passes(cds) or filter.passes(cc.code) then
                     begin
                       ov := cc.itemWeight;
                       if ov = '' then
-                        ov := cs.itemWeight(cctxt);
+                        ov := cs.itemWeight(FOpContext, cctxt);
                       excludeCode(cs, cs.systemUri, cs.version, cc.code, expansion, valueSets, vsSrc.url);
                     end;
                   end;
@@ -3968,20 +3987,21 @@ begin
 
           if cset.hasFilters then
           begin
+            FOpContext.log('prep filters');
             fcl := cset.filters;
             try
-              prep := cs.getPrepContext;
+              prep := cs.getPrepContext(FOpContext);
               try
                 offset := 0;
                 if not filter.null then
                 begin
-                  filters.Insert(0, cs.searchFilter(filter, prep, true)); // this comes first, because it imposes order
+                  filters.Insert(0, cs.searchFilter(FOpContext, filter, prep, true)); // this comes first, because it imposes order
                   inc(offset);
                 end;
 
                 if cs.specialEnumeration <> '' then
                 begin
-                  filters.Insert(offset, cs.specialFilter(prep, true));
+                  filters.Insert(offset, cs.specialFilter(FOpContext, prep, true));
                   expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                   notClosed := true;
                 end;
@@ -3990,35 +4010,36 @@ begin
                   deadCheck('processCodes#4a');
                   fc := fcl[i];
                   ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
+                  f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
                   if f = nil then
                     raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
                   filters.Insert(offset, f);
-                  if cs.isNotClosed(filter, f) then
+                  if cs.isNotClosed(FOpContext, filter, f) then
                     notClosed := true;
                 end;
 
-                inner := cs.prepare(prep);
+                FOpContext.log('iterate filters');
+                inner := cs.prepare(FOpContext, prep);
                 count := 0;
-                While cs.FilterMore(filters[0]) do
+                While cs.FilterMore(FOpContext, filters[0]) do
                 begin
                   deadCheck('processCodes#5');
-                  c := cs.FilterConcept(filters[0]);
+                  c := cs.FilterConcept(FOpContext, filters[0]);
                   try
-                    ok := (not FParams.activeOnly or not cs.IsInactive(c)) and (inner or passesFilters(c, 1));
-                    if ok then
+                    ok := (not FParams.activeOnly or not cs.IsInactive(FOpContext, c)) and (inner or passesFilters(c, 1));
+                     if ok then
                     begin
                       inc(count);
-                      if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
+                      if passesImports(valueSets, cs.systemUri, cs.code(FOpContext, c), 0) then
                       begin
                         if cs.canParent then
-                          parent := FMap[key(cs.systemUri, cs.parent(c))]
+                          parent := FMap[key(cs.systemUri, cs.parent(FOpContext, c))]
                         else
                         begin
                           FCanBeHierarchy := false;
                           parent := nil;
                         end;
-                        for code in cs.listCodes(c, FParams.altCodeRules) do
+                        for code in cs.listCodes(FOpContext, c, FParams.altCodeRules) do
                           excludeCode(cs, cs.systemUri, cs.version, code, expansion, nil, vsSrc.url);
                       end;
                     end;
@@ -4026,6 +4047,7 @@ begin
                     c.free;
                   end;
                 end;
+                FOpContext.log('iterate filters finished');
               finally
                 prep.free;
               end;
@@ -4066,7 +4088,7 @@ begin
       expansion.addParamUri('version', vs);
     ts := TStringList.create;
     try
-      cs.listSupplements(ts);
+      cs.listSupplements(FOpContext, ts);
       for vs in ts do
       begin
         deadCheck('processCodeAndDescendants');
@@ -4080,16 +4102,16 @@ begin
     end;
   end;
   n := nil;
-  if (not FParams.excludeNotForUI or not cs.IsAbstract(context)) and (not FParams.activeOnly or not cs.isInActive(context)) then
+  if (not FParams.excludeNotForUI or not cs.IsAbstract(FOpContext, context)) and (not FParams.activeOnly or not cs.isInActive(FOpContext, context)) then
   begin
     cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
     try
       listDisplays(cds, cs, context);
-      for code in cs.listCodes(context, FParams.altCodeRules) do
+      for code in cs.listCodes(FOpContext, context, FParams.altCodeRules) do
       begin
         deadCheck('processCodeAndDescendants#2');
-        t := includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(context), cs.IsInactive(context), cs.deprecated(context), cds, cs.definition(context),
-           cs.itemWeight(context), expansion, imports, cs.getExtensions(context), nil, cs.getProperties(context), nil, excludeInactive, srcUrl);
+        t := includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, context), cs.IsInactive(FOpContext, context), cs.deprecated(FOpContext, context), cds, cs.definition(FOpContext, context),
+           cs.itemWeight(FOpContext, context), expansion, imports, cs.getExtensions(FOpContext, context), nil, cs.getProperties(FOpContext, context), nil, excludeInactive, srcUrl);
         if (t <> nil) then
           inc(result);
         if (n = nil) then
@@ -4101,12 +4123,12 @@ begin
   end
   else
     n := parent;
-  iter := cs.getIterator(context);
+  iter := cs.getIterator(FOpContext, context);
   try
     while iter.more do
     begin
       deadCheck('processCodeAndDescendants#3');
-      c := cs.getNextContext(iter);
+      c := cs.getNextContext(FOpContext, iter);
       try
         inc(result, includeCodeAndDescendants(cs, c, expansion, imports, n, excludeInactive, srcUrl));
       finally
@@ -4137,7 +4159,7 @@ begin
       expansion.addParamUri('version', vs);
     ts := TStringList.create;
     try
-      cs.listSupplements(ts);
+      cs.listSupplements(FOpContext, ts);
       for vs in ts do
       begin
         deadCheck('processCodeAndDescendants');
@@ -4150,12 +4172,12 @@ begin
       ts.free;
     end;
   end;
-  if (not FParams.excludeNotForUI or not cs.IsAbstract(context)) and (not FParams.activeOnly or not cs.isInActive(context)) then
+  if (not FParams.excludeNotForUI or not cs.IsAbstract(FOpContext, context)) and (not FParams.activeOnly or not cs.isInActive(FOpContext, context)) then
   begin
     cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
     try
       listDisplays(cds, cs, context);
-      for code in cs.listCodes(context, FParams.altCodeRules) do
+      for code in cs.listCodes(FOpContext, context, FParams.altCodeRules) do
       begin
         deadCheck('processCodeAndDescendants#2');
         excludeCode(cs, cs.systemUri, cs.version, code, expansion, imports, srcUrl);
@@ -4164,12 +4186,12 @@ begin
       cds.free;
     end;
   end;
-  iter := cs.getIterator(context);
+  iter := cs.getIterator(FOpContext, context);
   try
     while iter.more do
     begin
       deadCheck('processCodeAndDescendants#3');
-      c := cs.getNextContext(iter);
+      c := cs.getNextContext(FOpContext, iter);
       try
         excludeCodeAndDescendants(cs, c, expansion, imports, excludeInactive, srcUrl);
       finally
@@ -4196,11 +4218,11 @@ begin
   if cp <> nil then
   begin
     try
-      lct := cp.locate(code);
+      lct := cp.locate(FOpContext, code);
       try
         if (op.error('InstanceValidator', itInvalid, path, lct <> nil, 'Unknown Code ('+system+'#'+code+')')) then
-          result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = cp.Display(lct, THTTPLanguageList(nil))),
-          'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct, THTTPLanguageList(nil))+'"');
+          result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = cp.Display(FOpContext, lct, THTTPLanguageList(nil))),
+          'Display for '+system+' code "'+code+'" should be "'+cp.Display(FOpContext, lct, THTTPLanguageList(nil))+'"');
       finally
         lct.free;
       end;

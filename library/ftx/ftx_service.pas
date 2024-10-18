@@ -64,6 +64,11 @@ Type
 
   TFhirFilterOperator = fhir_common.TFilterOperator;
 
+  TTxOperationContext = class abstract (TFslObject)
+  public
+    procedure log(note : String); virtual; abstract;
+  end;
+
   TCodeSystemProviderContext = class (TFslObject)
   public
     function Link : TCodeSystemProviderContext; overload;
@@ -247,59 +252,60 @@ Type
     function sourcePackage : String; virtual;
     function TotalCount : integer; virtual; abstract;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; virtual;
-    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
-    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
+    function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
+    function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri() : String; virtual; abstract;
     function version() : String; virtual;
     function defLang() : TIETFLang; virtual;
     function hasAnyDisplays(disp : THTTPLanguageList) : boolean; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
-    function getDisplay(code : String; langList : THTTPLanguageList):String; virtual; abstract;
-    function getDefinition(code : String):String; virtual; abstract;
-    function locate(code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; virtual;
-    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
-    function sameContext(a, b : TCodeSystemProviderContext) : boolean; virtual;
-    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
-    function IsAbstract(context : TCodeSystemProviderContext) : boolean; virtual; abstract;
-    function IsInactive(context : TCodeSystemProviderContext) : boolean; overload; virtual;
-    function getCodeStatus(context : TCodeSystemProviderContext) : String; overload; virtual;
-    function deprecated(context : TCodeSystemProviderContext) : boolean; overload; virtual;
-    function IsInactive(code : String) : boolean; overload; virtual;
-    function Code(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;  overload; virtual; abstract;
-    function Display(context : TCodeSystemProviderContext; lang : TFslList<TIETFLang>) : string; overload;
-    function Definition(context : TCodeSystemProviderContext) : string; virtual; abstract;
-    function itemWeight(context : TCodeSystemProviderContext) : string; virtual;
-    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; virtual; abstract;  // get all displays for all languages
-    function getExtensions(context : TCodeSystemProviderContext)  : TFslList<TFHIRExtensionW>; virtual;
-    function getProperties(context : TCodeSystemProviderContext) : TFslList<TFhirCodeSystemConceptPropertyW>; virtual;
-    function listCodes(ctxt : TCodeSystemProviderContext; altOpt : TAlternateCodeOptions) : TStringArray; virtual;
-    function parent(context : TCodeSystemProviderContext) : String; virtual; // return if there is one and only one
+    function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; virtual; abstract;
+    function getDefinition(opContext : TTxOperationContext; code : String):String; virtual; abstract;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; virtual;
+    function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
+    function sameContext(opContext : TTxOperationContext; a, b : TCodeSystemProviderContext) : boolean; virtual;
+    function locateIsA(opContext : TTxOperationContext; code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; virtual; abstract;
+    function IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; virtual; abstract;
+    function IsInactive(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; overload; virtual;
+    function getCodeStatus(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : String; overload; virtual;
+    function deprecated(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; overload; virtual;
+    function IsInactive(opContext : TTxOperationContext; code : String) : boolean; overload; virtual;
+    function Code(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; virtual; abstract;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;  overload; virtual; abstract;
+    function Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; lang : TFslList<TIETFLang>) : string; overload;
+    function Definition(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; virtual; abstract;
+    function itemWeight(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; virtual;
+    procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); overload; virtual; abstract;  // get all displays for all languages
+    function getExtensions(opContext : TTxOperationContext; context : TCodeSystemProviderContext)  : TFslList<TFHIRExtensionW>; virtual;
+    function getProperties(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TFslList<TFhirCodeSystemConceptPropertyW>; virtual;
+    function listCodes(opContext : TTxOperationContext; ctxt : TCodeSystemProviderContext; altOpt : TAlternateCodeOptions) : TStringArray; virtual;
+    function parent(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : String; virtual; // return if there is one and only one
     function canParent : boolean; virtual;
-    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
+    function doesFilter(opContext : TTxOperationContext; prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
     function incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList) : String; virtual;
 
-    function hasSupplement(url : String) : boolean; virtual;
-    procedure listSupplements(ts : TStringList); virtual;
-    function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
-    function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
-    function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
-    function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
-    function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; virtual; abstract;
-    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; overload; virtual; abstract;
-    function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
-    function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
-    function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); virtual;
-    function subsumesTest(codeA, codeB : String) : String; virtual;
+    function hasSupplement(opContext : TTxOperationContext; url : String) : boolean; virtual;
+    procedure listSupplements(opContext : TTxOperationContext; ts : TStringList); virtual;
+    function getPrepContext(opContext : TTxOperationContext) : TCodeSystemProviderFilterPreparationContext; virtual;
+    function searchFilter(opContext : TTxOperationContext; filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function specialFilter(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
+    function filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function prepare(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
+    function filterLocate(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
+    function FilterMore(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : boolean; virtual; abstract;
+    function filterSize(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext) : integer; overload; virtual; abstract;
+    function FilterConcept(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
+    function InFilter(opContext : TTxOperationContext; ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
+    function isNotClosed(opContext : TTxOperationContext; textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
+    procedure extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); virtual;
+    function subsumesTest(opContext : TTxOperationContext; codeA, codeB : String) : String; virtual;
 
     function SpecialEnumeration : String; virtual;
-    procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual; abstract;
+    procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); virtual; abstract;
+    function versionIsMoreDetailed(v1, v2 : String): boolean; virtual;
     procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); virtual;
-    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); virtual;
+    procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); virtual;
 
     procedure RecordUse(count : integer = 1);
     procedure checkReady; virtual;
@@ -309,6 +315,7 @@ Type
 
 const
   CODES_TDisplayCheckingStyle : Array [TDisplayCheckingStyle] of String = ('Exact', 'CaseInsensitive', 'Normalised');
+
 implementation
 
 { TAlternateCodeOptions }
@@ -915,12 +922,12 @@ begin
   inherited;
 end;
 
-function TCodeSystemProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
+function TCodeSystemProvider.doesFilter(opContext : TTxOperationContext; prop: String; op: TFhirFilterOperator; value: String): boolean;
 var
   ctxt : TCodeSystemProviderFilterContext;
 begin
   result := false;
-  ctxt := filter(true, prop, op, value, nil);
+  ctxt := filter(opContext, false, true, prop, op, value, nil);
   try
     result := ctxt <> nil;
   finally
@@ -933,51 +940,51 @@ begin
   result := '';
 end;
 
-procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TCodeSystemProvider.extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 begin
   // nothing here
 end;
 
-function TCodeSystemProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
+function TCodeSystemProvider.filterLocate(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; code: String): TCodeSystemProviderContext;
 var
   msg : String;
 begin
-  result := filterLocate(ctxt, code, msg);
+  result := filterLocate(opContext, ctxt, code, msg);
 end;
 
-procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
+procedure TCodeSystemProvider.getCDSInfo(opContext : TTxOperationContext; card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   card.summary := 'No CDSHook Implementation for code system '+systemUri+' for code '+code+' ('+display+')';
 end;
 
-function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+function TCodeSystemProvider.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
 end;
 
-function TCodeSystemProvider.hasSupplement(url: String): boolean;
+function TCodeSystemProvider.hasSupplement(opContext : TTxOperationContext; url: String): boolean;
 begin
   result := false;
 end;
 
-procedure TCodeSystemProvider.listSupplements(ts: TStringList);
+procedure TCodeSystemProvider.listSupplements(opContext : TTxOperationContext; ts: TStringList);
 begin
   // nothing
 end;
 
-function TCodeSystemProvider.IsInactive(code: String): boolean;
+function TCodeSystemProvider.IsInactive(opContext : TTxOperationContext; code: String): boolean;
 var
   ctxt : TCodeSystemProviderContext;
 begin
-  ctxt := locate(code);
+  ctxt := locate(opContext, code);
   try
-    result := IsInactive(ctxt);
+    result := IsInactive(opContext, ctxt);
   finally
     ctxt.free;
   end;
 end;
 
-function TCodeSystemProvider.Display(context: TCodeSystemProviderContext; lang : TFslList<TIETFLang>): string;
+function TCodeSystemProvider.Display(opContext : TTxOperationContext; context: TCodeSystemProviderContext; lang : TFslList<TIETFLang>): string;
 var
   hl : THTTPLanguageList;
   l : TIETFLang;
@@ -986,13 +993,13 @@ begin
   try
     for l in lang do
       hl.addCode(l.code);
-    result := display(context, hl);
+    result := display(opContext, context, hl);
   finally
     hl.free;
   end;
 end;
 
-function TCodeSystemProvider.itemWeight(context: TCodeSystemProviderContext): string;
+function TCodeSystemProvider.itemWeight(opContext : TTxOperationContext; context: TCodeSystemProviderContext): string;
 begin
   result := '';
 end;
@@ -1017,17 +1024,17 @@ begin
   result := nil;
 end;
 
-function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
+function TCodeSystemProvider.IsInactive(opContext : TTxOperationContext; context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
 end;
 
-function TCodeSystemProvider.getCodeStatus(context: TCodeSystemProviderContext): String;
+function TCodeSystemProvider.getCodeStatus(opContext : TTxOperationContext; context: TCodeSystemProviderContext): String;
 begin
   result := '';
 end;
 
-function TCodeSystemProvider.deprecated(context: TCodeSystemProviderContext): boolean;
+function TCodeSystemProvider.deprecated(opContext : TTxOperationContext; context: TCodeSystemProviderContext): boolean;
 begin
   result := false;
 end;
@@ -1037,11 +1044,11 @@ begin
   result := TCodeSystemProvider(inherited link);
 end;
 
-function TCodeSystemProvider.locate(code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;
+function TCodeSystemProvider.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;
 var
   msg : String;
 begin
-  result := locate(code, altOpt, msg);
+  result := locate(opContext, code, altOpt, msg);
 end;
 
 function TCodeSystemProvider.name(context: TCodeSystemProviderContext): String;
@@ -1049,7 +1056,7 @@ begin
   result := '';
 end;
 
-function TCodeSystemProvider.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
+function TCodeSystemProvider.prepare(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
   result := false;
 end;
@@ -1064,7 +1071,7 @@ begin
   // nothing
 end;
 
-function TCodeSystemProvider.sameContext(a, b: TCodeSystemProviderContext): boolean;
+function TCodeSystemProvider.sameContext(opContext : TTxOperationContext; a, b: TCodeSystemProviderContext): boolean;
 begin
   result := a = b;
 end;
@@ -1074,6 +1081,11 @@ begin
   result := '';
 end;
 
+function TCodeSystemProvider.versionIsMoreDetailed(v1, v2: String): boolean;
+begin
+  result := false;
+end;
+
 procedure TCodeSystemProvider.getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean);
 begin
   status := psNull;
@@ -1081,33 +1093,33 @@ begin
   experimental := false;
 end;
 
-function TCodeSystemProvider.specialFilter(prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
+function TCodeSystemProvider.specialFilter(opContext : TTxOperationContext; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
   raise ETerminologyError.create('Not implemented for '+ClassName, itException);
 end;
 
-function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
+function TCodeSystemProvider.subsumesTest(opContext : TTxOperationContext; codeA, codeB: String): String;
 begin
   raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri, itException);
 end;
 
-function TCodeSystemProvider.getExtensions(context : TCodeSystemProviderContext) : TFslList<TFHIRExtensionW>;
+function TCodeSystemProvider.getExtensions(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TFslList<TFHIRExtensionW>;
 begin
   result := nil;
 end;
 
-function TCodeSystemProvider.getProperties(context: TCodeSystemProviderContext): TFslList<TFhirCodeSystemConceptPropertyW>;
+function TCodeSystemProvider.getProperties(opContext : TTxOperationContext; context: TCodeSystemProviderContext): TFslList<TFhirCodeSystemConceptPropertyW>;
 begin
   result := nil
 end;
 
-function TCodeSystemProvider.listCodes(ctxt: TCodeSystemProviderContext; altOpt: TAlternateCodeOptions): TStringArray;
+function TCodeSystemProvider.listCodes(opContext : TTxOperationContext; ctxt: TCodeSystemProviderContext; altOpt: TAlternateCodeOptions): TStringArray;
 begin
   SetLength(result, 1);
-  result[0] := code(ctxt);
+  result[0] := code(opContext, ctxt);
 end;
 
-function TCodeSystemProvider.parent(context: TCodeSystemProviderContext): String;
+function TCodeSystemProvider.parent(opContext : TTxOperationContext; context: TCodeSystemProviderContext): String;
 begin
   result := '';
 end;
@@ -1218,6 +1230,8 @@ begin
   rating := 0;
   if FStems.Count = 0 then
     result := true
+  else if stems = nil then
+    result := false
   else
   begin
     all := true;
