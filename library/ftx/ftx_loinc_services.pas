@@ -1042,9 +1042,9 @@ begin
     end;
     c.terminate;
     t := GetTickCount64-t;
-    opContext.log('LOINC filter: '+inttostr(l)+' rows for '+d+' ('+DescribePeriodMS(t)+', sql = '+sql+')');
+    opContext.log('LOINC filter: '+inttostr(l)+' rows for '+d+' ('+inttostr(t)+'ms)');
     if (UnderDebugger) or (t > 1000) then
-      Logging.log('LOINC filter: '+inttostr(l)+' rows for '+d+' ('+DescribePeriodMS(t)+', sql = '+sql+')');
+      Logging.log('LOINC filter: '+inttostr(l)+' rows for '+d+' ('+inttostr(t)+'ms, sql = '+sql+')');
   end;
   SetLength(keys, l);
   result := TLoincFilterHolder.create;
