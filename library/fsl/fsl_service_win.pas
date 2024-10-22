@@ -446,7 +446,7 @@ var
 procedure TSystemService.ServiceExecute;
 begin
   // problem: if we weren't actually started as a service we are about
-  // to hang. But there is no way to deteramine whether we are running
+  // to hang. But there is no way to determine whether we are running
   // as a service
   GServiceInfo[0].lpServiceName := PChar(FSystemName);
   GServiceInfo[0].lpServiceProc := @ServiceMainEntry;

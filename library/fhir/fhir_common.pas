@@ -394,6 +394,8 @@ type
     property diagnostics : String read GetDiagnostics write SetDiagnostics;
   end;
 
+  { TFhirOperationOutcomeW }
+
   TFhirOperationOutcomeW = class (TFHIRXVersionResourceWrapper)
   public
     function link : TFhirOperationOutcomeW; overload;
@@ -407,6 +409,7 @@ type
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); overload; virtual; abstract;
     procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
     procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, msgId, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
+    procedure addDiagsIssue(message : string); virtual; abstract;
     function hasIssues : boolean; virtual; abstract;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; virtual; abstract;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; virtual; abstract;
