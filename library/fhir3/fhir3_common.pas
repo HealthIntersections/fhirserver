@@ -180,6 +180,7 @@ type
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); override;
     procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
     procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, msgId, message : String; code : TOpIssueCode; addIfDuplicate : boolean = false); overload; override;
+    procedure addDiagsIssue(message : string); override;
     function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
@@ -1466,6 +1467,16 @@ begin
   iss.locationList.Add(path);
   iss.expressionList.Add(path);
   iss.addExtension('http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id', msgid);
+end;
+
+procedure TFhirOperationOutcome3.addDiagsIssue(message: string);
+var
+  iss : TFhirOperationOutcomeIssue;
+begin
+  iss := (Fres as TFhirOperationOutcome).issueList.Append;
+  iss.code := IssueTypeInformational;
+  iss.severity := IssueSeverityInformation;
+  iss.diagnostics := message;
 end;
 
 function TFhirOperationOutcome3.code: TFhirIssueType;

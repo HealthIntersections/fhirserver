@@ -563,19 +563,24 @@ begin
                     txResources := processAdditionalResources(context, manager, nil, params);
 
                   pout := FServer.validate(request.id, issuePath, vs, coded, profile, abstractOk, inferSystem, mode, txResources, summary, tt);
-                end;
+                end;           
+                response.HTTPCode := 200; 
+                response.Message := 'OK';
                 if summary <> '' then
                   result := result + ': '+summary;
                 if (oOut <> nil) then
-                  response.resource := oOut.Resource.link
+                begin
+                  oOut.addDiagsIssue('X-Request-Id: '+request.externalRequestId);
+                  response.resource := oOut.Resource.link;
+                  response.HTTPCode := 422; // todo, change this?  
+                  response.Message := 'Error Processing Request';
+                end
                 else
                   response.resource := pout.Resource.link;
               finally
                 pOut.free;
                 oOut.free;
               end;
-              response.HTTPCode := 200;
-              response.Message := 'OK';
               response.Body := '';
               response.LastModifiedDate := now;
             finally
