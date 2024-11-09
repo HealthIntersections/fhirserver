@@ -57,7 +57,7 @@ uses
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;
-  TX_SEARCH_PAGE_LIMIT = 20;
+  TX_SEARCH_PAGE_LIMIT = 200;
 
 type
   TTerminologyServerEndPoint = class;
@@ -703,7 +703,7 @@ begin
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
 
   offset := 0;
-  count := 50;
+  count := TX_SEARCH_PAGE_DEFAULT;
   defCount := true;
   for i := 0 to request.Parameters.Count - 1 do
     if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
