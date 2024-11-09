@@ -256,8 +256,11 @@ begin
     b.append('?');
     for sp in search do
     begin
-      b.Append('&');
-      sp.build(b);
+      if not (sp.control in [scpCount]) then
+      begin
+        b.Append('&');
+        sp.build(b);
+      end;
     end;
     result := b.ToString;
   finally
