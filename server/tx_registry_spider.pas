@@ -366,7 +366,7 @@ begin
     ver.ValueSets.clear;
     ver.Address := obj.str['url'];
     SetThreadStatus(ver.Address);
-    Logging.log('Check on server '+ver.Address);
+    Logging.log('Check on server '+ver.Address+' ('+srvr.Name+')');
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
     try

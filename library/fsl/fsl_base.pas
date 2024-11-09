@@ -131,9 +131,14 @@ Type
   EWebServerException = Class(EFslException)
   Private
     FCode : Integer;
+    FMessageId : String;
+    FIssueType : String;
   Public
-    constructor Create(code : integer; message : String);
+    //constructor Create(code : integer; message : String);
+    constructor Create(code : integer; message, messageId, issueType : String);
     property Code : Integer read FCode;
+    property MessageId : String read FMessageId;
+    property issueType : String read FIssueType;
   End;
 
 Function ExceptObject : Exception;
@@ -3683,10 +3688,12 @@ end;
 
 { EWebServerException }
 
-constructor EWebServerException.Create(code: integer; message: String);
+constructor EWebServerException.Create(code: integer; message, messageId, issueType: String);
 begin
   inherited Create(message);
   FCode := code;
+  FMessageId := messageId;
+  FIssueType := issueType;
 end;
 
 Initialization

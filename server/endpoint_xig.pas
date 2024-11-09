@@ -1219,12 +1219,12 @@ begin
     try   
       pck := context.FPackagesById[pid];
       if (pck = nil) then
-        raise EWebServerException.create(400, 'Unknown Package '+pid.replace('|', '#'));
+        raise EWebServerException.create(400, 'Unknown Package '+pid.replace('|', '#'), '', '');
        db.sql := 'Select * from Resources where PackageKey = '+pck.key+' and ResourceType = '''+SqlWrapString(rtype)+''' and Id = '''+SqlWrapString(id)+'''';
        db.prepare;
        db.Execute;
        if not db.FetchNext then
-         raise EWebServerException.create(400, 'Unknown Resource '+rtype+'/'+id+' in package '+pid);
+         raise EWebServerException.create(400, 'Unknown Resource '+rtype+'/'+id+' in package '+pid, '', '');
        rk := db.ColStringByName['ResourceKey'];
        base := db.ColStringByName['Web'];
        base := base.Substring(0, base.LastIndexOf('/'));

@@ -1291,7 +1291,7 @@ procedure TFHIRPackageWebServer.serveUpload(request: TIdHTTPRequestInfo; respons
   procedure check(test : boolean; code : integer; msg : String);
   begin
     if not test then
-      raise EWebServerException.Create(code, msg);
+      raise EWebServerException.Create(code, msg, '', '');
   end;
 var
   src : TBytes;

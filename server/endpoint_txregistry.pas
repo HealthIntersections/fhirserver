@@ -798,9 +798,10 @@ begin
           sortJson(json, pm.Value['sort']);
         if request.Accept.Contains('json') then
         begin
+          response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(TJSONWriter.writeObjectStr(json, true)));
+          response.FreeContentStream := true;
+          response.contentType := 'application/json';
           response.ResponseNo := 200;
-          response.ContentType := 'application/json';
-          response.ContentText := TJSONWriter.writeObjectStr(json, true);
         end
         else
           sendHtml(request, response, secure, json, reg, srvr, ver, tx);

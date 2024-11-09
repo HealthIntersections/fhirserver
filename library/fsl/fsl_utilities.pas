@@ -14777,8 +14777,9 @@ begin
           begin
           if CharInSet(AStr[i], [' '..'~']) then
             b.Append(AStr[i])
-          else
-            b.Append('&#' + IntToStr(Ord(AStr[i])) + ';');
+          else                             
+            b.Append(AStr[i]); // can't escape because of unicode issues
+            // b.Append('&#' + IntToStr(Ord(AStr[i])) + ';');
           end;
         end;
       Inc(i);

@@ -765,8 +765,10 @@ begin
             end;
 
             if not useProxy and not FData.FLoadingComplete then
-              raise EWebServerException.create(500, 'The full data set is only '+inttostr((100 * FData.FLoaded) div FData.FTotalToLoad)+'% loaded ('+inttostr(FData.FLoaded)+' of '+inttostr(FData.FTotalToLoad)+') for searching - repeat this query in a few minutes (max ~15min)');
-
+              raise EWebServerException.create(500,
+                TFHIRServerContext(FServerContext).i18nSupport.translate('TX_SERVER_NOT_READY', request.LangList,
+                  [inttostr((100 * FData.FLoaded) div FData.FTotalToLoad), inttostr(FData.FLoaded), inttostr(FData.FTotalToLoad)]),
+                'TX_SERVER_NOT_READY', CODES_TFhirIssueType[itTransient]);
             if (hasScope(request, 'CodeSystem')) then
             begin
               for p in FData.CodeSystems.Values do

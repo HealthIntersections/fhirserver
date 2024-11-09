@@ -727,7 +727,8 @@ begin
   now := GetTickCount64;
   delta := now - start;
   if (delta > DEAD_CHECK_LIMIT) then
-    raise EWebServerException.create(500, 'Request took too long to process ('+inttostr(DEAD_CHECK_LIMIT div 1000)+'sec)');
+    raise EWebServerException.create(500, TFHIRServerContext(FServerContext).i18nSupport.translate('REQUEST_TOO_COSTLY_TIME', FLangList, [inttostr(DEAD_CHECK_LIMIT div 1000)]),
+         'REQUEST_TOO_COSTLY_TIME', CODES_TFhirIssueType[itProcessing]);
 end;
 
 
