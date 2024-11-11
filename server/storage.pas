@@ -830,12 +830,13 @@ begin
       oConf.id := 'FhirServer';
       oConf.contact(cpsOther, 'http://healthintersections.com.au/');
       if ServerContext.FormalURLPlain <> '' then
-        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'metadata'
+        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'CapabilityStatement/tx'
       else
-        oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
+        oConf.url := 'http://fhir.healthintersections.com.au/open/CapabilityStatement/tx';
 
       oConf.version := factory.versionString+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
-      oConf.name := 'FHIR Reference Server Conformance Statement';
+      oConf.name := 'FHIRReferenceServer';
+      oConf.title := 'FHIR Reference Server Conformance Statement';
       oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.kind := cskInstance;
@@ -1228,12 +1229,13 @@ begin
       oConf.id := 'FhirServer';
       oConf.contact(cpsOther, 'http://healthintersections.com.au/');
       if ServerContext.FormalURLPlain <> '' then
-        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'metadata'
+        oConf.url := AppendForwardSlash(ServerContext.FormalURLPlain)+'TerminologyCapabilities/tx'
       else
-        oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
+        oConf.url := 'http://fhir.healthintersections.com.au/open/TerminologyCapabilities/tx';
 
       oConf.version := TX_SERVER_VERSION;
-      oConf.name := 'FHIR Reference Server Teminology Capability Statement';
+      oConf.name := 'FHIRReferenceServerTeminologyCapabilities';
+      oConf.title := 'FHIR Reference Server Teminology Capability Statement';
       oConf.description := 'Standard Teminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;

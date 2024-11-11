@@ -308,7 +308,8 @@ type
     function getProfile: String; override;
     function hasInteraction : boolean; override;
     procedure setProfile(Value: String); override;
-    procedure addInteraction(code : String);  override;
+    procedure addInteraction(codeV, doco : String);  override;
+    procedure addOperation(codeV, defn, doco : String); override;
     function getReadHistory: boolean; override;
     procedure setReadHistory(Value: boolean); override;
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); override;
@@ -343,6 +344,8 @@ type
     procedure setUrl(Value: String); override;
     function getName : String; override;
     procedure setName(value : String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function getVersion : String; override;
     procedure setVersion(value : String); override;
     function getDescription : String; override;
@@ -1967,6 +1970,16 @@ end;
 procedure TFHIRCapabilityStatement4.setName(value : String);
 begin
   statement.Name := value;
+end;
+
+function TFHIRCapabilityStatement4.getTitle : String;
+begin
+  result := statement.Title;
+end;
+
+procedure TFHIRCapabilityStatement4.setTitle(value : String);
+begin
+  statement.Title := value;
 end;
 
 function TFHIRCapabilityStatement4.getVersion : String;
@@ -5288,9 +5301,23 @@ begin
   (Element as TFhirCapabilityStatementRestResource).profile := value;
 end;
 
-procedure TFhirCapabilityStatementRestResource4.addInteraction(code: String);
+procedure TFhirCapabilityStatementRestResource4.addInteraction(codeV, doco: String);
 begin
-  (Element as TFhirCapabilityStatementRestResource).interactionList.Append.codeElement := TFhirEnum.Create('http://hl7.org/fhir/ValueSet/type-restful-interaction', code);
+  With (Element as TFhirCapabilityStatementRestResource).interactionList.Append do
+  begin
+    codeElement := TFhirEnum.Create('http://hl7.org/fhir/ValueSet/type-restful-interaction', codeV);
+    documentation := doco;
+  end;
+end;
+
+procedure TFhirCapabilityStatementRestResource4.addOperation(codeV, defn, doco: String);
+begin
+  With (Element as TFhirCapabilityStatementRestResource).operationList.Append do
+  begin
+    name := codeV;
+    definition := defn;
+    documentation := doco;
+  end;
 end;
 
 function TFhirCapabilityStatementRestResource4.getReadHistory: boolean;

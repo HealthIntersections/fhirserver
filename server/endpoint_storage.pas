@@ -162,7 +162,6 @@ type
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
-    procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String);
     function loadFromRsaDer(cert : string) : TJWKList;
 
     function readVersion(mt : String) : TFHIRVersion;
@@ -196,6 +195,7 @@ type
     Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; virtual; abstract;
     function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; virtual; abstract;
     function ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
+    procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String); virtual;
 
     procedure returnContent(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; path: String; secure : boolean; title, content : String); overload;
     function processContent(path: String; secure : boolean; title, content : String) : String;

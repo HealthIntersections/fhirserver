@@ -234,6 +234,8 @@ type
     function allowInsecure : boolean; override;
   end;
 
+  { TTerminologyServerWebServer }
+
   TTerminologyServerWebServer = class (TStorageWebEndpoint)
   private
     FEndPoint : TTerminologyServerEndPoint;
@@ -249,6 +251,7 @@ type
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
     Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
     function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; override;
+    procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure : boolean; baseUrl : String; caps : Array of String); override;
 
     function AutoCache : boolean; override;
   public
@@ -2043,7 +2046,9 @@ begin
   end;
 end;
 
-function TTerminologyServerWebServer.BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+function TTerminologyServerWebServer.BuildFhirUploadPage(
+  langList: THTTPLanguageList; host, sBaseURL: String; aType: String;
+  Session: TFHIRSession): String;
 begin
   result := '';
   raise EFslException.Create('Uploads are not supported for the terminology server');
@@ -2063,6 +2068,24 @@ function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: stri
 begin
   result := nil;
   raise EFslException.Create('Not done yet');
+end;
+
+procedure TTerminologyServerWebServer.PopulateConformance(sender: TObject; conf: TFhirCapabilityStatementW; secure: boolean; baseUrl: String; caps: array of String);
+var
+  rr : TFhirCapabilityStatementRestResourceW;
+begin
+  inherited PopulateConformance(sender, conf, secure, baseUrl, caps);
+  rr := conf.addResource('CodeSystem');
+  rr.addInteraction('read', 'Read a code system');
+  rr.addInteraction('search-type', 'Search the code systems. Not that there a few major code systems that are not available through this API (SCT, LOINC etc)');
+  rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/CodeSystem-validate-code', '');
+  rr.addOperation('lookup', 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup', '');
+
+  rr := conf.addResource('ValueSet');
+  rr.addInteraction('read', 'Read a ValueSet');
+  rr.addInteraction('search-type', 'Search the value sets');
+  rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/ValueSet-validate-code', '');
+  rr.addOperation('expand', 'http://hl7.org/fhir/OperationDefinition/ValueSet-expand', '');
 end;
 
 function TTerminologyServerWebServer.factory: TFHIRFactory;

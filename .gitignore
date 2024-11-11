@@ -59,7 +59,6 @@ testcases/snomed/snomed.cache
 utilities/codescan/codescan
 
 install/build/FHIRToolkit.app
-/install/release-notes-old.md
 /.zuliprc
 /install/release-notes.md
 /load-password.bat
@@ -71,9 +70,7 @@ install/build/FHIRToolkit.zip
 exec/Resources
 /dependencies/Indy10-mod-static
 /dependencies/indy-master
-/release-notes.md
 /install/build
-/release-notes-old.md
 /tools
 /library/fhir4b-gen
 /library/fhir5-gen

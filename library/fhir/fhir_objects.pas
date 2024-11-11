@@ -41,7 +41,7 @@ Const
   SYSTEM_NOT_APPLICABLE = '%%null%%';
   SEARCH_PARAM_NAME_ID = 'search-id';
   HISTORY_PARAM_NAME_ID = 'history-id';
-  SEARCH_PARAM_NAME_OFFSET = 'search-offset';
+  SEARCH_PARAM_NAME_OFFSET = 'offset';
   SEARCH_PARAM_NAME_TEXT = '_text';
   SEARCH_PARAM_NAME_COUNT = '_count';
   SEARCH_PARAM_NAME_SORT = '_sort';

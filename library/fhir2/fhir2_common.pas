@@ -298,7 +298,8 @@ type
     procedure setCode(Value: String); override;
     function getProfile: String; override;
     procedure setProfile(Value: String); override;
-    procedure addInteraction(code : String);  override;
+    procedure addInteraction(codeV, doco : String);  override;
+    procedure addOperation(code, definition, doco : String); override;
     function getReadHistory: boolean; override;
     procedure setReadHistory(Value: boolean); override;
     function hasInteraction : boolean; override;
@@ -330,6 +331,8 @@ type
     procedure setUrl(Value: String); override;
     function getName : String; override;
     procedure setName(value : String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function getVersion : String; override;
     procedure setVersion(value : String); override;
     function getDescription : String; override;
@@ -1831,6 +1834,16 @@ end;
 procedure TFHIRCapabilityStatement2.setName(value : String);
 begin
   statement.Name := value;
+end;
+
+function TFHIRCapabilityStatement2.getTitle : String;
+begin
+  result := ''; // statement.Title;
+end;
+
+procedure TFHIRCapabilityStatement2.setTitle(value : String);
+begin
+//  statement.Title := value;
 end;
 
 function TFHIRCapabilityStatement2.getVersion : String;
@@ -4930,9 +4943,17 @@ begin
 end;
 
 
-procedure TFhirCapabilityStatementRestResource2.addInteraction(code: String);
+procedure TFhirCapabilityStatementRestResource2.addInteraction(codeV, doco: String);
 begin
-  (Element as TFhirCapabilityStatementRestResource).interactionList.Append.codeElement := TFhirEnum.Create('http://hl7.org/fhir/ValueSet/type-restful-interaction', code);
+  With (Element as TFhirCapabilityStatementRestResource).interactionList.Append do
+  begin
+    codeElement := TFhirEnum.Create('http://hl7.org/fhir/ValueSet/type-restful-interaction', codeV);
+    documentation := doco;
+  end;
+end;
+
+procedure TFhirCapabilityStatementRestResource2.addOperation(code, definition, doco: String);
+begin
 end;
 
 function TFhirCapabilityStatementRestResource2.getReadHistory: boolean;

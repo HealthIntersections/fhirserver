@@ -976,7 +976,7 @@ begin
       params.Clear;
       StringSplit(getSingleValue(carg), ':', l, r);
       params.Add(TGraphQLArgument.Create('search-id', TGraphQLStringValue.Create(l)));
-      params.Add(TGraphQLArgument.Create('search-offset', TGraphQLStringValue.Create(r)));
+      params.Add(TGraphQLArgument.Create('offset', TGraphQLStringValue.Create(r)));
     end;
 
     bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
@@ -1049,7 +1049,7 @@ begin
   begin
     pm := THTTPParameters.Create(s.Substring(s.IndexOf('?')+1));
     try
-      result := FBundle.makeStringValue(pm['search-id']+':'+pm['search-offset']);
+      result := FBundle.makeStringValue(pm['search-id']+':'+pm['offset']);
     finally
       pm.free;
     end;
@@ -1074,7 +1074,7 @@ begin
   result := '*Connection';
 end;
 
-  // http://test.fhir.org/r3/Patient?_format=text/xhtml&search-id=77c97e03-8a6c-415f-a63d-11c80cf73f&&active=true&_sort=_id&search-offset=50&_count=50
+  // http://test.fhir.org/r3/Patient?_format=text/xhtml&search-id=77c97e03-8a6c-415f-a63d-11c80cf73f&&active=true&_sort=_id&offset=50&_count=50
 
 function TFHIRGraphQLSearchWrapper.getId: String;
 begin
@@ -1098,7 +1098,7 @@ begin
   else if propName = 'count' then
     result := TFHIRProperty.Create(self, propname, 'integer', false, nil, makeIntValue(inttostr(FBundle.total)))
   else if propName = 'offset' then
-    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('search-offset', true))
+    result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('offset', true))
   else if propName = 'pagesize' then
     result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('_count', true))
   else if propName = 'edges' then

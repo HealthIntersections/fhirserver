@@ -575,8 +575,9 @@ type
     property profile : String read GetProfile write SetProfile;
     property readHistory : boolean read GetReadHistory write SetReadHistory;
     function hasInteraction : boolean; virtual; abstract;
-    procedure addInteraction(code : String); virtual; abstract;
+    procedure addInteraction(code : String; doco : String = ''); virtual; abstract;
     procedure addParam(html, n, url, d : String; t : TFHIRSearchParamType; tgts : Array of String); virtual; abstract;
+    procedure addOperation(code, definition, doco : String); virtual; abstract;
   end;
 
   TCapabilityStatementKind = (cskNull, cskInstance, cskCapability, cskRequirements);
@@ -589,6 +590,8 @@ type
     procedure setUrl(Value: String); virtual; abstract;
     function getName : String; virtual; abstract;
     procedure setName(value : String); virtual; abstract;
+    function getTitle : String; virtual; abstract;
+    procedure setTitle(value : String); virtual; abstract;
     function getVersion : String; virtual; abstract;
     procedure setVersion(value : String); virtual; abstract;
     function getDescription : String; virtual; abstract;
@@ -608,6 +611,7 @@ type
 
     property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property kind : TCapabilityStatementKind read getKind write setKind;
