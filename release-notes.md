@@ -1,6 +1,6 @@
 ## Change Notes:
 
-* 
+* server metadata and search conformance improvements
 
 ## Conformance Notes:
 
