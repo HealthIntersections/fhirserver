@@ -111,6 +111,7 @@ type
   public
     constructor Create(res : TFHIRResourceProxyV); overload;
     constructor Create(res : TFHIRCodeSystemW); overload;
+    constructor Create(source : TFHIRCodeSystemEntry); overload;
     destructor Destroy; override;
 
     property LoadingState : TFHIRCodeSystemEntryLoadingState read FLoadingState write FLoadingState;
@@ -217,6 +218,8 @@ type
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; factory : TFHIRFactory; cs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
+
+    function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TFhirCodeSystemProvider; override;
 
     function contentMode : TFhirCodeSystemContentMode; override;
     function sourcePackage : String; override;
@@ -325,6 +328,18 @@ begin
   FCodeSystem := res;
   LoadCodeSystem;
   FLoadingState := cseLoaded;
+end;
+
+constructor TFHIRCodeSystemEntry.Create(source: TFHIRCodeSystemEntry);
+begin              
+  inherited Create;
+  if (source.FLoadingState <> cseLoaded) then
+    raise ETerminologyError.create('unable to clone Code System Entry '+source.GetUrl+'#'+source.GetVersion);
+  FCodeSystem := source.FCodeSystem.link;
+  FSupplements := TFslList<TFHIRCodeSystemW>.create;
+  if (source.FSupplements <> nil) then
+    FSupplements.AddAll(source.FSupplements);
+  FCodeMap := source.FCodeMap.link;
 end;
 
 destructor TFHIRCodeSystemEntry.Destroy;
@@ -731,6 +746,19 @@ begin
   FCs.free;
   FFactory.free;
   inherited;
+end;
+
+function TFhirCodeSystemProvider.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TFhirCodeSystemProvider;
+var
+  cs : TFHIRCodeSystemEntry;
+begin
+  cs := TFHIRCodeSystemEntry.create(FCs);
+  try
+    cs.Supplements.AddAll(supplements);
+    result := TFhirCodeSystemProvider.create(FLanguages.link, FI18n.link, FFactory.link, cs.link);
+  finally
+    cs.free;
+  end;
 end;
 
 function {TFhirCodeSystemProvider.}allCodes(context : pointer; concept: TFhirCodeSystemConceptW): boolean;

@@ -245,6 +245,7 @@ Type
     destructor Destroy; override;
 
     function Link : TCodeSystemProvider; overload;
+    function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TCodeSystemProvider; virtual;
 
     function contentMode : TFhirCodeSystemContentMode; virtual;
     function expandLimitation : Integer; virtual;
@@ -1042,6 +1043,11 @@ end;
 function TCodeSystemProvider.Link: TCodeSystemProvider;
 begin
   result := TCodeSystemProvider(inherited link);
+end;
+
+function TCodeSystemProvider.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TCodeSystemProvider;
+begin
+  raise ETerminologyError.create('The codesystem '+systemUri()+' does not support supplements');
 end;
 
 function TCodeSystemProvider.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;

@@ -223,8 +223,8 @@ uses
     function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
     function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
-    procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
-    procedure checkSupplements(opContext : TTxOperationContext; cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
+    function  loadSupplements(url, version : String) : TFslList<TFhirCodeSystemW>;
+    procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;     
@@ -478,60 +478,74 @@ var
   cs, cs2 : TFhirCodeSystemW;
   ts : TStringlist;
   cse : TFHIRCodeSystemEntry;
+  supplements : TFslList<TFhirCodeSystemW>;
+  prov : TCodeSystemProvider;
 begin
   if (url = '') then
     exit(nil);
   if (url = URI_NDC) then
-  begin
-    result := nil;
-  end;
+    exit(nil);
 
-  cs := findInAdditionalResources(url, version, 'CodeSystem', not nullOk) as TFhirCodeSystemW;
-  if (cs <> nil) and (cs.content = cscmComplete) then
-  begin
-    cse := TFHIRCodeSystemEntry.Create(cs.link);
-    try
-      loadSupplements(cse, url);
-      exit(TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link));
-    finally
-      cse.free;
-    end;
-  end;
-
-  result := FOnGetCSProvider(self, url, version, FParams, true);
-
-  if (result <> nil) then
-    exit(result);
-
-  if (cs <> nil) and (cs.content in kinds) then
-  begin
-    cse := TFHIRCodeSystemEntry.Create(cs.link);
-    try
-      if cs.content <> cscmSupplement then
-        loadSupplements(cse, url);
-      exit(TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link));
-    finally
-      cse.free;
-    end;
-  end;
-
-  if not nullok then
-    if version = '' then
-      raise ETerminologySetup.create('Unable to provide support for code system '+url)
-    else
+  result := nil;
+  prov := nil;
+  try
+    cs := findInAdditionalResources(url, version, 'CodeSystem', not nullOk) as TFhirCodeSystemW;
+    if (cs <> nil) and (cs.content = cscmComplete) then
     begin
-      ts := TStringList.Create;
+      cse := TFHIRCodeSystemEntry.Create(cs.link);
       try
-        FOnListCodeSystemVersions(self, url, ts);
-        if (ts.Count = 0) then
-          raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version)
-        else
-          raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version+' (known versions = '+ts.CommaText+')');
+        prov := TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link);
       finally
-        ts.free;
+        cse.free;
       end;
-
     end;
+
+    if (prov = nil) then
+      prov := FOnGetCSProvider(self, url, version, FParams, true);
+
+    if (prov = nil) and (cs <> nil) and (cs.content in kinds) then
+    begin
+      cse := TFHIRCodeSystemEntry.Create(cs.link);
+      try
+        prov := TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link);
+      finally
+        cse.free;
+      end;
+    end;
+
+    if (prov <> nil) then
+    begin
+      supplements := loadSupplements(url, version);
+      try
+        if supplements.Empty then
+          result := prov.link
+        else
+          result := prov.cloneWithSupplements(supplements);
+      finally
+        supplements.free;
+      end;
+    end
+    else if not nullok then
+    begin
+      if version = '' then
+        raise ETerminologySetup.create('Unable to provide support for code system '+url)
+      else
+      begin
+        ts := TStringList.Create;
+        try
+          FOnListCodeSystemVersions(self, url, ts);
+          if (ts.Count = 0) then
+            raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version)
+          else
+            raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version+' (known versions = '+ts.CommaText+')');
+        finally
+          ts.free;
+        end;
+      end;
+    end;
+  finally
+    prov.free;
+  end;
 end;
 
 function TTerminologyWorker.costDiags(e: ETooCostly): ETooCostly;
@@ -591,30 +605,37 @@ begin
   end;
 end;
 
-procedure TTerminologyWorker.loadSupplements(cse : TFHIRCodeSystemEntry; url : String);
+function TTerminologyWorker.loadSupplements(url, version : String) : TFslList<TFhirCodeSystemW>;
 var
   r : TFHIRMetadataResourceW;
   cs : TFhirCodeSystemW;
 begin
-  for r in FAdditionalResources do
-  begin
-    if r is TFHIRCodeSystemW then
+  result := TFslList<TFhirCodeSystemW>.create;
+  try
+    for r in FAdditionalResources do
     begin
-      cs := r as TFHIRCodeSystemW;
-      if (cs.supplements = url) then
-        cse.Supplements.add(cs.link);
+      if r is TFHIRCodeSystemW then
+      begin
+        cs := r as TFHIRCodeSystemW;
+        if (cs.supplements = url) or (cs.supplements.startsWith(url+'|')) then
+          result.add(cs.link);
+      end;
     end;
+    result.link;
+  finally
+    result.free;
   end;
 end;
 
-procedure TTerminologyWorker.checkSupplements(opContext : TTxOperationContext; cs : TCodeSystemProvider; src : TFHIRXVersionElementWrapper);
+procedure TTerminologyWorker.checkSupplements(cs : TCodeSystemProvider; src : TFHIRXVersionElementWrapper);
 var
   ext : TFHIRExtensionW;
   i : integer;
 begin
-  for ext in src.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
-    if not cs.hasSupplement(opContext, ext.valueAsString) then
-      raise ETerminologyError.create('ValueSet depends on supplement '''+ext.valueAsString+''' on '+cs.systemUri+' that is not known', itBusinessRule);
+  if (src <> nil) then
+    for ext in src.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
+      if not cs.hasSupplement(opContext, ext.valueAsString) then
+        raise ETerminologyError.create('ValueSet depends on supplement '''+ext.valueAsString+''' on '+cs.systemUri+' that is not known', itBusinessRule);
   for i := FRequiredSupplements.count - 1 downto 0 do
     if cs.hasSupplement(opContext, FRequiredSupplements[i]) then
       FRequiredSupplements.delete(i);
