@@ -140,6 +140,7 @@ Type
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; unknownValueSets : TStringList);
     function getName: String;
     function valueSetDependsOnCodeSystem(url, version: String): boolean;
+    procedure checkSupplementsExist(vs : TFHIRValueSetW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
     function isValidating : boolean; override;
@@ -618,6 +619,8 @@ begin
     FRequiredSupplements.clear;
     for ext in vs.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
       FRequiredSupplements.add(ext.valueAsString);
+    if (FRequiredSupplements.Count > 0) then
+      checkSupplementsExist(vs);
 
     vs.checkNoImplicitRules('ValueSetChecker.prepare', 'ValueSet');
     FFactory.checkNoModifiers(vs, 'ValueSetChecker.prepare', 'ValueSet');
@@ -1175,7 +1178,7 @@ begin
               FOpContext.addNote(FValueSet, 'CodeSystem found: '+TTerminologyOperationContext.renderCoded(cs)+' for '+TTerminologyOperationContext.renderCoded(cc.systemUri, v));
               checkCanonicalStatus(path, op, cs, FValueSet);
               ver := cs.version;
-              checkSupplements(FOpContext, cs, cc);
+              checkSupplements(cs, cc);
               contentMode := cs.contentMode;
 
               if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, inactive, normalForm, vstatus, op, vcc) then
@@ -1221,7 +1224,7 @@ begin
               if (cs = nil) then
                 raise ETerminologyError.Create('No Match for '+cc.systemUri+'|'+cc.version+' in '+FOthers.AsText, itUnknown);
               checkCanonicalStatus(path, op, cs, FValueSet);
-              checkSupplements(FOpContext, cs, cc);
+              checkSupplements(cs, cc);
               ver := cs.version;
               contentMode := cs.contentMode;
               excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, inactive, normalForm, vstatus, op, vcc);
@@ -1438,6 +1441,30 @@ begin
   end;
 
   result := false;
+end;
+
+procedure TValueSetChecker.checkSupplementsExist(vs: TFHIRValueSetW);
+var
+  inc : TFhirValueSetComposeIncludeW;
+  cs : TCodeSystemProvider;
+  ts : TStringList;
+  s : String;
+begin
+  for inc in vs.includes do
+  begin
+    if inc.systemUri <> '' then
+    begin
+      cs := findCodeSystem(inc.systemUri, inc.version, FParams, [cscmComplete, cscmFragment], true);
+      if (cs <> nil) then
+      begin
+        try
+          checkSupplements(cs, nil);
+        finally
+          cs.free;
+        end;
+      end;
+    end;
+  end;
 end;
 
 function hasMessage(params : TFhirParametersW; msg : String) : boolean;
@@ -1751,10 +1778,20 @@ begin
                      if ts.indexOf(vs) = -1 then
                      begin
                        ts.add(vs);
-                       m := FI18N.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [c.code, ws, prov.version]);
-                       cause := itCodeInvalid;
-                       msg(m);
-                       op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
+                       if (prov.contentMode = cscmComplete) then
+                       begin
+                         m := FI18N.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [c.code, ws, prov.version]);
+                         cause := itCodeInvalid;
+                         msg(m);
+                         op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
+                       end
+                       else
+                       begin
+                         m := FI18N.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [c.code, ws, prov.version]);
+                         cause := itCodeInvalid;
+                         msg(m);
+                         op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
+                       end;
                      end;
                    end
                    else
@@ -2019,7 +2056,10 @@ begin
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
         if (not FParams.membershipOnly) then
-          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
+          if cs.contentMode <> cscmComplete then
+            op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
+          else
+            op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode);
       end
       else if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
       begin
@@ -3523,7 +3563,7 @@ begin
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
-          checkSupplements(FOpContext, cs, cset);
+          checkSupplements(cs, cset);
           checkCanonicalStatus(expansion, cs, FValueSet);
           sv := canonical(cs.systemUri, cs.version);
           if not expansion.hasParam('used-codesystem', sv) then
@@ -3859,7 +3899,7 @@ begin
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
-          checkSupplements(FOpContext, cs, cset);
+          checkSupplements(cs, cset);
           checkCanonicalStatus(expansion, cs, FValueSet);
           sv := canonical(cs.systemUri, cs.version);
           if not expansion.hasParam('used-codesystem', sv) then
