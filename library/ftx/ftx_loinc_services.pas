@@ -1164,7 +1164,13 @@ begin
     else if (prop = 'concept') and (op in [foEqual]) then // work around for misuse in VSAC
       result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where Code = '''+sqlwrapString(value)+''' order by CodeKey ASC',
         'select count(CodeKey) from Codes where Code = '''+sqlwrapString(value)+''' and CodeKey = ''', forExpansion)
-    else if (prop = 'concept') and (op in [foIn]) then // work around for misuse in VSAC         
+    else if (prop = 'code') and (op in [foIsA, foDescendentOf]) then // work around for misuse in VSAC
+      result := FilterBySQL(opContext, c, d, 'select DescendentKey as Key from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by DescendentKey ASC',
+        'select count(DescendentKey) from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and DescendentKey = ', forExpansion)
+    else if (prop = 'code') and (op in [foEqual]) then
+      result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where Code = '''+sqlwrapString(value)+''' order by CodeKey ASC',
+        'select count(CodeKey) from Codes where Code = '''+sqlwrapString(value)+''' and CodeKey = ''', forExpansion)
+    else if (prop = 'concept') and (op in [foIn]) then // work around for misuse in VSAC
     begin
       s := commaListOfCodes(value);
       result := FilterBySQL(opContext, c, d, 'select CodeKey as Key from Codes where Code in ('+s+') order by CodeKey ASC',
