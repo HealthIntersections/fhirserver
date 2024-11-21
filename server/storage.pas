@@ -1234,9 +1234,9 @@ begin
         oConf.url := 'http://fhir.healthintersections.com.au/open/TerminologyCapabilities/tx';
 
       oConf.version := TX_SERVER_VERSION;
-      oConf.name := 'FHIRReferenceServerTeminologyCapabilities';
-      oConf.title := 'FHIR Reference Server Teminology Capability Statement';
-      oConf.description := 'Standard Teminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
+      oConf.name := 'FHIRReferenceServerTerminologyCapabilities';
+      oConf.title := 'FHIR Reference Server Terminology Capability Statement';
+      oConf.description := 'Standard Terminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
 
