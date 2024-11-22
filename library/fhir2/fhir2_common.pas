@@ -357,6 +357,7 @@ type
     procedure listTypes(interactions : TFHIRInteractions; names : TStrings); override;
     procedure listSearchParams(name : String; list : TFslList<TFHIRSearchParamDefinitionW>); override;
     procedure addInstantiates(url : String); override;
+    procedure addTxFeature(version : String); override;
   end;
 
   { TFhirElementDefinition2 }
@@ -1644,6 +1645,22 @@ end;
 procedure TFHIRCapabilityStatement2.addInstantiates(url: String);
 begin
   // ignored here
+end;
+
+procedure TFHIRCapabilityStatement2.addTxFeature(version: String);
+var
+  ext1, ext2, ext3 : TFHIRExtension;
+begin
+  ext1 := statement.addExtension('http://hl7.org/fhir/uv/application-feature/StructureDefinition/feature');
+  ext2 := ext1.addExtension('definition');
+  ext2.value := TFHIRUri.create('http://hl7.org/fhir/uv/tx-tests/FeatureDefinition/test-version');
+  ext2 := ext1.addExtension('value');
+  ext2.value := TFHIRCode.create(version);
+  ext2 := ext1.addExtension('qualifier');
+  ext3 := ext2.addExtension('name');
+  ext3.value := TFHIRCode.create('mode');
+  ext3 := ext2.addExtension('value');
+  ext3.value := TFHIRCode.create('tx.fhir.org');
 end;
 
 procedure TFHIRCapabilityStatement2.addOperation(name, url: String);

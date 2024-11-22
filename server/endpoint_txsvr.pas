@@ -52,7 +52,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, 
-  telnet_server, kernel_thread, server_stats, xig_provider,
+  telnet_server, kernel_thread, server_stats, xig_provider, server_constants,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -2086,6 +2086,9 @@ begin
   rr.addInteraction('search-type', 'Search the value sets');
   rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/ValueSet-validate-code', '');
   rr.addOperation('expand', 'http://hl7.org/fhir/OperationDefinition/ValueSet-expand', '');
+
+  conf.addInstantiates('http://hl7.org/fhir/CapabilityStatement/terminology-server');
+  conf.addTxFeature(TX_TESTS_VERSION);
 end;
 
 function TTerminologyServerWebServer.factory: TFHIRFactory;

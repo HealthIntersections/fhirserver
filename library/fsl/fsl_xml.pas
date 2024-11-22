@@ -2049,7 +2049,7 @@ begin
           readInstruction(e);
       end;
       s := ReadToken(false);
-      rule(s = e.Name, 'Element name mismatch (start: "'+e.Name+'"/ end: "'+s+'")');
+      rule(s = e.Name, 'Element name mismatch (start: "'+e.Name+'"/ end: "'+s+'" at text "'+e.allText+'")');
       s := Readtoken(true);
       rule(s = '>', 'Element "'+e.Name+'" not terminated properly');
     end;

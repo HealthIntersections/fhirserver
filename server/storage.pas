@@ -989,9 +989,6 @@ begin
         end;
         html.append('</ul>'#13#10);
 
-        if ServerContext.ResConfig.ContainsKey('CodeSystem') and ServerContext.ResConfig['CodeSystem'].Supported and ServerContext.ResConfig['CodeSystem'].Supported then
-          oConf.addInstantiates('http://hl7.org/fhir/CapabilityStatement/terminology-server');
-
         html.append('</div>'#13#10);
         // operations
         factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(langList, xppReject, [], html.AsString));
@@ -1234,9 +1231,9 @@ begin
         oConf.url := 'http://fhir.healthintersections.com.au/open/TerminologyCapabilities/tx';
 
       oConf.version := TX_SERVER_VERSION;
-      oConf.name := 'FHIRReferenceServerTeminologyCapabilities';
-      oConf.title := 'FHIR Reference Server Teminology Capability Statement';
-      oConf.description := 'Standard Teminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
+      oConf.name := 'FHIRReferenceServerTerminologyCapabilities';
+      oConf.title := 'FHIR Reference Server Terminology Capability Statement';
+      oConf.description := 'Standard Terminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
 

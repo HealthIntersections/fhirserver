@@ -639,6 +639,7 @@ type
     procedure listTypes(interactions : TFHIRInteractions; names : TStrings); virtual; abstract;
     procedure listSearchParams(name : String; list : TFslList<TFHIRSearchParamDefinitionW>); virtual; abstract;
     procedure addInstantiates(url : String); virtual; abstract;
+    procedure addTxFeature(version : String); virtual; abstract;
   end;
 
   TFhirParametersParameterW = class (TFHIRXVersionElementWrapper)
