@@ -1564,6 +1564,7 @@ type
     FFhirObjectVersion : TFHIRVersion;
     FFhirType : String;
     FId  : String;
+    FIgnoreHtml: boolean;
     FPackageId: String;
     FSupplements: String;
     FUrl : String;
@@ -1592,6 +1593,7 @@ type
     property supplements : String read FSupplements;
     property content : String read FContent;
     property valueSet : String read FValueSet;
+    property ignoreHtml : boolean read FIgnoreHtml write FIgnoreHtml;
 
     property resourceV : TFHIRResourceV read GetResourceV;
     property resourceW : TFHIRXVersionResourceWrapper read getResourceW;

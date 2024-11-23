@@ -202,6 +202,7 @@ begin
 
   p := FFactory.makeParser(FWorker, ffJson, nil);
   try
+    p.IgnoreHtml := ignoreHtml;
     stream := TFileStream.Create(FInfo.filename, fmOpenRead + fmShareDenyWrite);
     try
       try

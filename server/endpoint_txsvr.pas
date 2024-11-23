@@ -1452,6 +1452,7 @@ begin
                 Logging.continue('.');
               res := factory.makeProxy(npm.name+'#'+npm.version, pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
               try
+                res.ignoreHtml := true;
                 loadResource(res, ignoreEmptyCodeSystems);
               finally
                 res.free;
