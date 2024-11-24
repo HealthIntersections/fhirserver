@@ -3438,38 +3438,41 @@ begin
   begin
     cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
     try
-
-      if cs.contentMode <> cscmComplete then
+      if (cs = nil) then
+        // nothing
+      else
       begin
-        if cs.contentMode = cscmNotPresent then
-          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' has no content, so this expansion cannot be performed', itInvalid)
-        else if cs.contentMode = cscmNotPresent then
-          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' defines a supplement, so this expansion cannot be performed', itInvalid)
-        else if FParams.incompleteOK then
-          exp.addParamUri(CODES_TFhirCodeSystemContentMode[cs.contentMode], cs.systemUri+'|'+cs.version)
-        else
-          raise ETerminologyError.create('The code system definition for '+cset.systemUri+' is a '+CODES_TFhirCodeSystemContentMode[cs.contentMode]+', so this expansion is not permitted unless the expansion parameter "incomplete-ok" has a value of "true"', itInvalid);
-      end;
-
-      if (not cset.hasConcepts) and (not cset.hasFilters) then
-      begin
-        if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion then
+        if cs.contentMode <> cscmComplete then
         begin
-          checkCanExpandValueSet(cs.SpecialEnumeration, '');
-        end
-        else if filter.Null then // special case - add all the code system
+          if cs.contentMode = cscmNotPresent then
+            raise ETerminologyError.create('The code system definition for '+cset.systemUri+' has no content, so this expansion cannot be performed', itInvalid)
+          else if cs.contentMode = cscmNotPresent then
+            raise ETerminologyError.create('The code system definition for '+cset.systemUri+' defines a supplement, so this expansion cannot be performed', itInvalid)
+          else if FParams.incompleteOK then
+            exp.addParamUri(CODES_TFhirCodeSystemContentMode[cs.contentMode], cs.systemUri+'|'+cs.version)
+          else
+            raise ETerminologyError.create('The code system definition for '+cset.systemUri+' is a '+CODES_TFhirCodeSystemContentMode[cs.contentMode]+', so this expansion is not permitted unless the expansion parameter "incomplete-ok" has a value of "true"', itInvalid);
+        end;
+
+        if (not cset.hasConcepts) and (not cset.hasFilters) then
         begin
-          if cs.isNotClosed(FOpContext, filter) then
-            if cs.SpecialEnumeration <> '' then
-              raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
-            else
-              raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
+          if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion then
+          begin
+            checkCanExpandValueSet(cs.SpecialEnumeration, '');
+          end
+          else if filter.Null then // special case - add all the code system
+          begin
+            if cs.isNotClosed(FOpContext, filter) then
+              if cs.SpecialEnumeration <> '' then
+                raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
+              else
+                raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
 
-          if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
-            raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)])));
-        end
+            if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
+              raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)])));
+          end
+        end;
       end;
-
     finally
       cs.free;
     end;
@@ -3562,105 +3565,229 @@ begin
       try
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
-          //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
-          checkSupplements(cs, cset);
-          checkCanonicalStatus(expansion, cs, FValueSet);
-          sv := canonical(cs.systemUri, cs.version);
-          if not expansion.hasParam('used-codesystem', sv) then
-            expansion.addParamUri('used-codesystem', sv);
-          if not expansion.hasParam('version', sv) then
-            expansion.addParamUri('version', sv);
-
-          for s in cset.valueSets do
+          if cs = nil then
+          else
           begin
-            //Logging.log(' ...import value set '+s);
-            deadCheck('processCodes#3');
-            f := nil;
-            FOpContext.log('import2 value set '+s);
-            // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
-            // this saves lots of overhead we don't need. But it does require simple cases (though they are common). So we have a look
-            // at the value set, and see whether we can short cut it. If we can, it's just another filter (though we can't iterate on it)
-            vs := FOnGetValueSet(self, s, '');
-            try
-              if (vs <> nil) then
-                f := makeFilterForValueSet(cs, vs);
-              if (f <> nil) then
-                filters.add(f)
-              else
-                valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed)));
-            finally
-              vs.free;
-            end;
-          end;
+            //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
+            checkSupplements(cs, cset);
+            checkCanonicalStatus(expansion, cs, FValueSet);
+            sv := canonical(cs.systemUri, cs.version);
+            if not expansion.hasParam('used-codesystem', sv) then
+              expansion.addParamUri('used-codesystem', sv);
+            if not expansion.hasParam('version', sv) then
+              expansion.addParamUri('version', sv);
 
-          if (not cset.hasConcepts) and (not cset.hasFilters) then
-          begin
-            if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion and filters.Empty then
+            for s in cset.valueSets do
             begin
-              FOpContext.log('import special value set '+s);
-              base := expandValueSet(cs.SpecialEnumeration, '', filter.filter, dependencies, notClosed);
+              //Logging.log(' ...import value set '+s);
+              deadCheck('processCodes#3');
+              f := nil;
+              FOpContext.log('import2 value set '+s);
+              // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
+              // this saves lots of overhead we don't need. But it does require simple cases (though they are common). So we have a look
+              // at the value set, and see whether we can short cut it. If we can, it's just another filter (though we can't iterate on it)
+              vs := FOnGetValueSet(self, s, '');
               try
-                expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
-                importValueSet(base, expansion, valueSets, 0);
-              finally
-                base.free;
-              end;
-              notClosed := true;
-            end
-            else if filter.Null then // special case - add all the code system
-            begin
-              FOpContext.log('add whole code system');
-              if cs.isNotClosed(FOpContext, filter) then
-                if cs.SpecialEnumeration <> '' then
-                  raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
+                if (vs <> nil) then
+                  f := makeFilterForValueSet(cs, vs);
+                if (f <> nil) then
+                  filters.add(f)
                 else
-                  raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
-
-              iter := cs.getIterator(FOpContext, nil);
-              try
-                if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
-                  raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)])));
-                tcount := 0;
-                while iter.more do
-                begin                
-                  deadCheck('processCodes#3a');
-                  c := cs.getNextContext(FOpContext, iter);
-                  try
-                    if passesFilters(c, 0) then
-                      inc(tcount, includeCodeAndDescendants(cs, c, expansion, valueSets, nil, excludeInactive, vsSrc.url));
-                  finally
-                    c.free;
-                  end;
-                end;
+                  valueSets.add(TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed)));
               finally
-                iter.free;
+                vs.free;
               end;
-              AddToTotal(tcount);
-            end
-            else
+            end;
+
+            if (not cset.hasConcepts) and (not cset.hasFilters) then
             begin
-              FOpContext.log('prepare filters');
-              NoTotal;
-              if cs.isNotClosed(FOpContext, filter) then
-                notClosed := true;
-              prep := cs.getPrepContext(FOpContext);
-              try
-                ctxt := cs.searchFilter(FOpContext, filter, prep, false);
+              if (cs.SpecialEnumeration <> '') and FParams.limitedExpansion and filters.Empty then
+              begin
+                FOpContext.log('import special value set '+s);
+                base := expandValueSet(cs.SpecialEnumeration, '', filter.filter, dependencies, notClosed);
                 try
-                  cs.prepare(FOpContext, prep);
-                  FOpContext.log('iterate filters');
-                  while cs.FilterMore(FOpContext, ctxt) do
+                  expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                  importValueSet(base, expansion, valueSets, 0);
+                finally
+                  base.free;
+                end;
+                notClosed := true;
+              end
+              else if filter.Null then // special case - add all the code system
+              begin
+                FOpContext.log('add whole code system');
+                if cs.isNotClosed(FOpContext, filter) then
+                  if cs.SpecialEnumeration <> '' then
+                    raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
+                  else
+                    raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
+
+                iter := cs.getIterator(FOpContext, nil);
+                try
+                  if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
+                    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)])));
+                  tcount := 0;
+                  while iter.more do
                   begin
-                    deadCheck('processCodes#4');
-                    c := cs.FilterConcept(FOpContext, ctxt);
+                    deadCheck('processCodes#3a');
+                    c := cs.getNextContext(FOpContext, iter);
                     try
                       if passesFilters(c, 0) then
+                        inc(tcount, includeCodeAndDescendants(cs, c, expansion, valueSets, nil, excludeInactive, vsSrc.url));
+                    finally
+                      c.free;
+                    end;
+                  end;
+                finally
+                  iter.free;
+                end;
+                AddToTotal(tcount);
+              end
+              else
+              begin
+                FOpContext.log('prepare filters');
+                NoTotal;
+                if cs.isNotClosed(FOpContext, filter) then
+                  notClosed := true;
+                prep := cs.getPrepContext(FOpContext);
+                try
+                  ctxt := cs.searchFilter(FOpContext, filter, prep, false);
+                  try
+                    cs.prepare(FOpContext, prep);
+                    FOpContext.log('iterate filters');
+                    while cs.FilterMore(FOpContext, ctxt) do
+                    begin
+                      deadCheck('processCodes#4');
+                      c := cs.FilterConcept(FOpContext, ctxt);
+                      try
+                        if passesFilters(c, 0) then
+                        begin
+                          cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
+                          try
+                            listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
+                            includeCode(cs, nil, cs.systemUri, cs.version, cs.code(FOpContext, c),  cs.isAbstract(FOpContext, c), cs.isInactive(FOpContext, c), cs.deprecated(FOpContext, c),
+                            cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, valueSets, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
+                          finally
+                            cds.free;
+                          end;
+                        end;
+                      finally
+                        c.free;
+                      end;
+                    end;
+                    FOpContext.log('iterate filters done');
+                  finally
+                    ctxt.free;
+                  end;
+                finally
+                  prep.free;
+                end;
+              end;
+            end;
+
+            if (cset.hasConcepts) then
+            begin
+              FOpContext.log('iterate concepts');
+              cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
+              try
+                tcount := 0;
+                for cc in cset.concepts.forEnum do
+                begin
+                  deadCheck('processCodes#3');
+                  cds.Clear;
+                  FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
+                  cctxt := cs.locate(FOpContext, cc.code, FAllAltCodes);
+                  try
+                    if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(FOpContext, cctxt)) and passesFilters(cctxt, 0) then
+                    begin
+                      listDisplays(cds, cs, cctxt);
+                      listDisplays(cds, cc, vsSrc);
+                      if filter.passes(cds) or filter.passes(cc.code) then
                       begin
+                        inc(tcount);
+                        ov := cc.itemWeight;
+                        if ov = '' then
+                          ov := cs.itemWeight(FOpContext, cctxt);
+                        includeCode(cs, nil, cs.systemUri, cs.version, cc.code, cs.isAbstract(FOpContext, cctxt), cs.isInactive(FOpContext, cctxt), cs.deprecated(FOpContext, cctxt), cds,
+                             cs.Definition(FOpContext, cctxt), ov, expansion, valueSets, cs.getExtensions(FOpContext, cctxt), cc.getAllExtensionsW, cs.getProperties(FOpContext, cctxt), nil, excludeInactive, vsSrc.url);
+                      end;
+                    end;
+                  finally
+                    cctxt.free;
+                  end;
+                end;
+                AddToTotal(tcount);
+              finally
+                cds.free;
+              end;
+              FOpContext.log('iterate concepts done');
+            end;
+
+            if cset.hasFilters then
+            begin
+              FOpContext.log('prepare filters');
+              fcl := cset.filters;
+              try
+                prep := cs.getPrepContext(FOpContext);
+                try
+                  offset := 0;
+                  if not filter.null then
+                  begin
+                    filters.Insert(0, cs.searchFilter(FOpContext, filter, prep, true)); // this comes first, because it imposes order
+                    inc(offset);
+                  end;
+
+                  if cs.specialEnumeration <> '' then
+                  begin
+                    filters.Insert(offset, cs.specialFilter(FOpContext, prep, true));
+                    expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
+                    notClosed := true;
+                  end;
+                  for i := 0 to fcl.count - 1 do
+                  begin
+                    deadCheck('processCodes#4a');
+                    fc := fcl[i];
+                    ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
+                    f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
+                    if f = nil then
+                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
+                    filters.Insert(offset, f);
+                    if cs.isNotClosed(FOpContext, filter, f) then
+                      notClosed := true;
+                    if (cset.filterCount = 1) and (not excludeInactive) and not FParams.activeOnly then
+                      AddToTotal(cs.filterSize(FOpContext, f));
+                    //else
+                      //NoTotal;
+                  end;
+
+                  inner := cs.prepare(FOpContext, prep);
+                  count := 0;
+                  FOpContext.log('iterate filters');
+                  While cs.FilterMore(FOpContext, filters[0]) do
+                  begin
+                    deadCheck('processCodes#5');
+                    c := cs.FilterConcept(FOpContext, filters[0]);
+                    try
+                      ok := (not FParams.activeOnly or not cs.IsInactive(FOpContext, c)) and (inner or passesFilters(c, 1));
+                      if ok then
+                      begin
+                        inc(count);
                         cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                         try
-                          listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                          includeCode(cs, nil, cs.systemUri, cs.version, cs.code(FOpContext, c),  cs.isAbstract(FOpContext, c), cs.isInactive(FOpContext, c), cs.deprecated(FOpContext, c),
-                          cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, valueSets, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
+                          if passesImports(valueSets, cs.systemUri, cs.code(FOpContext, c), 0) then
+                          begin
+                            listDisplays(cds, cs, c);
+                            if cs.canParent then
+                              parent := FMap[key(cs.systemUri, cs.parent(FOpContext, c))]
+                            else
+                            begin
+                              FCanBeHierarchy := false;
+                              parent := nil;
+                            end;
+                            for code in cs.listCodes(FOpContext, c, FParams.altCodeRules) do
+                              includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, c), cs.IsInactive(FOpContext, c),
+                                cs.deprecated(FOpContext, c), cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, nil, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
+                          end;
                         finally
                           cds.free;
                         end;
@@ -3669,133 +3796,13 @@ begin
                       c.free;
                     end;
                   end;
-                  FOpContext.log('iterate filters done');
                 finally
-                  ctxt.free;
+                  prep.free;
                 end;
+                FOpContext.log('iterate filters done');
               finally
-                prep.free;
+                fcl.free;
               end;
-            end;
-          end;
-
-          if (cset.hasConcepts) then
-          begin
-            FOpContext.log('iterate concepts');
-            cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
-            try
-              tcount := 0;
-              for cc in cset.concepts.forEnum do
-              begin
-                deadCheck('processCodes#3');
-                cds.Clear;
-                FFactory.checkNoModifiers(cc, 'ValueSetExpander.processCodes', 'set concept reference');
-                cctxt := cs.locate(FOpContext, cc.code, FAllAltCodes);
-                try
-                  if (cctxt <> nil) and (not FParams.activeOnly or not cs.IsInactive(FOpContext, cctxt)) and passesFilters(cctxt, 0) then
-                  begin
-                    listDisplays(cds, cs, cctxt);
-                    listDisplays(cds, cc, vsSrc);
-                    if filter.passes(cds) or filter.passes(cc.code) then
-                    begin
-                      inc(tcount);
-                      ov := cc.itemWeight;
-                      if ov = '' then
-                        ov := cs.itemWeight(FOpContext, cctxt);
-                      includeCode(cs, nil, cs.systemUri, cs.version, cc.code, cs.isAbstract(FOpContext, cctxt), cs.isInactive(FOpContext, cctxt), cs.deprecated(FOpContext, cctxt), cds,
-                           cs.Definition(FOpContext, cctxt), ov, expansion, valueSets, cs.getExtensions(FOpContext, cctxt), cc.getAllExtensionsW, cs.getProperties(FOpContext, cctxt), nil, excludeInactive, vsSrc.url);
-                    end;
-                  end;
-                finally
-                  cctxt.free;
-                end;
-              end;
-              AddToTotal(tcount);
-            finally
-              cds.free;
-            end;
-            FOpContext.log('iterate concepts done');
-          end;
-
-          if cset.hasFilters then
-          begin
-            FOpContext.log('prepare filters');
-            fcl := cset.filters;
-            try
-              prep := cs.getPrepContext(FOpContext);
-              try
-                offset := 0;
-                if not filter.null then
-                begin
-                  filters.Insert(0, cs.searchFilter(FOpContext, filter, prep, true)); // this comes first, because it imposes order
-                  inc(offset);
-                end;
-
-                if cs.specialEnumeration <> '' then
-                begin
-                  filters.Insert(offset, cs.specialFilter(FOpContext, prep, true));
-                  expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
-                  notClosed := true;
-                end;
-                for i := 0 to fcl.count - 1 do
-                begin
-                  deadCheck('processCodes#4a');
-                  fc := fcl[i];
-                  ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
-                  if f = nil then
-                    raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
-                  filters.Insert(offset, f);
-                  if cs.isNotClosed(FOpContext, filter, f) then
-                    notClosed := true;
-                  if (cset.filterCount = 1) and (not excludeInactive) and not FParams.activeOnly then
-                    AddToTotal(cs.filterSize(FOpContext, f));
-                  //else
-                    //NoTotal;
-                end;
-
-                inner := cs.prepare(FOpContext, prep);
-                count := 0;
-                FOpContext.log('iterate filters');
-                While cs.FilterMore(FOpContext, filters[0]) do
-                begin
-                  deadCheck('processCodes#5');
-                  c := cs.FilterConcept(FOpContext, filters[0]);
-                  try
-                    ok := (not FParams.activeOnly or not cs.IsInactive(FOpContext, c)) and (inner or passesFilters(c, 1));
-                    if ok then
-                    begin
-                      inc(count);
-                      cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
-                      try
-                        if passesImports(valueSets, cs.systemUri, cs.code(FOpContext, c), 0) then
-                        begin
-                          listDisplays(cds, cs, c);
-                          if cs.canParent then
-                            parent := FMap[key(cs.systemUri, cs.parent(FOpContext, c))]
-                          else
-                          begin
-                            FCanBeHierarchy := false;
-                            parent := nil;
-                          end;
-                          for code in cs.listCodes(FOpContext, c, FParams.altCodeRules) do
-                            includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, c), cs.IsInactive(FOpContext, c),
-                              cs.deprecated(FOpContext, c), cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, nil, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
-                        end;
-                      finally
-                        cds.free;
-                      end;
-                    end;
-                  finally
-                    c.free;
-                  end;
-                end;
-              finally
-                prep.free;
-              end;
-              FOpContext.log('iterate filters done');
-            finally
-              fcl.free;
             end;
           end;
         finally
