@@ -483,8 +483,6 @@ var
 begin
   if (url = '') then
     exit(nil);
-  if (url = URI_NDC) then
-    exit(nil);
 
   result := nil;
   prov := nil;
