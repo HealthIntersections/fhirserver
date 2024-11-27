@@ -212,6 +212,8 @@ type
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
     procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; values: TStringArray; List: TFhirCodeSystemProviderFilterContext; include : boolean);
     procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByEquality(positive : boolean; src : TFhirCodeSystemConceptListW; code: string; list: TFhirCodeSystemProviderFilterContext);
+
     procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -1608,6 +1610,20 @@ begin
   end;
 end;
 
+procedure TFhirCodeSystemProvider.iterateConceptsByEquality(positive: boolean; src: TFhirCodeSystemConceptListW; code: string;                        list: TFhirCodeSystemProviderFilterContext);
+var
+  c : TFhirCodeSystemConceptW;
+  ok : boolean;
+begin
+  for c in src do
+  begin
+    ok := (c.code = code) = positive;
+    if ok then
+      list.Add(c.Link, 0);
+    iterateConceptsByEquality(positive, c.conceptList, code, list);
+  end;
+end;
+
 function toStringArray(value : String) : TStringArray; overload;
 begin
   setLength(result, 1);
@@ -1632,7 +1648,7 @@ var
   cc : TFhirCodeSystemConceptW;
   includeRoot : boolean;
 begin
-  if (op in [foIsA, foDescendentOf]) and (prop = 'concept') then
+  if (op in [foIsA, foDescendentOf]) and ((prop = 'concept') or (prop = 'code')) then
   begin
     code := doLocate(value, nil);
     try
@@ -1655,7 +1671,7 @@ begin
       code.free;
     end;
   end
-  else if (op in [foIsNotA]) and (prop = 'concept') then
+  else if (op in [foIsNotA]) and  ((prop = 'concept') or (prop = 'code')) then
   begin
     code := doLocate(value, nil);
     try
@@ -1676,7 +1692,7 @@ begin
       code.free;
     end;
   end
-  else if (op = foIn) and (prop = 'concept') then
+  else if (op = foIn) and  ((prop = 'concept') or (prop = 'code')) then
   begin
     result := TFhirCodeSystemProviderFilterContext.Create;
     try
@@ -1712,6 +1728,16 @@ begin
           iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, nonLeafCodes, nil, true)
         else
           iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, leafCodes, nil, true);
+      result.link;
+    finally
+      result.free;
+    end;
+  end
+  else if (op = foEqual) and (prop = 'code') then
+  begin
+    result := TFhirCodeSystemProviderFilterContext.Create;
+    try
+      iterateConceptsByEquality(true, FCs.CodeSystem.conceptList, value, result as TFhirCodeSystemProviderFilterContext);
       result.link;
     finally
       result.free;

@@ -160,7 +160,7 @@ begin
   loadSQLite;
   assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
   if not FAutoCreate then
-    if not FileExists(FFIlename) then
+    if not FileExists(FFilename) then
       raise EDBException.Create('SQLite Database '+FFilename+' not found');
 end;
 
