@@ -126,12 +126,6 @@ cd ..
 :: =========================================================================================
 :: now time to do the github release
 
-copy release-notes-template.md release-notes.md
-
-echo ## GitHub Push##
-git commit -a -m "Release Version %1"
-git push 
-
 echo ## GitHub Release ##
 
 install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirserver-win64-%1.zip#Windows Server Installer Zip" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
@@ -139,6 +133,12 @@ install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windo
 echo ## GitHub Release Done ##
 
 utilities\codescan\codescan.exe -next-version %1
+
+copy release-notes-template.md release-notes.md
+
+echo ## GitHub Push##
+git commit -a -m "Release Version %1"
+git push 
 
 :: =========================================================================================
 :: echo Post note on Zulip
