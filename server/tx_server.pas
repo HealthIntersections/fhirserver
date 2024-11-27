@@ -562,7 +562,7 @@ begin
   if id.Contains('|') then
     id := id.Substring(0, id.IndexOf('|'));
 
-  if id.StartsWith('http://snomed.info/') then
+  if (CommonTerminologies.DefSnomed <> nil) and (id.StartsWith('http://snomed.info/')) then
   begin
     vs := CommonTerminologies.DefSnomed.buildValueSet(Factory, id);
     if (vs = nil) then
@@ -575,7 +575,7 @@ begin
       end;
     end;
   end
-  else if id.StartsWith('http://loinc.org/vs/LP') or id.StartsWith('http://loinc.org/vs/LL') then
+  else if (CommonTerminologies.Loinc <> nil) and (id.StartsWith('http://loinc.org/vs/LP') or id.StartsWith('http://loinc.org/vs/LL')) then
     vs := CommonTerminologies.Loinc.buildValueSet(Factory, id)
   else if id = 'http://loinc.org/vs' then
     vs := CommonTerminologies.Loinc.buildValueSet(Factory, '')
