@@ -66,12 +66,16 @@ type
   private
     FCodes : TFslList<TCountryCodeConcept>;
     FMap : TFslMap<TCountryCodeConcept>;
+    FSupplements : TFslList<TFHIRCodeSystemW>;
 
     procedure load;
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; codes : TFslList<TCountryCodeConcept>; map : TFslMap<TCountryCodeConcept>);
     destructor Destroy; Override;
     Function Link : TCountryCodeServices; overload;
+
+    function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TCodeSystemProvider; override;
 
     function description : String; override;
     function TotalCount : integer;  override;
@@ -116,6 +120,13 @@ begin
   FMap := TFslMap<TCountryCodeConcept>.Create('tx.countrycode');
   FMap.defaultValue := nil;
   Load;
+end;
+
+constructor TCountryCodeServices.Create(languages: TIETFLanguageDefinitions; i18n: TI18nSupport; codes: TFslList<TCountryCodeConcept>; map: TFslMap<TCountryCodeConcept>);
+begin
+  inherited create(languages, i18n);;
+  FCodes := codes;
+  FMap := map;
 end;
 
 
@@ -947,6 +958,7 @@ end;
 
 destructor TCountryCodeServices.Destroy;
 begin
+  FSupplements.free;
   FMap.free;
   FCodes.free;
   inherited;
@@ -958,8 +970,22 @@ begin
 end;
 
 procedure TCountryCodeServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
+var
+  supp : TFhirCodeSystemW;
+  defn : TFhirCodeSystemConceptW;
+  ccd : TFhirCodeSystemConceptDesignationW;
 begin
   list.addDesignation(true, true, '', Display(opContext, context, nil));
+  if (FSupplements <> nil) then
+  begin
+    for supp in FSupplements do
+    begin
+      defn := supp.getCode(TCountryCodeConcept(context).code);
+      if (defn <> nil) then
+        for ccd in defn.designations.forEnum do
+          list.addDesignation(ccd);
+    end;
+  end;
 end;
 
 function TCountryCodeServices.IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean;
@@ -975,6 +1001,19 @@ end;
 function TCountryCodeServices.Link: TCountryCodeServices;
 begin
   result := TCountryCodeServices(Inherited Link);
+end;
+
+function TCountryCodeServices.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TCodeSystemProvider;
+var
+  res : TCountryCodeServices;
+begin
+  res := TCountryCodeServices.create(FLanguages.link, FI18n.link, FCodes.link, FMap.link);
+  try
+    res.FSupplements := supplements.link;
+    result := res.link;
+  finally
+    res.free;
+  end;
 end;
 
 function TCountryCodeServices.getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
