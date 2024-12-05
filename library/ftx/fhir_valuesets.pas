@@ -96,6 +96,7 @@ Type
     FValueSet : TFHIRValueSetW;
 
     function findValueSet(url, version : String) : TFHIRValueSetW;
+    function pinValueSet(url : String) : String;
   protected
     FAllAltCodes : TAlternateCodeOptions;
 
@@ -336,6 +337,17 @@ begin
     exit(r.link as TFHIRValueSetW);
 
   result := FOnGetValueSet(self, url, version);
+end;
+
+function TValueSetWorker.pinValueSet(url: String): String;
+var
+  s : String;
+begin
+  result := url;
+  if FParams.hasValueSetVersionRules then
+    for s in FParams.getValueSetVersionRules do
+      if (s.startsWith(url+'|')) then
+        exit(s);
 end;
 
 function TValueSetWorker.sizeInBytesV(magic : integer) : cardinal;
@@ -679,7 +691,7 @@ procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComp
 var
   other: TFhirValueSetW;
   checker: TValueSetChecker;
-  s : string;
+  s, u : string;
   ccf: TFhirValueSetComposeIncludeFilterW;
   cs: TCodeSystemProvider;
   i : integer;
@@ -687,8 +699,9 @@ var
 begin
   deadCheck('prepareConceptSet');
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
-  for s in cc.valueSets do
+  for u in cc.valueSets do
   begin
+    s := pinValueSet(u);
     deadCheck('prepareConceptSet');
     if not FOthers.ExistsByKey(s) then
     begin
@@ -822,7 +835,7 @@ var
   excluded, ok, bAdd : boolean;
   isabstract : boolean;
   checker : TValueSetChecker;
-  s, v, msg : String;
+  s, v, msg, u : String;
   ics : TFHIRValueSetCodeSystemW;
   ccl : TFhirCodeSystemConceptListW;
   ccc : TFhirValueSetExpansionContainsW;
@@ -1191,9 +1204,10 @@ begin
           end
           else
             result := bFalse;
-          for s in cc.valueSets do
+          for u in cc.valueSets do
           begin
             deadCheck('check#3');
+            s := pinValueSet(u);
             FOpContext.addNote(FValueSet, 'Check included value set '+s);
             checker := TValueSetChecker(FOthers.matches[s]);
             if checker = nil then
@@ -1229,9 +1243,10 @@ begin
               contentMode := cs.contentMode;
               excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, message, inactive, normalForm, vstatus, op, vcc);
             end;
-            for s in cc.valueSets do
+            for u in cc.valueSets do
             begin
               deadCheck('check#5');
+              s := pinValueSet(u);
               checker := TValueSetChecker(FOthers.matches[s]);
               if (cs = nil) then
                 raise ETerminologyError.Create('No Match for '+cc.systemUri+'|'+cc.version+' in '+FOthers.AsText, itUnknown);
@@ -3334,7 +3349,17 @@ begin
   vs := findValueSet(uri, version);
   try
     if vs = nil then
-      raise ETerminologyError.create('Unable to find value set "'+uri+'"', itUnknown);
+    begin
+      if (version = '') and (uri.contains('|')) then
+      begin
+        version := uri.substring(uri.indexof('|')+1);
+        uri := uri.substring(0, uri.indexof('|'));
+      end;
+      if (version = '') then
+        raise ETerminologyError.create(FI18n.translate('VS_EXP_IMPORT_UNK', FLangList, [uri]), itUnknown)
+      else
+        raise ETerminologyError.create(FI18n.translate('VS_EXP_IMPORT_UNK_PINNED', FLangList, [uri, version]), itUnknown);
+    end;
   finally
     vs.free;
   end;
@@ -3351,7 +3376,7 @@ begin
     try
       dependencies.AddStrings(dep);
       if (result = nil) then
-        raise ETerminologyError.create('unable to find value set '+uri, itUnknown);
+        raise ETerminologyError.create(FI18n.translate('VS_EXP_IMPORT_UNK', FLangList, [uri]), itUnknown);
       if result.expansion.hasextension('http://hl7.org/fhir/params/questionnaire-extensions#closed') then
         notClosed := true;
       result.Link;
@@ -3421,15 +3446,16 @@ end;
 procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
 var
   cs : TCodeSystemProvider;
-  s : string;
+  s, u : string;
   imp : boolean;
 begin
   deadCheck('checkSource');
   FFactory.checkNoModifiers(cset,'ValueSetExpander.checkSource', 'set');
   imp := false;
-  for s in cset.valueSets do
+  for u in cset.valueSets do
   begin
     deadCheck('checkSource');
+    s := pinValueSet(u);
     checkCanExpandValueset(s, '');
     imp := true;
   end;
@@ -3492,7 +3518,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, display, ov, code, vsId, sv : String;
+  s, u, display, ov, code, vsId, sv : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -3542,10 +3568,11 @@ begin
 
     if cset.systemUri = '' then
     begin
-      for s in cset.valueSets do
+      for u in cset.valueSets do
       begin
         //Logging.log('Processing '+vsId+', import value set '+s);
         deadCheck('processCodes#2');
+        s := pinValueSet(u);
         FOpContext.log('import value set '+s);
         ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
         try
@@ -3577,10 +3604,11 @@ begin
             if not expansion.hasParam('version', sv) then
               expansion.addParamUri('version', sv);
 
-            for s in cset.valueSets do
+            for u in cset.valueSets do
             begin
               //Logging.log(' ...import value set '+s);
               deadCheck('processCodes#3');
+              s := pinValueSet(u);
               f := nil;
               FOpContext.log('import2 value set '+s);
               // if we can, we can do a short cut evaluation that means we don't have to do a full expansion of the source value set.
@@ -3830,7 +3858,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, display, ov, code, vsId, sv : String;
+  s, u, display, ov, code, vsId, sv : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -3882,8 +3910,9 @@ begin
       if (cset.hasValueSets) then
       begin
         NoTotal;
-        for s in cset.valueSets do
+        for u in cset.valueSets do
         begin
+          s := pinValueSet(u);
           //Logging.log('Processing '+vsId+', import value set '+s);
           deadCheck('processCodes#2');
           ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
@@ -3914,8 +3943,9 @@ begin
           if not expansion.hasParam('version', sv) then
             expansion.addParamUri('version', sv);
 
-          for s in cset.valueSets do
+          for u in cset.valueSets do
           begin
+            s := pinValueSet(u);
             //Logging.log(' ...import value set '+s);
             deadCheck('processCodes#3');
             f := nil;

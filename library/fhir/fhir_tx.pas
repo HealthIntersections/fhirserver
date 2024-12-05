@@ -84,6 +84,7 @@ uses
   TFHIRTxOperationParams = class (TFslObject)
   private
     FVersionRules : TFslList<TFhirExpansionParamsVersionRule>;
+    FValueSetVersionRules : TStringList;
     FactiveOnly: boolean;
     FexcludeNested: boolean;
     FGenerateNarrative: boolean;
@@ -136,6 +137,7 @@ uses
     procedure SetIncompleteOK(value : boolean);
     procedure SetDisplayWarning(value : boolean);
     procedure SetMembershipOnly(value : boolean);
+
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -194,6 +196,9 @@ uses
     function summary : string;
     function verSummary : String;
     function hash : String;
+
+    function hasValueSetVersionRules : boolean;
+    function getValueSetVersionRules : TStringList;
   end;
           
   TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRTxOperationParams; nullOk : boolean) : TCodeSystemProvider of object;
@@ -933,6 +938,7 @@ begin
   FDisplayLanguages.free;
   FProperties.free;
   FDesignations.free;
+  FValueSetVersionRules.free;
   inherited;
 end;
 
@@ -964,6 +970,18 @@ begin
   for t in FVersionRules do
     s := s + t.asString+'|';
   result := inttostr(HashStringToCode32(s));
+end;
+
+function TFHIRTxOperationParams.hasValueSetVersionRules: boolean;
+begin
+  result := FValueSetVersionRules <> nil;
+end;
+
+function TFHIRTxOperationParams.getValueSetVersionRules: TStringList;
+begin
+  if FValueSetVersionRules = nil then
+    FValueSetVersionRules := TStringList.create;
+  result := FValueSetVersionRules;
 end;
 
 function TFHIRTxOperationParams.link: TFHIRTxOperationParams;

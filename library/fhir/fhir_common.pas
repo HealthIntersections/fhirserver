@@ -819,6 +819,17 @@ type
     function link : TFslMetadataResourceList; overload;
   end;
 
+  { TFslMetadataResourceByVersionSorter }
+
+  TFslMetadataResourceByVersionSorter = class (TFslComparer<TFHIRMetadataResourceW>)
+  private
+    FReverse : boolean;
+  protected
+    function Compare(const l, r : TFHIRMetadataResourceW) : integer; override;
+  public
+    constructor create(reverse : boolean);
+  end;
+
   { TFhirCodeSystemW }
 
   TFhirCodeSystemW = class (TFHIRMetadataResourceW)
@@ -3118,6 +3129,29 @@ end;
 function TFslMetadataResourceList.link: TFslMetadataResourceList;
 begin
   result := TFslMetadataResourceList(inherited link);
+end;
+
+{ TFslMetadataResourceByVersionSorter }
+
+function TFslMetadataResourceByVersionSorter.Compare(const l, r: TFHIRMetadataResourceW): integer;
+begin
+  if l.version = r.version then
+    result := 0
+  else if not TSemanticVersion.isValid(l.version) or not TSemanticVersion.isValid(r.version) then
+    result := StringCompare(l.version, r.version)
+  else if TSemanticVersion.isMoreRecent(l.version, r.version) then
+    result := 1
+  else
+    result := -1;
+
+  if FReverse then
+    result := - result;
+end;
+
+constructor TFslMetadataResourceByVersionSorter.create(reverse: boolean);
+begin
+  inherited create;
+  FReverse := reverse;
 end;
 
 { TFHIRImmunizationW }

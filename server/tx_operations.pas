@@ -249,6 +249,7 @@ var
   params : TFhirParametersW;
   needSecure : boolean;
   txResources : TFslMetadataResourceList;
+  matches : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;
 begin
   result := 'Expand ValueSet';
@@ -276,12 +277,22 @@ begin
             url := params.str('url');
             version := request.Parameters['valueSetVersion'];
             txResources := processAdditionalResources(context, manager, nil, params);
-            for mr in txResources do
-              if (mr.url = url) and (mr is TFHIRValueSetW) then
+            matches := TFslMetadataResourceList.create;
+            try
+              for mr in txResources do
               begin
-                vs := (mr as TFHIRValueSetW).link;
-                break;
+                if ((mr.url = url) or (mr.vurl = url)) and (mr is TFHIRValueSetW) then
+                  matches.add(mr.link);
               end;
+              if matches.Count > 0 then
+              begin
+                if matches.count > 1 then
+                  matches.Sort(TFslMetadataResourceByVersionSorter.create(false));
+                vs := (matches[matches.count - 1] as TFHIRValueSetW).link;
+              end;
+            finally
+              matches.free;
+            end;
             if (vs = nil) then
             begin
               if (url.startsWith('ValueSet/')) then
@@ -1364,6 +1375,7 @@ begin
   finally
     list.free;
   end;
+  result.Sort(TFslMetadataResourceByVersionSorter.create(true));
 end;
 
 function TFhirTerminologyOperation.isValidation: boolean;
@@ -1411,6 +1423,8 @@ begin
       result.seeVersionRule(p.valueString, fvmCheck)
     else  if (p.name = 'force-system-version') then
       result.seeVersionRule(p.valueString, fvmOverride)
+    else  if (p.name = 'valueset-version') then
+      result.getValueSetVersionRules.add(p.valueString)
     else if (p.name = 'displayLanguage') then
       result.DisplayLanguages := THTTPLanguageList.create(p.valueString, not isValidation)
     else if (p.name = 'property') then
