@@ -1,7 +1,7 @@
 object ConsoleAboutForm: TConsoleAboutForm
   Left = 817
   Height = 223
-  Top = 583
+  Top = 1414
   Width = 430
   BorderIcons = []
   BorderStyle = bsNone
@@ -10,7 +10,7 @@ object ConsoleAboutForm: TConsoleAboutForm
   ClientWidth = 430
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '3.1.0.0'
   object pnlBase: TPanel
     Left = 0
     Height = 223
@@ -23,6 +23,7 @@ object ConsoleAboutForm: TConsoleAboutForm
     ClientHeight = 223
     ClientWidth = 430
     Color = clWhite
+    ParentBackground = False
     ParentColor = False
     TabOrder = 0
     object Image1: TImage

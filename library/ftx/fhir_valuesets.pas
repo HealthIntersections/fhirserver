@@ -1271,6 +1271,8 @@ begin
               v := version
             else if (version = '') or (version = ccc.version) then
               v := ccc.version
+            else if (cs <> nil) and (cs.versionIsMoreDetailed(ccc.version, version)) then
+              v := version
             else
             begin
               message := 'The code system "'+ccc.systemUri+'" version "'+ccc.version+'" in the ValueSet expansion is different to the one in the value ("'+version+'")';

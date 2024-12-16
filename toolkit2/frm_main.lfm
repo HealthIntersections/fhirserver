@@ -1,7 +1,7 @@
 object MainToolkitForm: TMainToolkitForm
   Left = 664
   Height = 946
-  Top = 25
+  Top = 1105
   Width = 1064
   Caption = 'FHIR Toolkit'
   ClientHeight = 946
@@ -3207,7 +3207,7 @@ object MainToolkitForm: TMainToolkitForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.2.7.0'
+  LCLVersion = '3.1.0.0'
   object pnlStatus: TStatusBar
     Left = 0
     Height = 18
@@ -3283,7 +3283,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton6: TToolButton
       Left = 116
-      Height = 8
+      Height = 24
       Top = 2
       Caption = 'ToolButton6'
       Style = tbsSeparator
@@ -3315,7 +3315,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton12: TToolButton
       Left = 239
-      Height = 8
+      Height = 24
       Top = 2
       Caption = 'ToolButton12'
       Style = tbsSeparator
@@ -3342,7 +3342,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton27: TToolButton
       Left = 339
-      Height = 8
+      Height = 24
       Top = 2
       Caption = 'ToolButton27'
       Style = tbsSeparator
@@ -3369,7 +3369,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton34: TToolButton
       Left = 439
-      Height = 8
+      Height = 24
       Top = 2
       Caption = 'ToolButton34'
       Style = tbsSeparator
@@ -3417,27 +3417,27 @@ object MainToolkitForm: TMainToolkitForm
         OnChange = pgBottomChange
         object tbMessages: TTabSheet
           Caption = 'Messages'
-          ClientHeight = 110
+          ClientHeight = 104
           ClientWidth = 1056
           ImageIndex = 44
           ParentFont = False
           object pnlMessages: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
             BevelOuter = bvNone
-            ClientHeight = 110
+            ClientHeight = 104
             ClientWidth = 1056
             TabOrder = 0
             object Panel4: TPanel
               Left = 0
-              Height = 110
+              Height = 104
               Top = 0
               Width = 32
               Align = alLeft
-              ClientHeight = 110
+              ClientHeight = 104
               ClientWidth = 32
               ParentFont = False
               TabOrder = 0
@@ -3447,11 +3447,11 @@ object MainToolkitForm: TMainToolkitForm
                 Hint = 'Only from Current File'
                 Top = 8
                 Width = 18
-                OnChange = updateMessages
                 ParentFont = False
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
+                OnChange = updateMessages
               end
               object chkhideHintsAndWarnings: TCheckBox
                 Left = 8
@@ -3459,16 +3459,16 @@ object MainToolkitForm: TMainToolkitForm
                 Hint = 'Hide Hints and Warnings'
                 Top = 32
                 Width = 18
-                OnChange = updateMessages
                 ParentFont = False
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 1
+                OnChange = updateMessages
               end
             end
             object lvMessages: TListView
               Left = 32
-              Height = 110
+              Height = 104
               Top = 0
               Width = 1024
               Align = alClient
@@ -3503,28 +3503,28 @@ object MainToolkitForm: TMainToolkitForm
         end
         object tbLog: TTabSheet
           Caption = 'Log'
-          ClientHeight = 110
+          ClientHeight = 104
           ClientWidth = 1056
           ImageIndex = 45
           OnShow = tbLogShow
           ParentFont = False
           object pnlLog: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
             BevelOuter = bvNone
-            ClientHeight = 110
+            ClientHeight = 104
             ClientWidth = 1056
             TabOrder = 0
             object Panel2: TPanel
               Left = 0
-              Height = 110
+              Height = 104
               Top = 0
               Width = 36
               Align = alLeft
-              ClientHeight = 110
+              ClientHeight = 104
               ClientWidth = 36
               ParentFont = False
               TabOrder = 0
@@ -3565,7 +3565,7 @@ object MainToolkitForm: TMainToolkitForm
             end
             object mConsole: TMemo
               Left = 36
-              Height = 110
+              Height = 104
               Top = 0
               Width = 1020
               Align = alClient
@@ -3577,18 +3577,18 @@ object MainToolkitForm: TMainToolkitForm
         end
         object tbSearch: TTabSheet
           Caption = 'Search'
-          ClientHeight = 110
+          ClientHeight = 104
           ClientWidth = 1056
           ImageIndex = 43
           ParentFont = False
           object pnlSearch: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
             BevelOuter = bvNone
-            ClientHeight = 110
+            ClientHeight = 104
             ClientWidth = 1056
             TabOrder = 0
             object Panel5: TPanel
@@ -3647,10 +3647,10 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 4
                   Width = 690
                   Anchors = [akTop, akLeft, akRight]
-                  ItemHeight = 19
-                  OnEditingDone = cbxSearchEditingDone
+                  ItemHeight = 18
                   ParentFont = False
                   TabOrder = 2
+                  OnEditingDone = cbxSearchEditingDone
                 end
               end
               object Panel7: TPanel
@@ -3687,11 +3687,11 @@ object MainToolkitForm: TMainToolkitForm
                     'Directory'
                     'Directory and Subfolders'
                   )
-                  OnChange = cbxSearchTypeChange
                   ParentFont = False
                   Style = csDropDownList
                   TabOrder = 0
                   Text = 'Current File'
+                  OnChange = cbxSearchTypeChange
                 end
                 object btnSearch: TBitBtn
                   Left = 378
@@ -3746,7 +3746,7 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 4
                   Width = 126
                   Anchors = [akTop, akLeft, akRight]
-                  ItemHeight = 19
+                  ItemHeight = 18
                   ParentFont = False
                   TabOrder = 2
                 end
@@ -3766,7 +3766,7 @@ object MainToolkitForm: TMainToolkitForm
             end
             object lvSearch: TListView
               Left = 0
-              Height = 78
+              Height = 72
               Top = 32
               Width = 1056
               Align = alClient
@@ -3798,13 +3798,13 @@ object MainToolkitForm: TMainToolkitForm
         end
         object tbBreakpoints: TTabSheet
           Caption = 'Break Points'
-          ClientHeight = 110
+          ClientHeight = 104
           ClientWidth = 1056
           ImageIndex = 83
           ParentFont = False
           object pnlBreakpoints: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
@@ -3815,28 +3815,28 @@ object MainToolkitForm: TMainToolkitForm
         object tbTasks: TTabSheet
           BorderWidth = 4
           Caption = 'Tasks'
-          ClientHeight = 0
-          ClientWidth = 0
+          ClientHeight = 104
+          ClientWidth = 1056
           ImageIndex = 46
           ParentFont = False
           object pnlTasks: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
             BevelOuter = bvNone
-            ClientHeight = 110
+            ClientHeight = 104
             ClientWidth = 1056
             TabOrder = 0
             object Panel1: TPanel
               Left = 0
-              Height = 110
+              Height = 104
               Top = 0
               Width = 32
               Align = alLeft
               BevelOuter = bvNone
-              ClientHeight = 110
+              ClientHeight = 104
               ClientWidth = 32
               ParentFont = False
               TabOrder = 0
@@ -3892,7 +3892,7 @@ object MainToolkitForm: TMainToolkitForm
             end
             object Panel3: TPanel
               Left = 1018
-              Height = 110
+              Height = 104
               Top = 0
               Width = 38
               Align = alRight
@@ -3901,7 +3901,7 @@ object MainToolkitForm: TMainToolkitForm
             end
             object lvTasks: TListView
               Left = 32
-              Height = 110
+              Height = 104
               Top = 0
               Width = 986
               Align = alClient
@@ -3938,13 +3938,13 @@ object MainToolkitForm: TMainToolkitForm
         end
         object tbExpression: TTabSheet
           Caption = 'FHIR Path'
-          ClientHeight = 110
+          ClientHeight = 104
           ClientWidth = 1056
           ImageIndex = 47
           ParentFont = False
           object pnlFHIRPath: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
@@ -3954,13 +3954,13 @@ object MainToolkitForm: TMainToolkitForm
         end
         object tbPackages: TTabSheet
           Caption = 'Packages'
-          ClientHeight = 110
+          ClientHeight = 104
           ClientWidth = 1056
           ImageIndex = 37
           ParentFont = False
           object pnlPackages: TPanel
             Left = 0
-            Height = 110
+            Height = 104
             Top = 0
             Width = 1056
             Align = alClient
@@ -4526,19 +4526,19 @@ object MainToolkitForm: TMainToolkitForm
           OnChange = pgLeftChange
           object tbProjects: TTabSheet
             Caption = 'Projects'
-            ClientHeight = 725
+            ClientHeight = 719
             ClientWidth = 294
             ImageIndex = 38
             ParentFont = False
             object pnlProjects: TPanel
               Left = 0
-              Height = 725
+              Height = 719
               Top = 0
               Width = 294
               Align = alClient
               BevelOuter = bvNone
               Caption = 'pnlProjects'
-              ClientHeight = 725
+              ClientHeight = 719
               ClientWidth = 294
               TabOrder = 0
               object ToolBar3: TToolBar
@@ -4559,7 +4559,7 @@ object MainToolkitForm: TMainToolkitForm
               end
               object tvProjects: TTreeView
                 Left = 0
-                Height = 699
+                Height = 693
                 Top = 26
                 Width = 294
                 Align = alClient
@@ -4576,19 +4576,19 @@ object MainToolkitForm: TMainToolkitForm
           end
           object tbServers: TTabSheet
             Caption = 'Servers'
-            ClientHeight = 725
+            ClientHeight = 719
             ClientWidth = 294
             ImageIndex = 42
             ParentFont = False
             object pnlServers: TPanel
               Left = 0
-              Height = 725
+              Height = 719
               Top = 0
               Width = 294
               Align = alClient
               BevelOuter = bvNone
               Caption = 'pnlServers'
-              ClientHeight = 725
+              ClientHeight = 719
               ClientWidth = 294
               TabOrder = 0
               object ToolBar2: TToolBar
@@ -4618,7 +4618,7 @@ object MainToolkitForm: TMainToolkitForm
               end
               object lvServers: TListView
                 Left = 0
-                Height = 699
+                Height = 693
                 Top = 26
                 Width = 294
                 Align = alClient
@@ -4674,18 +4674,18 @@ object MainToolkitForm: TMainToolkitForm
           OnChange = pgRightChange
           object tbText: TTabSheet
             Caption = 'Text'
-            ClientHeight = 725
+            ClientHeight = 719
             ClientWidth = 282
             ImageIndex = 140
             object pnlTextTools: TPanel
               Left = 0
-              Height = 725
+              Height = 719
               Top = 0
               Width = 282
               Align = alClient
               BevelOuter = bvNone
               Caption = 'pnlTextTools'
-              ClientHeight = 725
+              ClientHeight = 719
               ClientWidth = 282
               TabOrder = 0
               object pnlTextHeader: TPanel
@@ -4752,15 +4752,15 @@ object MainToolkitForm: TMainToolkitForm
                   Width = 24
                   Anchors = [akTop, akRight]
                   Caption = '...'
+                  TabOrder = 1
                   OnClick = btnTextHeaderClick
                   OnContextPopup = btnTextHeaderContextPopup
-                  TabOrder = 1
                 end
               end
               object Panel9: TPanel
                 Left = 0
                 Height = 45
-                Top = 680
+                Top = 674
                 Width = 282
                 Align = alBottom
                 BevelOuter = bvNone
@@ -4773,8 +4773,8 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 63
                   Caption = 'Copy'
-                  OnClick = btnTextCopyClick
                   TabOrder = 0
+                  OnClick = btnTextCopyClick
                 end
                 object btnTextPaste: TButton
                   Left = 0
@@ -4782,13 +4782,13 @@ object MainToolkitForm: TMainToolkitForm
                   Top = 8
                   Width = 67
                   Caption = 'Paste'
-                  OnClick = btnTextPasteClick
                   TabOrder = 1
+                  OnClick = btnTextPasteClick
                 end
               end
               object mTextSource: TMemo
                 Left = 0
-                Height = 640
+                Height = 634
                 Top = 40
                 Width = 282
                 Align = alClient
@@ -4798,25 +4798,25 @@ object MainToolkitForm: TMainToolkitForm
           end
           object tbInspector: TTabSheet
             Caption = 'Inspector'
-            ClientHeight = 725
+            ClientHeight = 719
             ClientWidth = 282
             ImageIndex = 49
             ParentFont = False
             object pnlInspector: TPanel
               Left = 0
-              Height = 725
+              Height = 719
               Top = 0
               Width = 282
               Align = alClient
               BevelOuter = bvNone
               BorderWidth = 2
               Caption = 'pnlInspector'
-              ClientHeight = 725
+              ClientHeight = 719
               ClientWidth = 282
               TabOrder = 0
               object vlInspector: TValueListEditor
                 Left = 2
-                Height = 721
+                Height = 715
                 Top = 2
                 Width = 278
                 Align = alClient
@@ -4830,20 +4830,20 @@ object MainToolkitForm: TMainToolkitForm
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goThumbTracking, goCellEllipsis]
                 ColWidths = (
                   64
-                  214
+                  212
                 )
               end
             end
           end
           object tbVariables: TTabSheet
             Caption = 'Variables'
-            ClientHeight = 725
+            ClientHeight = 719
             ClientWidth = 282
             ImageIndex = 33
             ParentFont = False
             object pnlVariables: TPanel
               Left = 0
-              Height = 725
+              Height = 719
               Top = 0
               Width = 282
               Align = alClient
@@ -4853,13 +4853,13 @@ object MainToolkitForm: TMainToolkitForm
           end
           object tbStack: TTabSheet
             Caption = 'Stack'
-            ClientHeight = 725
+            ClientHeight = 719
             ClientWidth = 282
             ImageIndex = 32
             ParentFont = False
             object pnlStack: TPanel
               Left = 0
-              Height = 725
+              Height = 719
               Top = 0
               Width = 282
               Align = alClient

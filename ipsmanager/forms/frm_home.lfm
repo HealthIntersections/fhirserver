@@ -1,7 +1,7 @@
 object IPSManagerForm: TIPSManagerForm
   Left = 350
   Height = 567
-  Top = 288
+  Top = 1119
   Width = 1197
   Caption = 'Patient Summary Manager'
   ClientHeight = 567
@@ -9,7 +9,7 @@ object IPSManagerForm: TIPSManagerForm
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '3.0.0.2'
+  LCLVersion = '3.1.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 74

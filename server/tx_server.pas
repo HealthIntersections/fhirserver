@@ -98,7 +98,6 @@ Type
     procedure AddDependency(name, value : String; dt : TDateTime);
 //    function getCodeDefinition(c : TFhirCodeSystemConceptW; code : string) : TFhirCodeSystemConceptW; overload;
 //    function getCodeDefinition(vs : TFhirCodeSystemW; code : string) : TFhirCodeSystemConceptW; overload;
-    function makeAnyValueSet: TFhirValueSetW;
 
     // database maintenance
     procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TFDBConnection);
@@ -122,8 +121,6 @@ Type
 
     // functional services
 
-    // if this id identifies a value set known to the external resources (if it does, construct it and return it)
-    function isKnownValueSet(id : String; out vs : TFhirValueSetW): Boolean;
 
     // given a value set, expand it
     function expandVS(vs : TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne, diagnostics : boolean; tt : TFslTimeTracker) : TFhirValueSetW; overload;
@@ -530,72 +527,6 @@ begin
 end;
 
 
-function TTerminologyServer.makeAnyValueSet: TFhirValueSetW;
-var
-  inc : TFhirValueSetComposeIncludeW;
-begin
-  result := Factory.wrapValueSet(factory.makeResource('ValueSet'));
-  try
-    result.url := ANY_CODE_VS;
-    result.name := 'All codes known to the system';
-    result.description := 'All codes known to the system';
-    result.status := psActive;
-    inc := result.addInclude;
-    try
-      // inc.systemUri := ALL_CODE_CS;
-    finally
-      inc.free;
-    end;
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-
-function TTerminologyServer.isKnownValueSet(id: String; out vs: TFhirValueSetW): Boolean;
-var
-  cs : TFhirCodeSystemW;
-  sn : TSnomedServices;
-begin
-  vs := nil;
-  if id.Contains('|') then
-    id := id.Substring(0, id.IndexOf('|'));
-
-  if (CommonTerminologies.DefSnomed <> nil) and (id.StartsWith('http://snomed.info/')) then
-  begin
-    vs := CommonTerminologies.DefSnomed.buildValueSet(Factory, id);
-    if (vs = nil) then
-    begin
-      for sn in CommonTerminologies.Snomed do
-      begin
-        vs := sn.buildValueSet(Factory, id);
-        if (vs <> nil) then
-          break;
-      end;
-    end;
-  end
-  else if (CommonTerminologies.Loinc <> nil) and (id.StartsWith('http://loinc.org/vs/LP') or id.StartsWith('http://loinc.org/vs/LL')) then
-    vs := CommonTerminologies.Loinc.buildValueSet(Factory, id)
-  else if id = 'http://loinc.org/vs' then
-    vs := CommonTerminologies.Loinc.buildValueSet(Factory, '')
-  else if id = ANY_CODE_VS then
-    vs := makeAnyValueSet
-  else
-  begin
-    cs := getCodeSystemByValueSet(id);
-    if (cs <> nil) then
-    begin
-      try
-        vs := cs.buildImplicitValueSet;
-      finally
-        cs.free;
-      end;
-    end;
-  end;
-
-  result := vs <> nil;
-end;
 
 function TTerminologyServer.MakeChecker(reqId, uri, version: string; profile : TFHIRTxOperationParams; tt : TFslTimeTracker): TValueSetChecker;
 var
