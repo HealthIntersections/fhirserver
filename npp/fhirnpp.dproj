@@ -269,25 +269,6 @@
             <Form>PackageCacheForm</Form>
         </DCCReference>
         <DCCReference Include="..\library\npm\fsl_npm_cache.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_factory.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_types.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_base.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_utilities.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_resources.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_constants.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_context.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_elementmodel.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_common.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_profiles.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_parser.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_xml.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_parserBase.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_json.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_validator.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_pathnode.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_pathengine.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_narrative.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_client.pas"/>
         <DCCReference Include="..\library\r4\fhir4_factory.pas"/>
         <DCCReference Include="..\library\r4\fhir4_parser.pas"/>
         <DCCReference Include="..\library\r4\fhir4_xml.pas"/>
@@ -319,12 +300,9 @@
         <DCCReference Include="..\library\r3\fhir3_opbase.pas"/>
         <DCCReference Include="..\library\r4\fhir4_operations.pas"/>
         <DCCReference Include="..\library\r4\fhir4_opbase.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_operations.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_opbase.pas"/>
         <DCCReference Include="..\library\tools\fhir_codesystem_service.pas"/>
         <DCCReference Include="..\library\tools\fhir_valuesets.pas.pas"/>
         <DCCReference Include="..\library\r3\fhir3_authmap.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_authmap.pas"/>
         <DCCReference Include="..\library\r4\fhir4_authmap.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VTAccessibilityFactory.pas"/>
         <DCCReference Include="..\dependencies\treeview\Source\VirtualTrees.StyleHooks.pas"/>
@@ -364,11 +342,6 @@
         <DCCReference Include="..\library\r4\fhir4_resources_other.pas"/>
         <DCCReference Include="..\library\r4\fhir4_resources_medications.pas"/>
         <DCCReference Include="..\library\r4\fhir4_resources_financial.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_resources_base.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_resources_admin.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_resources_other.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_resources_clinical.pas"/>
-        <DCCReference Include="..\library\r2\fhir2_resources_canonical.pas"/>
         <DCCReference Include="..\library\r3\fhir3_resources_admin.pas"/>
         <DCCReference Include="..\library\r3\fhir3_resources_other.pas"/>
         <DCCReference Include="..\library\r3\fhir3_resources_clinical.pas"/>

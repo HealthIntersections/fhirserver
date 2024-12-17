@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -19,7 +20,6 @@
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="33"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
@@ -219,7 +219,10 @@
             </Debugging>
           </Linking>
           <Other>
-            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
+            <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
           </Other>
         </CompilerOptions>
       </Item6>
@@ -315,7 +318,7 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="18">
+    <RequiredPackages Count="17">
       <Item1>
         <PackageName Value="Pdfium"/>
       </Item1>
@@ -335,41 +338,38 @@
         <PackageName Value="fhir3"/>
       </Item6>
       <Item7>
-        <PackageName Value="fhir2"/>
+        <PackageName Value="fhir_xver"/>
       </Item7>
       <Item8>
-        <PackageName Value="fhir_xver"/>
+        <PackageName Value="fhir4"/>
       </Item8>
       <Item9>
-        <PackageName Value="fhir4"/>
+        <PackageName Value="fcomp"/>
       </Item9>
       <Item10>
-        <PackageName Value="fcomp"/>
+        <PackageName Value="laz.virtualtreeview_package"/>
       </Item10>
       <Item11>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="LazControls"/>
       </Item11>
       <Item12>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="fhir_fsl"/>
       </Item12>
       <Item13>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir"/>
       </Item13>
       <Item14>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir_fui"/>
       </Item14>
       <Item15>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="MarkdownEngine"/>
       </Item15>
       <Item16>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item16>
       <Item17>
-        <PackageName Value="DateTimeCtrls"/>
-      </Item17>
-      <Item18>
         <PackageName Value="LCL"/>
-      </Item18>
+      </Item17>
     </RequiredPackages>
     <Units Count="15">
       <Unit0>
@@ -511,7 +511,7 @@
         <Name Value="ELibraryException"/>
       </Item3>
       <Item4>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item4>
       <Item5>
         <Name Value="0000000eEIdSocketError"/>

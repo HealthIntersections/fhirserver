@@ -394,8 +394,8 @@ begin
 ////            rule(evd.triggerList[0].dataList[0].profileList.IsEmpty, 'DataRequirement profile must be absent');
 ////            if evd.triggerList[0].condition <> nil then
 ////            begin
-////              rule(evd.triggerList[0].condition.language = 'text\fhir2_pathengine', 'Condition language must be fhir2_pathengine');
-////              rule(evd.triggerList[0].condition.expression <> '', 'Condition fhir2_pathengine must not be blank');
+////              rule(evd.triggerList[0].condition.language = 'text\fhirpath', 'Condition language must be fhirpath');
+////              rule(evd.triggerList[0].condition.expression <> '', 'Condition fhirpath must not be blank');
 ////              try
 ////                expr := fpp.parse(evd.triggerList[0].condition.expression);
 ////                evd.triggerList[0].condition.expressionElement.Tag := expr;

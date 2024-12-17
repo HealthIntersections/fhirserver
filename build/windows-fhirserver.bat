@@ -26,7 +26,6 @@ del *.o /s /q
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir_fsl.lpk -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe packages/fcomp.lpk -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir.lpk -q -q --build-all
-%tmp%\tools\lazarus\lazbuild.exe packages/fhir2.lpk -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir3.lpk -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir4.lpk -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir4b.lpk -q -q --build-all

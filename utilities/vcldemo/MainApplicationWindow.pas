@@ -51,7 +51,7 @@ uses
   SHDocVw, PngImage, Generics.Collections, Generics.Defaults, VirtualTrees,
   IdSSLOpenSSLHeaders, IdSSLOpenSSL, IdResourceStringsOpenSSL,
   fsl_base, fsl_utilities,
-  fhir_objects, fhir2_client, fhir2_constants, fhir2_types, fhir2_resources_base, fhir2_resources, fhir2_utilities, fhir_xhtml,
+  fhir_objects, fhir4_client, fhir4_constants, fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_utilities, fhir_xhtml,
   ServerLoginDialog, ProgressDialog, FHIRDemoLogging;
 
 type

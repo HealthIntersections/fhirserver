@@ -49,9 +49,6 @@ Type
   TFHIRClientLogger = fhir_client.TFHIRClientLogger;
   TFHIRHTTPCommunicator = fhir_client_http.TFHIRHTTPCommunicator;
   TFhirThreadedCommunicator = fhir_client_threaded.TFhirThreadedCommunicator;
-  {$IFDEF FHIR2}
-  TFhirClient = fhir2_client.TFhirClient2;
-  {$ENDIF}
   {$IFDEF FHIR3}
   TFhirClient = fhir3_client.TFhirClient3;
   {$ENDIF}

@@ -1084,7 +1084,6 @@ begin
 {$ENDIF}
   caption := 'FHIR Toolkit (R' + FHIR_GENERATED_PUBLICATION + ')';
   ToolkitLogger := TToolkitLogger.Create;
-{$IFDEF FHIR2} FFactory := TFHIRFactoryR2.Create; {$ENDIF}
 {$IFDEF FHIR3} FFactory := TFHIRFactoryR3.Create; {$ENDIF}
 {$IFDEF FHIR4} FFactory := TFHIRFactoryR4.Create; {$ENDIF}
 end;

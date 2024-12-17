@@ -1130,18 +1130,10 @@ begin
       for sd in list do
         if (sd.kind <> StructureDefinitionKindLogical) then
         begin
-          {$IFNDEF FHIR2}
           if (sd.derivation = TypeDerivationRuleSPECIALIZATION) then
             allTypes.add(sd.id);
           if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
             primitiveTypes.add(sd.id);
-          {$ELSE}
-          raise EFHIRException.Create('Debug this');
-          if (sd.constrainedType = DefinedTypesNull) then
-            allTypes.add(sd.id);
-          if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
-            primitiveTypes.add(sd.id);
-          {$ENDIF}
       end;
     finally
       list.free;
@@ -7125,11 +7117,7 @@ var
   ed : TFhirElementDefinition;
 begin
   for ed in sd.snapshot.elementList do
-    {$IFNDEF FHIR2}
     if (name.equals('#'+ed.id)) then
-    {$ELSE}
-    if (name.equal(ed.Name)) then
-    {$ENDIF}
       exit(ed);
   result := nil;
 end;

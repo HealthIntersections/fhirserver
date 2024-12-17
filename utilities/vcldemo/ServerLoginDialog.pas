@@ -136,7 +136,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, System.UITypes, IniFiles,
   fsl_utilities, fsl_shell, fsl_http,
   fhir_utilities, fhir_common, fhir_oauth, fui_vcl_smart, fhir_objects, fhir_client_http, fhir_client,
-  fhir2_client, fhir2_types, fhir2_resources, fhir2_utilities, fhir2_common,
+  fhir4_client, fhir4_types, fhir4_resources, fhir4_utilities, fhir4_common,
   ProgressDialog, FHIRDemoLogging;
 
 type

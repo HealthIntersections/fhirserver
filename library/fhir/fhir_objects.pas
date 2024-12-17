@@ -58,14 +58,6 @@ Type
   TFHIRVersionSet = set of TFHIRVersion;
 
 Const
-  {$IFDEF FHIR1} 
-  CURRENT_FHIR_VERSION = fhirVersionRelease1;
-  COMPILED_FHIR_VERSION = fhirVersionRelease1;
-  {$ELSE}
-  {$IFDEF FHIR2} 
-  CURRENT_FHIR_VERSION = fhirVersionRelease2;
-  COMPILED_FHIR_VERSION = fhirVersionRelease2;
-  {$ELSE}
   {$IFDEF FHIR3}
   CURRENT_FHIR_VERSION = fhirVersionRelease3;
   COMPILED_FHIR_VERSION = fhirVersionRelease3;
@@ -76,7 +68,7 @@ Const
   {$ELSE}
   CURRENT_FHIR_VERSION = fhirVersionUnknown;
   // not defined, so that compiles fail if $define is not defined anywhere. COMPILED_FHIR_VERSION = fhirVersionUnknown;
-  {$ENDIF} {$ENDIF} {$ENDIF} {$ENDIF}
+  {$ENDIF} {$ENDIF}
 
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4', 'r4b', 'r5');
   CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4', '4b', '5');
@@ -2857,7 +2849,7 @@ end;
 
 constructor EFHIRPath.Create(path: String; offset: integer; problem: String);
 begin
-  inherited Create('fhir2_pathengine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
+  inherited Create('fhir_pathengine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
 end;
 
 constructor EFHIRPath.Create(problem: String);

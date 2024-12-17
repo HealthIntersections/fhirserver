@@ -155,9 +155,7 @@ end;
 constructor TCDAHackingHealthOrderService.Create;
 begin
   inherited;
-  !{$IFNDEF FHIR2}
   FEngines.add(THackingHealthBNPLogic);
-  {$ENDIF}
 end;
 
 function TCDAHackingHealthOrderService.description: String;
@@ -216,7 +214,6 @@ begin
   raise EFHIRException.Create('to do');
 
 (*
-!{$IFNDEF FHIR2}
    for res in request.context do
     begin
       if check(issues, res.ResourceType = frtProcedureRequest, 'Context resources must be a ProcedureRequest') then
@@ -263,7 +260,6 @@ begin
                 check(issues, c.subject.reference = 'Patient/'+request.patient, 'Condition subject ('+c.subject.reference+') must match request.subject ('+request.patient+')');
               check(issues, c.code <> nil, 'Condition must have a code');
             end;
-    {$ENDIF}
     result := TCDSHookResponse.Create;
     card := Result.addCard;
     if issues.Count = 0 then
@@ -337,9 +333,7 @@ end;
 //  card : TCDSHookCard;
 //  b : TFslStringBuilder;
 ////  cp : TFhirNamingSystemContact;
-////  !{$IFNDEF FHIR2}
 ////  uc : TFhirUsageContext;
-////  {$ENDIF}
 ////  cc : TFhirCodeableConcept;
 //begin
 //  card := resp.addCard;
@@ -359,18 +353,13 @@ end;
 //
 //    b.append(#13#10);
 //
-//    if (ns.useContextList.Count > 0) !{$IFNDEF FHIR2}or (ns.jurisdictionList.Count > 0){$ENDIF} then
+//    if (ns.useContextList.Count > 0) or (ns.jurisdictionList.Count > 0) then
 //    begin
 //      b.Append('Contexts of Use'#13#10#13#10);
-//      !{$IFNDEF FHIR2}
 //      for uc in ns.useContextList do
 //        b.Append('* '+gen(uc.code)+':'+gen(uc.value)+#13#10);
 //      for cc in ns.jurisdictionList do
 //        b.Append('* Jurisdiction: '+gen(cc)+#13#10);
-//      {$ELSE}
-//      for cc in ns.useContextList do
-//        b.Append('* '+gen(cc)+#13#10);
-//      {$ENDIF}
 //      b.append(#13#10);
 //    end;
 //

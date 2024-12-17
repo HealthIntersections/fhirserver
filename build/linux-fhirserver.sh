@@ -24,9 +24,6 @@ $BUILD/tools/lazarus/lazbuild packages/fcomp.lpk -q -q --build-all
 echo "## compile packages/fhir.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir.lpk -q -q --build-all
 
-echo "## compile packages/fhir2.lpk"
-$BUILD/tools/lazarus/lazbuild packages/fhir2.lpk -q -q --build-all
-
 echo "## compile packages/fhir3.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir3.lpk -q -q --build-all
 

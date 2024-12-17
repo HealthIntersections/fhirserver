@@ -36,7 +36,7 @@ uses
   Classes, SysUtils,
   fsl_lang, fsl_npm_cache,
   fhir_objects, fhir_factory,
-  ftk_fhir_context_2, ftk_fhir_context_3, ftk_fhir_context_4, ftk_fhir_context_5;
+  ftk_fhir_context_3, ftk_fhir_context_4, ftk_fhir_context_5;
 
 type
   TToolkitValidatorContext = class
@@ -51,7 +51,6 @@ implementation
 class function TToolkitValidatorContext.Create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; TerminologyServer: String; pcm : TFHIRPackageManager): TFHIRWorkerContextWithFactory;
 begin
   case factory.version of
-    fhirVersionRelease2 : result := TToolkitValidatorContextR2.Create(factory, languages, TerminologyServer, pcm.link);
     fhirVersionRelease3 : result := TToolkitValidatorContextR3.Create(factory, languages, TerminologyServer, pcm.link);
     fhirVersionRelease4 : result := TToolkitValidatorContextR4.Create(factory, languages, TerminologyServer, pcm.link);
     fhirVersionRelease5 : result := TToolkitValidatorContextR5.Create(factory, languages, TerminologyServer, pcm.link);

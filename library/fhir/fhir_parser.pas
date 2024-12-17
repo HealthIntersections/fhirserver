@@ -183,7 +183,6 @@ Type
     function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
   End;
 
-  {$IFNDEF FHIR2}
   TFHIRTurtleParserBase = class (TFHIRParser)
   protected
     Fdoc : TTurtleDocument;
@@ -196,7 +195,6 @@ Type
     procedure Parse; Overload; Override;
     function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
   end;
-  {$ENDIF}
 
   TFHIRTextParser = class (TFHIRParser)
   protected
@@ -748,11 +746,7 @@ end;
 
 function TFHIRXmlComposerBase.MimeType: String;
 begin
-  {$IFDEF FHIR2}
-  result := 'application/xml+fhir; charset=UTF-8';
-  {$ELSE}
   result := 'application/fhir+xml; charset=UTF-8';
-  {$ENDIF} 
 end;
 
 procedure TFHIRXmlComposerBase.commentsStart(xml: TXmlBuilder; value: TFHIRObject);
@@ -1019,11 +1013,7 @@ end;
 
 function TFHIRJsonComposerBase.MimeType: String;
 begin
- {$IFDEF FHIR2}
- result := 'application/json+fhir; charset=UTF-8';
- {$ELSE}
- result := 'application/fhir+json';
- {$ENDIF}
+  result := 'application/fhir+json';
 end;
 
 
@@ -1412,11 +1402,7 @@ end;
 
 function TFHIRComposer.ResourceMediaType: String;
 begin
-  {$IFDEF FHIR2}
-  result := 'application/xml+fhir; charset=UTF-8';
-  {$ELSE}
   result := 'application/fhir+xml';
-  {$ENDIF}
 end;
 
 function URLTail(s : String):String;
@@ -1866,8 +1852,6 @@ begin
   result := 'text/fhir';
 end;
 
-{$IFNDEF FHIR2}
-
 { TFHIRTurtleParserBase }
 
 function TFHIRTurtleParserBase.GetFormat: TFHIRFormat;
@@ -1927,7 +1911,6 @@ begin
     raise ERdfException.Create('Unable to determine type: rdfs#type not a URL');
   result := TTurtleURL(t).uri.Substring(20);
 end;
-{$ENDIF}
 
 procedure RemoveBOM(var s : String);
 begin
