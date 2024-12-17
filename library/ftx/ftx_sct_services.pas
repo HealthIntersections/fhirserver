@@ -2423,7 +2423,8 @@ begin
       result.url := url;
       result.status := psActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Reference Set List';
+      result.name := 'SNOMEDCTReferenceSetList';
+      result.title := 'SNOMED CT Reference Set List';
       result.description := 'Reference Sets defined in this SNOMED-CT version';
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
@@ -2455,7 +2456,8 @@ begin
       result.url := url;
       result.status := psActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Reference Set (All of SNOMED CT)';
+      result.name := 'ALLSNOMEDCT';
+      result.title := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.description := 'SNOMED CT Reference Set (All of SNOMED CT)';
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
@@ -2476,7 +2478,8 @@ begin
       result.url := url;
       result.status := psActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Reference Set '+id.Substring(16);
+      result.name := 'SNOMEDCTRefSet'+id.Substring(16);
+      result.title := 'SNOMED CT Reference Set '+id.Substring(16);
       result.description := GetDisplayName(id.Substring(16), '');
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
@@ -2505,7 +2508,8 @@ begin
       result.url := url;
       result.status := psActive;
       result.version := VersionDate;
-      result.name := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
+      result.name := 'SNOMEDCTConcept'+id.Substring(13);
+      result.title := 'SNOMED CT Concept '+id.Substring(13)+' and descendants';
       result.description := 'All Snomed CT concepts for '+GetDisplayName(id.Substring(13), '');
       result.date := TFslDateTime.makeUTC;
       inc := result.addInclude;
