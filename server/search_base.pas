@@ -84,6 +84,7 @@ Type
     FElements : TStringList;
     FAllowedParams : TStringList;
     FSearchControls : TFHIRSearchControlParameterSet;
+    FParams: TFslList<TSearchParameter>;
     function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
     constructor Create(searchControls : TFHIRSearchControlParameterSet);
@@ -93,6 +94,7 @@ Type
     function buildUrl(base : String; search : TFslList<TSearchParameter>): String;
     property Elements : TStringList read FElements;
     property allowedParams : TStringList read FAllowedParams;
+    function hasParam(name : String; out value : string) : boolean;
   end;
 
 const
@@ -269,6 +271,20 @@ begin
 
 end;
 
+function TSearchParser.hasParam(name: String; out value : string): boolean;
+var
+  sp : TSearchParameter;
+begin
+  result := true;
+  value := '';
+  for sp in FParams do
+    if (sp.FIndex.Name = name) then
+    begin
+      value := sp.value;
+      exit(true);
+    end;
+end;
+
 function TSearchParser.parse(indexes : TFHIRIndexInformation; resourceType : String; pm: THTTPParameters): TFslList<TSearchParameter>;
 var
   iName, iValue : integer;
@@ -291,6 +307,7 @@ begin
         end;
       end;
     end;
+    FParams := result.link;
     result.link;
   finally
     result.free;
@@ -409,6 +426,7 @@ destructor TSearchParser.Destroy;
 begin
   FAllowedParams.free;
   FElements.free;
+  FParams.free;
   inherited Destroy;
 end;
 

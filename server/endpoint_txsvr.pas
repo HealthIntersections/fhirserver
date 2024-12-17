@@ -41,12 +41,12 @@ uses
 
   ftx_service, ftx_sct_services,
 
-  fhir2_factory, fhir3_factory, fhir4_factory, fhir4b_factory, fhir5_factory,
-  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir4b_indexinfo, fhir5_indexinfo,
-  fhir2_context, fhir3_context, fhir4_context, fhir4b_context, fhir5_context,
-  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir4b_pathengine, fhir5_pathengine,
-  fhir2_validator, fhir3_validator, fhir4_validator, fhir4b_validator, fhir5_validator,
-  validator_r2, validator_r3, validator_r4, validator_r4b, validator_r5,
+  fhir3_factory, fhir4_factory, fhir4b_factory, fhir5_factory,
+  fhir3_indexinfo, fhir4_indexinfo, fhir4b_indexinfo, fhir5_indexinfo,
+  fhir3_context, fhir4_context, fhir4b_context, fhir5_context,
+  fhir3_pathengine, fhir4_pathengine, fhir4b_pathengine, fhir5_pathengine,
+  fhir3_validator, fhir4_validator, fhir4b_validator, fhir5_validator,
+  validator_r3, validator_r4, validator_r4b, validator_r5,
 
   fhir_indexing, search_base, database_installer,
   tx_manager, tx_server, tx_operations, operations,
@@ -88,7 +88,9 @@ type
     FNamingSystems : TFslMap<TFHIRResourceProxyV>;
     FConceptMaps : TFslMap<TFHIRResourceProxyV>;
     FLoadingComplete : boolean;
-    FTotalToLoad : integer;
+    FTotalToLoad : integer; 
+    FTerminologyServer : TTerminologyServer;
+    FImplicitValueSets : TFslMetadataResourceList;
     FLoaded : integer;
     procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
   protected
@@ -100,6 +102,7 @@ type
 
     procedure clear;
 
+    property TerminologyServer : TTerminologyServer read FTerminologyServer;
     property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
     property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
     property NamingSystems : TFslMap<TFHIRResourceProxyV> read FNamingSystems;
@@ -135,6 +138,7 @@ type
     function tokenMatchesCoding(c: TFhirCodingW; sp: TSearchParameter): boolean; overload;
     function tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
     function makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
+    procedure checkForImplicitValueSet(list : TFslMetadataResourceList; url : String);
   protected
     function context : TFHIRServerContext;
     procedure StartTransaction; override;
@@ -304,7 +308,6 @@ implementation
 function TTerminologyServerFactory.makeIndexes: TFHIRIndexBuilder;
 begin
   case FVersion of
-    fhirVersionRelease2 : result := TFHIRIndexBuilderR2.create;
     fhirVersionRelease3 : result := TFHIRIndexBuilderR3.create;
     fhirVersionRelease4 : result := TFHIRIndexBuilderR4.create;
     fhirVersionRelease4B : result := TFHIRIndexBuilderR4B.create;
@@ -317,7 +320,6 @@ end;
 function TTerminologyServerFactory.makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV;
 begin
   case FVersion of
-    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create, pc.link));
     fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pc.link));
     fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pc.link));
     fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(TFHIRFactoryR4B.create, pc.link));
@@ -348,7 +350,6 @@ end;
 function TTerminologyServerFactory.makeEngine(validatorContext: TFHIRWorkerContextWithFactory; ucum: TUcumServiceImplementation): TFHIRPathEngineV;
 begin
   case FVersion of
-    fhirVersionRelease2 : result := TFHIRPathEngine2.Create(validatorContext as TFHIRWorkerContext2, ucum);
     fhirVersionRelease3 : result := TFHIRPathEngine3.Create(validatorContext as TFHIRWorkerContext3, ucum);
     fhirVersionRelease4 : result := TFHIRPathEngine4.Create(validatorContext as TFHIRWorkerContext4, ucum);
     fhirVersionRelease4B : result := TFHIRPathEngine4B.Create(validatorContext as TFHIRWorkerContext4B, ucum);
@@ -361,7 +362,6 @@ end;
 procedure TTerminologyServerFactory.setTerminologyServer(validatorContext: TFHIRWorkerContextWithFactory; server: TFslObject);
 begin
   case FVersion of
-    fhirVersionRelease2 : TFHIRServerWorkerContextR2(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease3 : TFHIRServerWorkerContextR3(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease4 : TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease4B : TFHIRServerWorkerContextR4B(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
@@ -387,6 +387,7 @@ begin
   FConceptMaps.defaultValue := nil;
   FPackages := TStringList.create;
   FTextIndex := TextIndex;
+  FImplicitValueSets := TFslMetadataResourceList.create;
 end;
 
 destructor TTerminologyServerData.Destroy;
@@ -397,6 +398,8 @@ begin
   FValueSets.free;
   FCodeSystems.free;
   FTextIndex.free;
+  FTerminologyServer.Free;
+  FImplicitValueSets.Free;
 
   inherited;
 end;
@@ -685,6 +688,18 @@ begin
   result.version := p.version;
 end;
 
+procedure TTerminologyServerOperationEngine.checkForImplicitValueSet(list: TFslMetadataResourceList; url: String);
+var
+  vs : TFhirValueSetW;
+begin
+  if (FData.TerminologyServer.isKnownValueSet(url, vs)) then
+  begin
+    list.add(vs);
+    vs.id := NewGuidId;
+    FData.FImplicitValueSets.add(vs.link);
+  end;
+end;
+
 procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
   search : TFslList<TSearchParameter>;
@@ -701,6 +716,7 @@ var
   p : TFHIRResourceProxyV;
   useProxy : boolean;
   start : UInt64;
+  url : string;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
@@ -785,6 +801,9 @@ begin
             end;
             if (hasScope(request, 'ValueSet')) then
             begin
+              list.AddAll(FData.FImplicitValueSets);
+              if (spp.hasParam('url', url)) then
+                checkForImplicitValueSet(list, url);
               for p in FData.ValueSets.Values do
               begin
                 deadCheck(start);
@@ -792,7 +811,7 @@ begin
                   list.add(makeWrapper('ValueSet', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
-              end
+              end;
             end;
             if (hasScope(request, 'ConceptMap')) then
             begin
@@ -1772,7 +1791,6 @@ end;
 function makeTxFactory(version : TFHIRVersion): TFHIRFactory;
 begin
   case version of
-    fhirVersionRelease2 : result := TFHIRFactoryR2.create;
     fhirVersionRelease3 : result := TFHIRFactoryR3.create;
     fhirVersionRelease4 : result := TFHIRFactoryR4.create;
     fhirVersionRelease4B : result := TFHIRFactoryR4B.create;
@@ -1828,6 +1846,7 @@ begin
   FServerContext.TerminologyServer.Loading := false;
 
   FStore.Initialise;
+  FStore.FData.FTerminologyServer := FServerContext.TerminologyServer.link;
   FStore.FData.FLoadingComplete := false;
   FLoadThread := TTerminologyServerDataLoadThread.create(self);
 end;
