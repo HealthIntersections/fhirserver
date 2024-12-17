@@ -3425,7 +3425,7 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
+      raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not known', itInvalid);
     Setlength(res.descendants, 1);
     res.descendants[0] := index;
     result := TSnomedFilterContext(res.link);
@@ -3442,7 +3442,7 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
+      raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not known', itInvalid);
     if includeBase then
       res.descendants := mergeCardinals(index, GetConceptDescendants(index))
     else
@@ -3461,16 +3461,15 @@ begin
   res := TSnomedFilterContext.Create;
   try
     if not Concept.FindConcept(id, index) then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
+      raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not known', itInvalid);
     if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
-      raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set', itInvalid);
+      raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not a reference set', itInvalid);
     res.members := RefSetMembers.GetMembers(members);
     result := TSnomedFilterContext(res.link);
   finally
     res.free;
   end;
 end;
-
 
 function TSnomedServices.GetPNForConcept(iIndex: Cardinal): String;
 var
@@ -3498,9 +3497,9 @@ var
   name, index, members, types, iFieldNames : cardinal;
 begin
   if not Concept.FindConcept(id, index) then
-    raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
+    raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not known', itInvalid);
   if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
-    raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' is not a reference set', itInvalid);
+    raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not a reference set', itInvalid);
   result := RefSetMembers.GetMembers(members);
 end;
 

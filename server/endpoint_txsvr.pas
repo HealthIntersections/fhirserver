@@ -81,6 +81,7 @@ type
 
   TTerminologyServerData = class (TFslObject)
   private
+    FLock : TFslLock;
     FPackages : TStringList;
     FCodeSystems : TFslMap<TFHIRResourceProxyV>;
     FTextIndex: TFDBFullTextSearch;
@@ -90,7 +91,7 @@ type
     FLoadingComplete : boolean;
     FTotalToLoad : integer; 
     FTerminologyServer : TTerminologyServer;
-    FImplicitValueSets : TFslMetadataResourceList;
+    FImplicitValueSets : TFslList<TFhirValueSetW>;
     FLoaded : integer;
     procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
   protected
@@ -168,7 +169,6 @@ type
 
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
   private
-    FLock : TFslLock;
     FData : TTerminologyServerData;
     FServerContext : TFHIRServerContext; // free from owner
     procedure loadResource(res: TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
@@ -377,6 +377,7 @@ end;
 constructor TTerminologyServerData.Create(TextIndex : TFDBFullTextSearch);
 begin
   inherited create;
+  FLock := TFslLock.create('tx.storage');
   FCodeSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FCodeSystems.defaultValue := nil;
   FValueSets := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
@@ -387,7 +388,7 @@ begin
   FConceptMaps.defaultValue := nil;
   FPackages := TStringList.create;
   FTextIndex := TextIndex;
-  FImplicitValueSets := TFslMetadataResourceList.create;
+  FImplicitValueSets := TFslList<TFhirValueSetW>.create;
 end;
 
 destructor TTerminologyServerData.Destroy;
@@ -400,6 +401,7 @@ begin
   FTextIndex.free;
   FTerminologyServer.Free;
   FImplicitValueSets.Free;
+  FLock.free;
 
   inherited;
 end;
@@ -622,6 +624,7 @@ end;
 function TTerminologyServerOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;
 var
   res : TFHIRResourceV;
+  vs : TFhirValueSetW;
 begin
   result := false;
   res := nil;
@@ -633,7 +636,18 @@ begin
   else if request.ResourceName = 'ValueSet' then
   begin
     if (FData.ValueSets.ContainsKey(request.id)) then
-      res := FData.ValueSets[request.Id].resourceV.Link
+      res := FData.ValueSets[request.Id].resourceV.Link;
+    if res = nil then
+    begin
+      FData.FLock.lock('ExecuteRead');
+      try
+        for vs in FData.FImplicitValueSets do
+          if (res = nil) and (vs.id = request.id) then
+            res := vs.Resource.link;
+      finally
+        FData.FLock.Unlock;
+      end;
+    end;
   end
   else if request.ResourceName = 'NamingSystem' then
   begin
@@ -691,12 +705,21 @@ end;
 procedure TTerminologyServerOperationEngine.checkForImplicitValueSet(list: TFslMetadataResourceList; url: String);
 var
   vs : TFhirValueSetW;
+  ok : boolean;
 begin
-  if (FData.TerminologyServer.isKnownValueSet(url, vs)) then
-  begin
-    list.add(vs);
-    vs.id := NewGuidId;
-    FData.FImplicitValueSets.add(vs.link);
+  ok := false;
+  FData.FLock.Lock('checkForImplicitValueSet');
+  try
+    for vs in FData.FImplicitValueSets do
+      ok := ok or (vs.url = url);
+    if not ok and (FData.TerminologyServer.isKnownValueSet(url, vs)) then
+    begin
+      list.add(vs);
+      vs.id := NewGuidId;
+      FData.FImplicitValueSets.add(vs.link);
+    end;
+  finally
+    FData.FLock.Unlock;
   end;
 end;
 
@@ -717,6 +740,7 @@ var
   useProxy : boolean;
   start : UInt64;
   url : string;
+  vs : TFhirValueSetW;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
@@ -801,7 +825,13 @@ begin
             end;
             if (hasScope(request, 'ValueSet')) then
             begin
-              list.AddAll(FData.FImplicitValueSets);
+              FData.FLock.Lock('ExecuteSearch');
+              try
+                for vs in FData.FImplicitValueSets do
+                  list.Add(vs.link);
+              finally
+                FData.FLock.Unlock;
+              end;
               if (spp.hasParam('url', url)) then
                 checkForImplicitValueSet(list, url);
               for p in FData.ValueSets.Values do
@@ -1282,12 +1312,10 @@ constructor TTerminologyFhirServerStorage.Create(factory : TFHIRFactory);
 begin
   inherited Create(factory);
   FData := TTerminologyServerData.create(TFDBFullTextSearchFactory.makeSQLiteTextSearch(factory.versionName))         ;
-  FLock := TFslLock.create('tx.storage');
 end;
 
 destructor TTerminologyFhirServerStorage.Destroy;
 begin
-  FLock.free;
   FData.free;
   inherited;
 end;
@@ -1469,7 +1497,7 @@ begin
               inc(i);
               if (i mod 100 = 0) then
                 Logging.continue('.');
-              res := factory.makeProxy(npm.name+'#'+npm.version, pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
+              res := factory.makeProxy(npm.name+'#'+npm.version, pi.Link, FServerContext.ValidatorContext.Link, FData.FLock.link);
               try
                 res.ignoreHtml := true;
                 loadResource(res, ignoreEmptyCodeSystems);

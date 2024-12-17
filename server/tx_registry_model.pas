@@ -215,16 +215,20 @@ type
     class function readRegistry(fv : String; json : TJsonObject): TServerRegistry;
 
     class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation; auth : boolean);
-    class procedure buildRows(reg: TServerRegistry; srvr : TServerInformation; version, tx : String; rows : TFslList<TServerRow>); overload;
-    class procedure buildRows(reg : TServerRegistry; srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
-    class procedure buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
+    class procedure buildRowsCS(reg: TServerRegistry; srvr : TServerInformation; version, tx : String; rows : TFslList<TServerRow>); overload;
+    class procedure buildRowsVS(reg: TServerRegistry; srvr : TServerInformation; version, vs : String; rows : TFslList<TServerRow>); overload;
+    class procedure buildRowsVS(reg : TServerRegistry; srvrCode, version, vs : String; rows : TFslList<TServerRow>); overload;
+    class procedure buildRowsCS(reg : TServerRegistry; srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
+    class procedure buildRowsCS(info : TServerRegistries; regCode, srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
+    class procedure buildRowsVS(info : TServerRegistries; regCode, srvrCode, version, vs : String; rows : TFslList<TServerRow>); overload;
 
   public
     class function fromJson(json : TJsonObject) : TServerRegistries;
     class function toJson(reg : TServerRegistries) : TJsonObject; overload;
     class function toJson(row : TServerRow) : TJsonObject; overload;
 
-    class function buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String) : TFslList<TServerRow>; overload;
+    class function buildRowsCS(info : TServerRegistries; regCode, srvrCode, version, tx : String) : TFslList<TServerRow>; overload;
+    class function buildRowsVS(info : TServerRegistries; regCode, srvrCode, version, vs : String) : TFslList<TServerRow>; overload;
     class function hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
     class function hasMatchingValueSet(vs : String; list : TStringList; mask : boolean) : boolean;
   end;
@@ -471,7 +475,21 @@ begin
   end;
 end;
 
-class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvr: TServerInformation; version, tx: String; rows: TFslList<TServerRow>);
+class procedure TServerRegistryUtilities.buildRowsVS(reg: TServerRegistry; srvr: TServerInformation; version, vs: String; rows: TFslList<TServerRow>);
+var
+  ver : TServerVersionInformation;
+  auth : boolean;
+begin
+  auth := hasMatchingValueSet(vs, srvr.AuthVSList, true);
+  for ver in srvr.Versions do
+    if (version = '') or (TSemanticVersion.matches(version, ver.version, semverAuto)) then
+      begin
+        if auth or (vs = '') or hasMatchingValueSet(vs, ver.ValueSets, false) then
+          addRow(rows, reg, srvr, ver, auth);
+      end;
+end;
+
+class procedure TServerRegistryUtilities.buildRowsCS(reg: TServerRegistry; srvr: TServerInformation; version, tx: String; rows: TFslList<TServerRow>);
 var
   ver : TServerVersionInformation;
   auth : boolean;
@@ -485,22 +503,40 @@ begin
       end;
 end;
 
-class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvrCode, version, tx: String; rows: TFslList<TServerRow>);
+class procedure TServerRegistryUtilities.buildRowsVS(reg: TServerRegistry; srvrCode, version, vs: String; rows: TFslList<TServerRow>);
 var
   srvr : TServerInformation;
 begin
   for srvr in reg.Servers do
     if (srvrCode = '') or (srvr.Code = srvrCode) then
-      buildRows(reg, srvr, version, tx, rows);
+      buildRowsVS(reg, srvr, version, vs, rows);
 end;
 
-class procedure TServerRegistryUtilities.buildRows(info: TServerRegistries; regCode, srvrCode, version, tx: String; rows: TFslList<TServerRow>);
+class procedure TServerRegistryUtilities.buildRowsCS(reg: TServerRegistry; srvrCode, version, tx: String; rows: TFslList<TServerRow>);
+var
+  srvr : TServerInformation;
+begin
+  for srvr in reg.Servers do
+    if (srvrCode = '') or (srvr.Code = srvrCode) then
+      buildRowsCS(reg, srvr, version, tx, rows);
+end;
+
+class procedure TServerRegistryUtilities.buildRowsCS(info: TServerRegistries; regCode, srvrCode, version, tx: String; rows: TFslList<TServerRow>);
 var
   reg : TServerRegistry;
 begin
   for reg in info.Registries do
     if (regCode = '') or (reg.Code = regCode) then
-      buildRows(reg, srvrCode, version, tx, rows);
+      buildRowsCS(reg, srvrCode, version, tx, rows);
+end;
+
+class procedure TServerRegistryUtilities.buildRowsVS(info: TServerRegistries; regCode, srvrCode, version, vs: String; rows: TFslList<TServerRow>);
+var
+  reg : TServerRegistry;
+begin
+  for reg in info.Registries do
+    if (regCode = '') or (reg.Code = regCode) then
+      buildRowsVS(reg, srvrCode, version, vs, rows);
 end;
 
 class function TServerRegistryUtilities.toJson(reg: TServerRegistries): TJsonObject;
@@ -559,13 +595,29 @@ begin
   end;
 end;
 
-class function TServerRegistryUtilities.buildRows(info: TServerRegistries; regCode, srvrCode, version, tx: String): TFslList<TServerRow>;
+class function TServerRegistryUtilities.buildRowsCS(info: TServerRegistries; regCode, srvrCode, version, tx: String): TFslList<TServerRow>;
 begin
   info.Lock('build');
   try
     result := TFslList<TServerRow>.Create;
     try
-      buildRows(info, regCode, srvrCode, version, tx, result);
+      buildRowsCS(info, regCode, srvrCode, version, tx, result);
+      result.link;
+    finally
+      result.free;
+    end;
+  finally
+    info.unlock;
+  end;
+end;
+
+class function TServerRegistryUtilities.buildRowsVS(info: TServerRegistries; regCode, srvrCode, version, vs: String): TFslList<TServerRow>;
+begin
+  info.Lock('build');
+  try
+    result := TFslList<TServerRow>.Create;
+    try
+      buildRowsVS(info, regCode, srvrCode, version, vs, result);
       result.link;
     finally
       result.free;

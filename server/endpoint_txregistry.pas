@@ -84,8 +84,10 @@ type
 
     procedure sortJson(json : TJsonObject; sort : String);
     function renderJson(json : TJsonObject; path, reg, srvr, ver : String) : String;
-    procedure sendHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json : TJsonObject; reg, srvr, ver, tx : String);
-    function listRows(reg, srvr, ver, tx : String) : TJsonObject;
+    procedure sendHtmlVS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json : TJsonObject; reg, srvr, ver, vs : String);
+    procedure sendHtmlCS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json : TJsonObject; reg, srvr, ver, tx : String);
+    function listRowsVS(reg, srvr, ver, vs : String) : TJsonObject;
+    function listRowsCS(reg, srvr, ver, tx : String) : TJsonObject;
     function resolveCS(version, cs, usage : String; var matches : String) : TJsonObject;
     function resolveVS(version, vs, usage : String; var matches : String) : TJsonObject;
     function renderInfo : String;
@@ -467,7 +469,7 @@ begin
   end;
 end;
 
-procedure TFHIRTxRegistryWebServer.sendHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json: TJsonObject; reg, srvr, ver, tx : String);
+procedure TFHIRTxRegistryWebServer.sendHtmlCS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json: TJsonObject; reg, srvr, ver, tx : String);
 var
   path : String;
   vars : TFslMap<TFHIRObject>;
@@ -500,7 +502,40 @@ begin
   end;
 end;
 
-function TFHIRTxRegistryWebServer.listRows(reg, srvr, ver, tx : String): TJsonObject;
+procedure TFHIRTxRegistryWebServer.sendHtmlVS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json: TJsonObject; reg, srvr, ver, vs : String);
+var
+  path : String;
+  vars : TFslMap<TFHIRObject>;
+begin
+  path := AbsoluteURL(secure)+'/?';
+  if (reg <> '') then
+    path := path+'&registry='+reg;
+  if (srvr <> '') then
+    path := path+'&server='+srvr;
+  if (ver <> '') then
+    path := path+'&fhirVersion='+ver;
+  if (vs <> '') then
+    path := path+'&valueSet='+vs;
+
+  vars := TFslMap<TFHIRObject>.Create('vars');
+  try
+    vars.add('path', TFHIRObjectText.Create(path));
+    vars.add('matches', TFHIRObjectText.Create(renderJson(json, path, reg, srvr, ver)));
+    vars.add('count', TFHIRObjectText.Create(json.forceArr['results'].Count));
+    vars.add('registry', TFHIRObjectText.Create(reg));
+    vars.add('server', TFHIRObjectText.Create(srvr));
+    vars.add('fhirVersion', TFHIRObjectText.Create(ver));
+    vars.add('valueSet', TFHIRObjectText.Create(vs));
+    vars.add('status', TFHIRObjectText.Create(status));
+    vars.add('tx-reg-doco', TFHIRObjectText.Create(FInfo.doco));
+    vars.add('tx-reg-view', TFHIRObjectText.Create(renderInfo));
+    returnFile(request, response, nil, request.Document, 'tx-registry.html', false, vars);
+  finally
+    vars.free;
+  end;
+end;
+
+function TFHIRTxRegistryWebServer.listRowsVS(reg, srvr, ver, vs : String): TJsonObject;
 var
   rows :TFslList<TServerRow>;
   row : TServerRow;
@@ -510,7 +545,30 @@ begin
     result.str['last-update'] := FInfo.LastRun.toXML;
     result.str['master-url'] := FInfo.Address;
 
-    rows := TServerRegistryUtilities.buildRows(FInfo, reg, srvr, ver, tx);
+    rows := TServerRegistryUtilities.buildRowsVS(FInfo, reg, srvr, ver, vs);
+    try
+      for row in rows do
+        result.forceArr['results'].add(TServerRegistryUtilities.toJson(row));
+    finally
+      rows.free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRTxRegistryWebServer.listRowsCS(reg, srvr, ver, tx : String): TJsonObject;
+var
+  rows :TFslList<TServerRow>;
+  row : TServerRow;
+begin
+  result := TJsonObject.Create;
+  try
+    result.str['last-update'] := FInfo.LastRun.toXML;
+    result.str['master-url'] := FInfo.Address;
+
+    rows := TServerRegistryUtilities.buildRowsCS(FInfo, reg, srvr, ver, tx);
     try
       for row in rows do
         result.forceArr['results'].add(TServerRegistryUtilities.toJson(row));
@@ -630,7 +688,7 @@ begin
               for ver in srvr.Versions do
               begin
                 if TSemanticVersion.matches(version, ver.version, semverAuto) then
-                  if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
+                  if true or TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
                   begin
                     populate(result.forceArr['authoritative'].addObject, srvr, ver);
                     added := true;
@@ -778,7 +836,7 @@ end;
 function TFHIRTxRegistryWebServer.doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; secure : boolean) : String;
 var
   pm : THTTPParameters;
-  reg, srvr, ver, tx, desc : String;
+  reg, srvr, ver, tx, desc, vs : String;
   json : TJsonObject;
 begin
   pm := THTTPParameters.Create(request.UnparsedParams);
@@ -791,9 +849,16 @@ begin
       srvr := pm.Value['server'];
       ver := pm.Value['fhirVersion'];
       tx := pm.Value['url'];
-      json := listRows(reg, srvr, ver, tx);
-      try
-        result := 'Tx servers (registry='+reg+', server='+srvr+', fhirVersion='+ver+', url='+tx+')';
+      vs := pm.Value['valueSet'];
+      if (vs <> '') then
+        json := listRowsVS(reg, srvr, ver, vs)
+      else
+        json := listRowsCS(reg, srvr, ver, tx);
+      try                 
+        if (vs <> '') then
+          result := 'Tx servers (registry='+reg+', server='+srvr+', fhirVersion='+ver+', valueSet='+vs+')'
+        else
+          result := 'Tx servers (registry='+reg+', server='+srvr+', fhirVersion='+ver+', url='+tx+')';
         if (pm.has('sort')) then
           sortJson(json, pm.Value['sort']);
         if request.Accept.Contains('json') then
@@ -803,8 +868,10 @@ begin
           response.contentType := 'application/json';
           response.ResponseNo := 200;
         end
+        else if (vs <> '') then
+          sendHtmlVS(request, response, secure, json, reg, srvr, ver, vs)
         else
-          sendHtml(request, response, secure, json, reg, srvr, ver, tx);
+          sendHtmlCS(request, response, secure, json, reg, srvr, ver, tx);
       finally
         json.free;
       end;
