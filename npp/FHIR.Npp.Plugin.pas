@@ -320,7 +320,6 @@ implementation
 
 uses
   IdSSLOpenSSLHeaders,
-  fhir2_factory,
   fhir3_factory,
   fhir4_factory;
 

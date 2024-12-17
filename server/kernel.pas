@@ -43,7 +43,7 @@ Uses
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
-  fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
+  fhir3_factory, fhir4_factory, fhir5_factory,
 
   {$IFDEF FPC}
   fui_fake_console,

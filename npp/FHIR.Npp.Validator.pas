@@ -36,7 +36,6 @@ Uses
   fsl_utilities, fsl_base,
   fhir_objects, fhir_factory, fhir_client, fhir_common, 
   ftx_service,
-  fhir2_types, fhir2_resources, fhir2_resources_base, fhir2_context, fhir2_profiles, fhir2_client,
   fhir3_types, fhir3_resources, fhir3_resources_base, fhir3_context, fhir3_profiles, fhir3_client,
   fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_context, fhir4_profiles, fhir4_client,
   fhir_valuesets.pas;

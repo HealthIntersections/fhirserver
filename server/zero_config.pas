@@ -105,7 +105,6 @@ begin
   FParams := params;
   FFiles := TFslStringDictionary.Create;
   FEndPoints := TFslMap<TEndPointInfo>.Create;
-  FEndPoints.Add('r2', TEndPointInfo.Create(fhirVersionRelease2));
   FEndPoints.Add('r3', TEndPointInfo.Create(fhirVersionRelease3));
   FEndPoints.Add('r4', TEndPointInfo.Create(fhirVersionRelease4));
   FEndPoints.Add('r5', TEndPointInfo.Create(fhirVersionRelease5));
@@ -364,7 +363,7 @@ begin
   if not FParams.get('version', vl) then
     vl := '*';
   if (vl = '*') then
-    vl := '2,3,4,5';
+    vl := '3,4,5';
 
   for v in vl.Split([';', ',']) do
   begin
@@ -470,9 +469,6 @@ begin
 
   for i := 0 to pck.forceArr['r3'].Count - 1 do
     FEndPoints['r3'].Packages.Add(pck.arr['r3'].Value[i]);
-
-  for i := 0 to pck.forceArr['r2'].Count - 1 do
-    FEndPoints['r2'].Packages.Add(pck.arr['r2'].Value[i]);
 end;
 
 procedure TConfigurationBuilder.downloadFile(fn : String);
