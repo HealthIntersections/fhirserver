@@ -647,7 +647,6 @@ type
     function getComposeExtensions : TFslList<TFHIRExtensionW>; override;
     function checkExpansion(place, role : String) : boolean; override;
     function imports : TArray<String>; override;
-    function inlineCS : TFHIRValueSetCodeSystemW; override;
     function includes : TFslList<TFhirValueSetComposeIncludeW>; override;
     function excludes : TFslList<TFhirValueSetComposeIncludeW>; override;
     procedure clearDefinition; override;
@@ -665,7 +664,6 @@ type
     procedure setStatus(Value: TPublicationStatus); override;
     function getDate: TFslDateTime; override;
     procedure setDate(Value: TFslDateTime); override;
-    function hasInlineCS : boolean; override;      
     function excludeInactives : boolean; override;
     function addInclude : TFhirValueSetComposeIncludeW; override;
     function getContext: String; override;
@@ -1808,6 +1806,12 @@ begin
   ext3.value := TFHIRCode.create('mode');
   ext3 := ext2.addExtension('value');
   ext3.value := TFHIRCode.create('tx.fhir.org');
+
+  ext1 := statement.addExtension('http://hl7.org/fhir/uv/application-feature/StructureDefinition/feature');
+  ext2 := ext1.addExtension('definition');
+  ext2.value := TFHIRCanonical.create('http://hl7.org/fhir/uv/tx-ecosystem/FeatureDefinition/CodeSystemAsParameter');
+  ext2 := ext1.addExtension('value');
+  ext2.value := TFHIRBoolean.create(true);
 end;
 
 procedure TFHIRCapabilityStatement3.addOperation(name, url: String);
@@ -3411,11 +3415,6 @@ begin
   result := vs.expansion <> nil;
 end;
 
-function TFHIRValueSet3.hasInlineCS: boolean;
-begin
-  result := false;
-end;
-
 function TFHIRValueSet3.excludeInactives: boolean;
 begin
   result := (vs.compose.inactiveElement <> nil) and not vs.compose.inactive;
@@ -3438,11 +3437,6 @@ begin
     for c in vs.compose.includeList do
       result.Add(TFhirValueSetComposeInclude3.Create(c.Link));
   end;
-end;
-
-function TFHIRValueSet3.inlineCS: TFHIRValueSetCodeSystemW;
-begin
-  result := nil;
 end;
 
 function TFHIRValueSet3.getDate: TFslDateTime;

@@ -640,21 +640,6 @@ begin
     FValueSet := vs.link;
     FAllValueSet := FValueSet.url = 'http://hl7.org/fhir/ValueSet/@all';
 
-    // r2:
-    ics := FValueSet.inlineCS;
-    if ics <> nil then
-    begin
-      try
-        FFactory.checkNoModifiers(ics, 'ValueSetChecker.prepare', 'CodeSystem');
-        cs := TFhirCodeSystemProvider.create(FLanguages.link, FI18n.link, ffactory.link, TFHIRCodeSystemEntry.Create(FFactory.wrapCodeSystem(FValueSet.Resource.Link)));
-        FOthers.Add(ics.systemUri, cs);
-        if (FValueSet.version <> '') then
-          FOthers.Add(ics.systemUri+'|'+FValueSet.version, cs.link);
-      finally
-        ics.free;
-      end;
-    end;
-
     if (FValueSet.checkCompose('ValueSetChecker.prepare', 'ValueSet.compose')) then
     begin
       // not r2:
@@ -1101,30 +1086,6 @@ begin
         begin
           impliedSystem := system;
           FOpContext.addNote(FValueSet, 'Inferred CodeSystem = "'+system+'"');
-        end;
-      end;
-
-      ics := FValueSet.inlineCS; // r2
-      if ics <> nil then
-      begin
-        try
-          contentMode := cscmComplete;
-          ver := FValueSet.version;
-          if (system = ics.systemUri) or (system = SYSTEM_NOT_APPLICABLE) then
-          begin
-            ccl := ics.concepts;
-            try
-              ok := FindCode(nil, code, ccl, displays, isabstract);
-              if ok and (abstractOk or not isabstract) then
-                exit(bTrue)
-              else
-                exit(bFalse);
-            finally
-              ccl.free;
-            end;
-          end;
-        finally
-          ics.free;
         end;
       end;
 
@@ -2556,26 +2517,6 @@ begin
     opContext.log('start working');
     DeadCheck('expand');
     try
-      ics := source.inlineCS;
-      try
-        if (ics <> nil) then
-        begin
-          FFactory.checkNoModifiers(ics, 'ValueSetExpander.Expand', 'code system');
-          cl := ics.concepts;
-          try
-            cs2 := FFactory.wrapCodeSystem(source.Resource.link);
-            try
-              handleDefine(cs2, ics, cl, filter, exp, nil, false, source.url);
-            finally
-              cs2.free;
-            end;
-          finally
-            cl.free;
-          end;
-        end;
-      finally
-        ics.free;
-      end;
       notClosed := false;
       if (source.checkCompose('ValueSetExpander.Expand', 'compose')) then
         handleCompose(source, filter, dependencies, exp, notClosed);

@@ -1035,8 +1035,6 @@ type
     function checkExpansion(place, role : String) : boolean; virtual; abstract;
     function imports : TArray<String>; virtual; abstract; // only in R2
     function excludeInactives : boolean; virtual; abstract;
-    function hasInlineCS : boolean; virtual; abstract;
-    function inlineCS : TFHIRValueSetCodeSystemW; virtual; abstract;
     function includes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
     function addInclude : TFhirValueSetComposeIncludeW; virtual; abstract; {      result.compose := TFhirValueSetCompose.Create;     inc := result.addInclude; compose.includeList.Append; }
     function excludes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
