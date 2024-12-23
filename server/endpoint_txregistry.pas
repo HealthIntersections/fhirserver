@@ -593,6 +593,9 @@ begin
   if (ssOAuth in ver.Security) then json.bool[CODES_TServerSecurity[ssOAuth]] := true;
   if (ssSmart in ver.Security) then json.bool[CODES_TServerSecurity[ssSmart]] := true;
   if (ssCert in ver.Security) then json.bool[CODES_TServerSecurity[ssCert]] := true;
+
+  if (srvr.AccessInfo <> '') then 
+    json.str['access_info'] := ver.Address;
 end;
 
 function TFHIRTxRegistryWebServer.resolveCS(version, cs, usage: String; var matches : String): TJsonObject;
