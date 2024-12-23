@@ -730,19 +730,6 @@ begin
 
       FBaseValueSets.AddOrSetValue(resource.url, resource.Link);
       FValueSets.see(resource);
-      if (resource.fhirObjectVersion = fhirVersionRelease2) then
-      begin
-        vs := resource.resourceW as TFHIRValueSetW;
-        if vs.hasInlineCS then
-        begin
-          cs := FFactory.wrapCodesystem(vs.Resource.link);
-          try
-            AddCodeSystemToCache(resource.packageId, cs, true);
-          finally
-            cs.free;
-          end;
-        end;
-      end;
       if not loading then
         UpdateConceptMaps;
     end
@@ -778,20 +765,6 @@ begin
 
       FValueSets.see(resource);
       invalidateVS(resource.url);
-      if (resource.fhirObjectVersion = fhirVersionRelease2) then
-      begin
-        vs := resource.resourceW as TFHIRValueSetW;
-        if vs.hasInlineCS then
-        begin
-          cs := FFactory.wrapCodesystem(vs.resource.Link);
-          try
-            AddCodeSystemToCache(resource.packageId, cs, true);
-          finally
-            cs.free;
-          end;
-        end;
-        UpdateConceptMaps;
-      end;
     end
     else if (resource.fhirType = 'CodeSystem') then
     begin

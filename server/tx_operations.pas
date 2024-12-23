@@ -275,7 +275,9 @@ begin
           else if params.has('url') then
           begin
             url := params.str('url');
-            version := request.Parameters['valueSetVersion'];
+            version := params.str('valueSetVersion');
+            if (version <> '') and not url.contains('|') then
+              url := url+'|'+version;
             txResources := processAdditionalResources(context, manager, nil, params);
             matches := TFslMetadataResourceList.create;
             try
