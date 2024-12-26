@@ -2187,6 +2187,8 @@ begin
             oComp := TFHIRNDJsonComposer.Create(self.Context.ValidatorContext.link, style, oRequest.langList)
           else if oResponse.format = ffXml then
             oComp := FContext.factory.makeComposer(self.Context.ValidatorContext, ffXml, oRequest.langList, style)
+          else if oResponse.format = ffJQuery then
+            oComp := FContext.factory.makeComposer(self.Context.ValidatorContext, ffJQuery, oRequest.langList, style)
           else if oResponse.format = ffText then
             oComp := TFHIRTextComposer.Create(self.Context.ValidatorContext.link, style, oRequest.langList)
           else if (FContext.factory.version <> fhirVersionRelease2) and ((oResponse.format = ffTurtle) or (res._source_format = ffTurtle)) then

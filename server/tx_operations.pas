@@ -356,6 +356,9 @@ begin
           profile := buildExpansionParams(request, manager, params);
           try
             filter := params.str('filter');
+            if (filter = '') and params.has('term') then
+              filter := params.str('term'); // jquery support
+
             count := StrToIntDef(params.str('count'), -1);
             offset := StrToIntDef(params.str('offset'), -1);
             limit := StrToIntDef(params.str('_limit'), -1);

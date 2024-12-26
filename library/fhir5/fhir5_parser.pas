@@ -35,8 +35,8 @@ interface
 
 uses
   SysUtils, Classes,
-  fhir_objects, fhir_parser, fhir_xhtml,  fsl_http,
-  fhir5_enums, fhir5_types, fhir5_resources, fhir5_xml, fhir5_json, fhir5_turtle, fhir5_context;
+  fhir_objects, fhir_parser, fhir_xhtml, fsl_http, fsl_json, fsl_stream,
+  fhir5_enums, fhir5_types, fhir5_resources, fhir5_xml, fhir5_json, fhir5_turtle, fhir5_context, fhir5_parserbase;
 
 type
   TFHIRParsers5 = class
@@ -47,6 +47,16 @@ type
     class procedure composeFile(worker : TFHIRWorkerContext; format : TFHIRFormat; r : TFHIRResourceV; langList : THTTPLanguageList; filename : String; style : TFHIROutputStyle); overload;
   end;
 
+  { TFHIRJQueryComposer }
+
+   TFHIRJQueryComposer = class (TFHIRJsonComposerBase5)
+   private
+     function composeValueSet(vs : TFhirValueSet) : TBytes;
+   public
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
+    Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); overload; override;
+   end;
+
 implementation
 
 { TFHIRParsers5 }
@@ -56,6 +66,7 @@ begin
   case format of
     ffXml : result := fhir5_xml.TFHIRXmlComposer.Create(worker, style, langList);
     ffJson : result := fhir5_json.TFHIRJsonComposer.Create(worker, style, langList);
+    ffJQuery : result := TFHIRJQueryComposer.Create(worker, style, langList);
     ffTurtle : result := fhir5_turtle.TFHIRTurtleComposer.Create(worker, style, langList);
     ffText : result := TFHIRTextComposer.Create(worker, style, langList);
   else
@@ -103,6 +114,60 @@ begin
   finally
     p.free;
   end;
+end;
+
+{ TFHIRJQueryComposer }
+
+
+function TFHIRJQueryComposer.composeValueSet(vs : TFhirValueSet) : TBytes;
+var
+  arr : TJsonArray;
+  obj : TJsonObject;
+  cc : TFhirValueSetExpansionContains;
+begin
+  arr := TJsonArray.create;
+  try
+    if (vs.expansion <> nil) and (vs.expansion.hasContainsList) then
+    begin
+      for cc in vs.expansion.containsList do
+      begin
+        obj := TJsonObject.create;
+        arr.add(obj);
+        obj.str['label'] := cc.display;
+        obj.str['code'] := cc.system+'#'+cc.code;
+      end;
+    end;
+
+    Result := TJsonWriterDirect.writeArray(arr);
+  finally
+    arr.free;
+  end;
+end;
+
+Procedure TFHIRJQueryComposer.Compose(stream : TStream; oResource : TFhirResourceV);
+var
+  b : TBytes;
+begin
+  if (oResource is TFhirValueSet) then
+  begin
+    b := composeValueSet(oResource as TFhirValueSet);
+    stream.Write(b, 0, length(b));
+  end
+  else
+    raise EFHIRException.create('Only ValueSet is supported for the JQuery format');
+end;
+
+Procedure TFHIRJQueryComposer.Compose(stream : TFslStream; oResource : TFhirResourceV);
+var
+  b : TBytes;
+begin
+  if (oResource is TFhirValueSet) then
+  begin
+    b := composeValueSet(oResource as TFhirValueSet);
+    stream.Write(b, length(b));
+  end
+  else
+    raise EFHIRException.create('Only ValueSet is supported for the JQuery format');
 end;
 
 end.

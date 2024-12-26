@@ -119,6 +119,7 @@ Type
     ffJson,{ JSON }
     ffTurtle, { RDF using Turtle syntax }
     ffText,
+    ffJQuery, { Json good for JQuery autocompete }
     ffNDJson, { new line delimited JSON }
     ffXhtml); { XHTML - only for retrieval from the server }
   TFHIROutputStyle = (OutputStyleNormal, OutputStylePretty, OutputStyleCanonical);
@@ -204,16 +205,17 @@ Const
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
     'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'Metadata', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Task', 'delete task', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
-  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'RDF/Turtle', 'Text Representation', 'Newline delimited JSON', 'XHTML');
-  EXT_ACTUAL_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.ndjson', '.html');
-  EXT_WEB_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.ndjson', '.xml');
-  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'application/fhir+xml', 'application/fhir+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'application/x-ndjson', 'text/xhtml');
+  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'RDF/Turtle', 'Text Representation', 'JQuery Format', 'Newline delimited JSON', 'XHTML');
+  EXT_ACTUAL_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.json', '.ndjson', '.html');
+  EXT_WEB_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.json', '.ndjson', '.xml');
+  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'application/fhir+xml', 'application/fhir+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'application/jquery', 'application/x-ndjson', 'text/xhtml');
   MIMETYPES_TFHIRFormat_Version : Array [TFHIRFormat, TFHIRVersion] of String = (
     ('', '', '', '', '', '', ''),
     ('', 'application/xml+fhir', 'application/xml+fhir', 'application/fhir+xml', 'application/fhir+xml', 'application/fhir+xml', 'application/fhir+xml'),
     ('', 'application/json+fhir', 'application/json+fhir', 'application/fhir+json', 'application/fhir+json', 'application/fhir+json', 'application/fhir+json'),
     ('','','','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir'),
     ('','','','text/fhir','text/fhir','text/fhir','text/fhir'),
+    ('','','','application/jquery','application/jquery','application/jquery','application/jquery'),
     ('','','','','application/x-ndjson', 'application/x-ndjson', 'application/x-ndjson'),
     ('', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml')
     );

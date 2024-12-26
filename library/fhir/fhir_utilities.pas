@@ -104,6 +104,7 @@ begin
     begin
       if      (ct.base = 'application/json') or (ct.base = 'application/fhir+json') or (ct.base = 'application/json+fhir') then result := ffJson
       else if (ct.base = 'application/xml') or (ct.base = 'application/fhir+xml') or (ct.base = 'application/xml+fhir') then result := ffXml
+      else if (ct.base = 'application/jquery') then result := ffJQuery
       else if (ct.base = 'application/x-ndjson') or (ct.base = 'application/fhir+ndjson') then result := ffNDJson
       else if (ct.base = 'text/turtle') or (ct.base = 'application/fhir+turtle') then result := ffTurtle
 
@@ -114,6 +115,7 @@ begin
       else if (ct.base = 'text/plain') then result := ffText
 
       else if StringExistsInsensitive(ct.base, 'json') then result := ffJson
+      else if StringExistsInsensitive(ct.base, 'jquery') then result := ffJQuery
       else if StringExistsInsensitive(ct.base, 'xml') then result := ffXml
       else if StringExistsInsensitive(ct.base, 'html') then result := ffXhtml
       else if StringExistsInsensitive(ct.base, 'text') then result := ffText
