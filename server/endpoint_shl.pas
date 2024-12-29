@@ -50,8 +50,8 @@ type
     FPassword : String;
     FDB : TFDBManager;
     procedure SetDB(AValue: TFDBManager);
-    function processCreate(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
-    function processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String) : String;
+    function processCreate(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
+    function processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon);
     destructor Destroy; override;
@@ -93,11 +93,10 @@ begin
   FDB:=AValue;
 end;
 
-function TSHLWebServer.processCreate(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;
+function TSHLWebServer.processCreate(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection): String;
 var
   req, resp : TJsonObject;
   exp : TDateTime;
-  c : TFDBConnection;
   days : integer;
 begin
   result := 'Create SHL context';
@@ -114,23 +113,14 @@ begin
         resp.str['pword'] := NewGuidId;
         resp.str['link'] := 'http://'+common.host+PathWithSlash+resp.str['uuid'];
 
-        c := FDB.GetConnection('processCreate');
-        try
-          c.SQL := 'Insert into SHL (uuid, pword, expiry) values (:u, :p, :e)';
-          c.prepare;
-          c.BindString('u', resp.str['uuid']);
-          c.BindString('p', resp.str['pword']);
-          c.BindTimeStamp('e', DateTimeToTS(exp));
-          c.execute;
-          c.terminate;
-          c.Release;
-        except
-          on e : Exception do
-          begin
-            c.Error(e);
-            raise;
-          end;
-        end;
+        c.SQL := 'Insert into SHL (uuid, pword, expiry, mimetype) values (:u, :p, :e, :m)';
+        c.prepare;
+        c.BindString('u', resp.str['uuid']);
+        c.BindString('p', resp.str['pword']);
+        c.BindTimeStamp('e', DateTimeToTS(exp));  
+        c.BindString('m', req.str['mimetype']);
+        c.execute;
+        c.terminate;
         response.ResponseNo := 200;
         response.ResponseText := 'OK';
         response.ContentText := TJSONWriter.writeObjectStr(resp, true);
@@ -145,10 +135,9 @@ begin
   end;
 end;
 
-function TSHLWebServer.processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String): String;
+function TSHLWebServer.processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection): String;
 var
-  p : THTTPParameters; 
-  c : TFDBConnection;
+  p : THTTPParameters;
   bytes : TBytes;
 begin
   result := 'upload SHL content';
@@ -157,29 +146,19 @@ begin
     bytes := StreamToBytes(request.PostStream);
     if (p.has('uuid') and p.has('pword')) then
     begin
-      c := FDB.GetConnection('processUpload');
-      try
-        c.sql := 'select pword from SHL where uuid = '''+SQLWrapString(p['uuid'])+'''';
-        c.Prepare;
-        c.Execute;
-        if not c.FetchNext then       
-          raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid  "'+p['uuid']+'" not found', nil);
-        if p['pword'] <> c.ColStringByName['pword'] then
-          raise ERestfulException.create('processCreate', 404, itSecurity, 'password failure', nil);
-        c.terminate;
-        c.SQL := 'update SHL set blob = :b where uuid = '''+SQLWrapString(p['uuid'])+'''';
-        c.prepare;
-        c.BindBlob('b', bytes);
-        c.Execute;
-        c.terminate;
-        c.Release;
-      except
-        on e : Exception do
-        begin
-          c.Error(e);
-          raise;
-        end;
-      end;
+      c.sql := 'select pword from SHL where uuid = '''+SQLWrapString(p['uuid'])+'''';
+      c.Prepare;
+      c.Execute;
+      if not c.FetchNext then
+        raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid  "'+p['uuid']+'" not found', nil);
+      if p['pword'] <> c.ColStringByName['pword'] then
+        raise ERestfulException.create('processCreate', 404, itSecurity, 'password failure', nil);
+      c.terminate;
+      c.SQL := 'update SHL set blob = :b where uuid = '''+SQLWrapString(p['uuid'])+'''';
+      c.prepare;
+      c.BindBlob('b', bytes);
+      c.Execute;
+      c.terminate;
       response.ResponseNo := 200;
       response.ResponseText := 'OK';
       response.ContentText := '{ "msg": "OK" }';
@@ -218,16 +197,51 @@ begin
 end;
 
 function TSHLWebServer.PlainRequest(AContext: TIdContext; ip: String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; tt: TFslTimeTracker): String;
-begin                    
+var
+  c : TFDBConnection;
+begin
   response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
   response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
   response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-  if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'create') then
-    result := processCreate(request, response, id)
-  else if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'upload') then
-    result := processUpload(request, response, id)
-  else
-    raise EFslException.create(request.Command+' '+request.Document+' not handled');
+
+  c := FDB.GetConnection('processCreate');
+  try
+    if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'create') then
+      result := processCreate(request, response, c)
+    else if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'upload') then
+      result := processUpload(request, response, c)
+    else if (request.CommandType = hcGET) and (request.Document.length > PathWithSlash.length) then
+    begin
+      c.sql := 'select * from SHL where uuid = :u';
+      c.prepare;
+      c.BindString('u', request.Document.subString(PathWithSlash.length));
+      c.execute;
+      if c.FetchNext then
+      begin
+        response.ResponseNo := 200;
+        response.ResponseText:= 'OK';
+        response.ContentStream := TBytesStream.create(c.GetColBlobByName('blob'));
+        response.ContentType := c.GetColStringByName('mimetype');
+        c.Terminate;
+      end
+      else
+      begin
+        c.Terminate;
+        raise EFslException.create(request.Command+' '+request.Document+' not handled');
+      end;
+    end
+    else
+    begin
+      raise EFslException.create(request.Command+' '+request.Document+' not handled');
+    end;
+    c.Release;
+  except
+    on e : Exception do
+    begin
+      c.Error(e);
+      raise;
+    end;
+  end;
 end;
 
 function TSHLWebServer.SecureRequest(AContext: TIdContext; ip: String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt: TFslTimeTracker): String;
@@ -259,6 +273,7 @@ begin
           c.ExecSQL('CREATE TABLE SHL ( '+#13#10+
                ' uuid nchar(40) '+ColCanBeNull(c.owner.platform, False)+', '+
                ' pword nchar(40) '+ColCanBeNull(c.owner.platform, False)+', '+
+               ' mimetype nchar(60) '+ColCanBeNull(c.owner.platform, False)+', '+
                ' expiry '+DBDateTimeType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, False)+', '+
                ' blob '+DBBlobType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, true)+') '+
                CreateTableInfo(c.owner.platform));
