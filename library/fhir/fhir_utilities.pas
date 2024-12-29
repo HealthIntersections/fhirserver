@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, {$IFDEF FPC} zstream, {$ELSE} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions, fsl_collections,
   fhir_objects, fhir_uris;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
@@ -89,6 +89,21 @@ function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
 function csName(url : string) : String;
 
 function csUriForProperty(code : String) : String;
+
+type
+  { TFslWordStemmer }
+
+  TFslWordStemmer = class (TFslObject)
+  private
+    // FStem : TYuStemmer;
+  public
+    constructor Create(lang : String);
+    destructor Destroy; override;
+    function stem(word : String) : String;
+
+    procedure stems(content : String; stems : TFslStringList; lang, defLang : String);
+  end;
+
 
 implementation
 
@@ -528,6 +543,43 @@ begin
   else if (code = 'itemWeight') then      result := 'http://hl7.org/fhir/concept-properties#itemWeight'
   else
     result := '';
+end;
+
+
+{ TFslWordStemmer }
+
+constructor TFslWordStemmer.Create(lang: String);
+begin
+  inherited Create;
+//  FStem := GetStemmer(lang);
+end;
+
+destructor TFslWordStemmer.Destroy;
+begin
+//  FStem.free;
+  inherited;
+end;
+
+function TFslWordStemmer.stem(word: String): String;
+begin
+  result := EncodeNYSIIS(word); // temporary hack
+  // result := FStem.Stem(word);
+end;
+
+procedure TFslWordStemmer.stems(content: String; stems: TFslStringList; lang, defLang: String);
+var
+  s, t : string;
+begin
+  content := content.replace('''', '');
+  for s in content.Split([',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '-', '+', '=']) do
+  begin
+    if (s <> '') And not StringIsInteger64(s) and (s.length > 2) Then
+    begin
+      t := Stem(s);
+      if (t <> '') then
+        stems.add(t.toLower);
+    end;
+  End;
 end;
 
 end.

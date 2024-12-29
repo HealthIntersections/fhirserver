@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections,
   fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang, fsl_logging, fsl_i18n,
   fsl_http,
-  fhir_common, fhir_factory, fhir_features, fhir_objects,
+  fhir_common, fhir_factory, fhir_features, fhir_objects, fhir_utilities,
   fhir_cdshooks;
 
 type
@@ -209,7 +209,7 @@ Type
     function passes(value : String) : boolean; overload;
     function passes(cds : TConceptDesignations) : boolean; overload;
     function passes(value : String; var rating : double) : boolean; overload;
-    function passes(stems : TFslStringList; var rating : double) : boolean; overload;
+    function matches(stems : TFslStringList) : double; overload;
     property filter : string read FFilter;
     property stems : TStringList read FStems;
   end;
@@ -1157,7 +1157,7 @@ begin
   Create;
   FStemmer := TFslWordStemmer.create('english');
   FStems := TStringList.Create;
-  FFilter := filter;
+  FFilter := filter.toLower;
   process;
 end;
 
@@ -1228,29 +1228,36 @@ begin
   End;
 end;
 
-function TSearchFilterText.passes(stems: TFslStringList; var rating : double): boolean;
+function TSearchFilterText.matches(stems: TFslStringList): double;
 var
   i : integer;
-  all, any, this : boolean;
+  s : String;
+  incomplete, complete : boolean;
 begin
-  rating := 0;
+  result := 0;
   if FStems.Count = 0 then
-    result := true
+    result := 100
   else if stems = nil then
-    result := false
+    result := 0
   else
   begin
-    all := true;
-    any := false;
     for i := 0 to stems.count - 1 do
     begin
-      this := find(stems[i]);
-      all := all and this;
-      any := any or this;
-      if this then
-        rating := rating + length(stems[i])/Fstems.count;
+      incomplete := false;
+      complete := false;
+      for s in FStems do
+      begin
+        if s = stems[i] then
+          complete := complete or true
+        else
+          incomplete := incomplete or stems[i].startsWith(s);
+      end;
+      if complete then
+        result := result + length(stems[i])/Fstems.count
+      else if incomplete then
+        result := result + length(stems[i])/Fstems.count / 2
+      else
     end;
-    result := any;
   end;
 end;
 

@@ -41,7 +41,7 @@ uses
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir, xig_provider,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt, tx_omop,
-  utilities, server_config, kernel_thread, server_stats;
+  utilities, server_config, kernel_thread, server_stats, fhir_utilities;
 
 const
   URI_VERSION_BREAK = '#';

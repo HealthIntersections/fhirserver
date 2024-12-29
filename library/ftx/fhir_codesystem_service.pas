@@ -378,17 +378,46 @@ procedure TFHIRCodeSystemEntry.loadCodeSystem;
       end;
     end;
   end;
+  procedure indexCodes(list : TFhirCodeSystemConceptListW; stemmer : TFslWordStemmer);
+  var
+    item : TFhirCodeSystemConceptW;
+    dd : TFhirCodeSystemConceptDesignationW;
+    stems : TFslStringList;
+  begin
+    for item in list do
+    begin
+      stems := TFslStringList.create;
+      try
+        item.tag := stems.link;
+        stems.IgnoreDuplicates;
+        stemmer.stems(item.display, stems, FCodeSystem.language, '');
+        for dd in item.designations.forEnum do
+          stemmer.stems(dd.value, stems, dd.language, FCodeSystem.language);
+      finally
+        stems.free;
+      end;
+      if (item.HasConcepts) then
+        indexCodes(item.conceptList, stemmer);
+    end;
+  end;
 var
   prop : TFHIRCodeSystemPropertyW;
   entry : TFHIRCodeSystemCodeEntry;
   p : TFhirCodeSystemConceptPropertyW;
   c : TFHIRCodeSystemCodeEntry;
+  stemmer : TFslWordStemmer;
 begin
   Assert(FCodeMap = nil);
 
   FCodeMap := TFslMap<TFHIRCodeSystemCodeEntry>.create;
   FCodeMap.defaultValue := nil;
   registerCodes(FCodeSystem.conceptList, nil);
+  stemmer := TFslWordStemmer.create;
+  try
+    indexCodes(FCodeSystem.conceptList, stemmer);
+  finally
+    stemmer.free;
+  end;
   for prop in FCodeSystem.properties.forEnum do
   begin
     if (prop.code = 'parent') or (prop.uri = 'http://hl7.org/fhir/concept-properties#parent') then
@@ -1831,12 +1860,24 @@ var
   i : integer;
   code : TFhirCodeSystemConceptW;
   rating : double;
+  stems : TFslStringList;
 begin
   for i := 0 to source.Count - 1 do
   begin
     code := source[i];
-    if filter.passes(code.tag as TFslStringList, rating) then
-      dest.Add(code.Link, rating);
+    stems := code.Tag as TFslStringList;
+    rating := 0;
+    if (code.code.toLower = filter.filter) or (code.display.toLower = filter.filter) then
+      rating := 100
+    else if code.code.toLower.startsWith(filter.filter) then
+      rating := 90
+    else if code.display.toLower.startsWith(filter.filter) then
+      rating := 80+(10 * (length(filter.filter)/length(code.display)))
+    else
+      rating := filter.matches(stems);
+    if rating > 0 then
+      dest.add(code.link, rating);
+
     filterCodes(dest, code.conceptList, filter);
   end;
 end;

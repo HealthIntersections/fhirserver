@@ -549,15 +549,6 @@ type
     property separator : String read FSeperator write FSeperator;
   end;
 
-  TFslWordStemmer = class (TFslObject)
-  private
-    // FStem : TYuStemmer;
-  public
-    constructor Create(lang : String);
-    destructor Destroy; override;
-    function stem(word : String) : String;
-  end;
-
 //Type
 //  TXmlEncodingMode = (xmlText, xmlAttribute, xmlCanonical);
 //
@@ -15648,25 +15639,6 @@ begin
   end;
 end;
 
-{ TFslWordStemmer }
-
-constructor TFslWordStemmer.create(lang: String);
-begin
-  inherited Create;
-//  FStem := GetStemmer(lang);
-end;
-
-destructor TFslWordStemmer.Destroy;
-begin
-//  FStem.free;
-  inherited;
-end;
-
-function TFslWordStemmer.stem(word: String): String;
-begin
-  result := EncodeNYSIIS(word); // temporary hack
-  // result := FStem.Stem(word);
-end;
 
 function removeAccentFromChar(ch : UnicodeChar) : String;
 var
