@@ -1,8 +1,6 @@
 ## Change Notes:
 
-* Add SHL endpoint
-* Fix text filter on CodeSystem resources
-* Add support for JQuery format
+* Fix bugs in mimetype handling in SHL server
 
 ## Conformance Notes:
 
