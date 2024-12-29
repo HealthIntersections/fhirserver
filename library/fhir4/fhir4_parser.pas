@@ -152,7 +152,7 @@ begin
   if (oResource is TFhirValueSet) then
   begin
     b := composeValueSet(oResource as TFhirValueSet);
-    stream.Write(b, 0, length(b));
+    //stream.Write(b, 0, length(b));
   end
   else
     raise EFHIRException.create('Only ValueSet is supported for the JQuery format');
