@@ -1,7 +1,7 @@
 object EditEPForm: TEditEPForm
-  Left = 639
+  Left = 644
   Height = 475
-  Top = 25
+  Top = 1351
   Width = 626
   Caption = 'Edit EndPoint'
   ClientHeight = 475
@@ -11,6 +11,7 @@ object EditEPForm: TEditEPForm
   OnResize = FormResize
   OnShow = FormShow
   Position = poOwnerFormCenter
+  LCLVersion = '3.1.0.0'
   object cbxVersion: TComboBox
     Left = 80
     Height = 20
@@ -232,7 +233,7 @@ object EditEPForm: TEditEPForm
   end
   object edtIdentity: TEdit
     Left = 80
-    Height = 22
+    Height = 21
     Top = 8
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -258,16 +259,17 @@ object EditEPForm: TEditEPForm
       'folder'
       'icao'
       'tx-registry'
+      'shl'
     )
-    OnChange = cbxTypeChange
     ParentFont = False
     Style = csDropDownList
     TabOrder = 2
     Text = 'full'
+    OnChange = cbxTypeChange
   end
   object edtPath: TEdit
     Left = 80
-    Height = 22
+    Height = 21
     Top = 92
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -317,14 +319,14 @@ object EditEPForm: TEditEPForm
     Top = 206
     Width = 531
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 19
+    ItemHeight = 18
     ParentFont = False
     TabOrder = 5
     Text = 'cbxDriver'
   end
   object edtServer: TEdit
     Left = 79
-    Height = 22
+    Height = 21
     Top = 234
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -334,7 +336,7 @@ object EditEPForm: TEditEPForm
   end
   object edtDBName: TEdit
     Left = 79
-    Height = 22
+    Height = 21
     Top = 262
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -344,7 +346,7 @@ object EditEPForm: TEditEPForm
   end
   object edtUsername: TEdit
     Left = 79
-    Height = 22
+    Height = 21
     Top = 290
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -354,7 +356,7 @@ object EditEPForm: TEditEPForm
   end
   object edtPassword: TEdit
     Left = 79
-    Height = 22
+    Height = 21
     Top = 318
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -423,9 +425,9 @@ object EditEPForm: TEditEPForm
     Width = 153
     AutoSize = False
     Caption = 'Microsoft SQL Server'
-    OnChange = rbMSSQLChange
     ParentFont = False
     TabOrder = 10
+    OnChange = rbMSSQLChange
   end
   object rbMySQL: TRadioButton
     Left = 265
@@ -434,9 +436,9 @@ object EditEPForm: TEditEPForm
     Width = 71
     AutoSize = False
     Caption = 'MySQL'
-    OnChange = rbMSSQLChange
     ParentFont = False
     TabOrder = 11
+    OnChange = rbMSSQLChange
   end
   object Bevel1: TBevel
     Left = 8
@@ -475,7 +477,7 @@ object EditEPForm: TEditEPForm
   end
   object edtSQLiteFile: TEdit
     Left = 79
-    Height = 22
+    Height = 21
     Top = 346
     Width = 531
     Anchors = [akTop, akLeft, akRight]
@@ -490,9 +492,9 @@ object EditEPForm: TEditEPForm
     Width = 71
     AutoSize = False
     Caption = 'SQLite'
-    OnChange = rbMSSQLChange
     ParentFont = False
     TabOrder = 14
+    OnChange = rbMSSQLChange
   end
   object cbAutocreate: TCheckBox
     Left = 79
@@ -513,7 +515,7 @@ object EditEPForm: TEditEPForm
   end
   object edtFolder: TEdit
     Left = 80
-    Height = 22
+    Height = 21
     Top = 154
     Width = 531
     Anchors = [akTop, akLeft, akRight]
