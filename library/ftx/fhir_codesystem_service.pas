@@ -1664,7 +1664,7 @@ var
   i : integer;
 begin
   result := value.split([',']);
-  for i := 0 to length(value) - 1 do
+  for i := 0 to length(result) - 1 do
     result[i] := result[i].trim();
 end;
 
