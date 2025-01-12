@@ -31,20 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 {$I fhir.inc}
 
 // URL: http://snomed.info/sct/[module]/version/[e.g. 20150131]'
-//  International: 900000000000207008
-//  US:  731000124108
-//  Australia: 32506021000036107
-//  Belgium: 11000172109
-//  Canada: 20611000087101
-//  Spain: 449081005
-//  Denmark: 554471000005108
-//  Netherlands: 11000146104
-//  Sweden: 45991000052106
-//  Switzerland: 2011000195101
-//  UK: 83821000000107
-//  IPS: 827022005
-
-// my combination
+// see https://digital.nhs.uk/services/terminology-server/training-guides/use-the-terminology-server-in-a-community/content-release-process/appendix-g
 
 Interface
 
@@ -2099,30 +2086,33 @@ begin
     exit(FEditionName);
   s := EditionUri.split(['/']);
   FEditionId := s[length(s)-1];
-  if FEditionId = '900000000000207008' then
-    result := 'International'
-  else if FEditionId = '731000124108' then
-    result := 'SNOMED CT USA'
-  else if FEditionId = '32506021000036107' then
-    result := 'SNOMED CT Australia'
-  else if FEditionId = '20611000087101' then
-    result := 'SNOMED CT Canada'
-  else if FEditionId = '449081005' then
-    result := 'SNOMED CT Spain'
-  else if FEditionId = '554471000005108' then
-    result := 'SNOMED CT Denmark'
-  else if FEditionId = '11000146104' then
-    result := 'SNOMED CT Netherlands'
-  else if FEditionId = '45991000052106' then
-    result := 'SNOMED CT Sweden'
-  else if FEditionId = '83821000000107' then
-    result := 'SNOMED CT UK'
-  else if FEditionId = '2011000195101' then
-    result := 'SNOMED CT Switzerland'
-  else if FEditionId = '11000172109' then
-    result := 'SNOMED CT Belgium'
-  else if FEditionId = '827022005' then
-    result := 'SNOMED CT IPS Terminology'
+  result := '??';
+  if FEditionId = '900000000000207008' then result := 'International Edition'
+  else if FEditionId = '449081005' then result := 'International Spanish Edition'
+  else if FEditionId = '11000221109' then result := 'Argentinian Edition'
+  else if FEditionId = '32506021000036107' then result := 'Australian Edition (with drug extension)'
+  else if FEditionId = '11000234105' then result := 'Austrian Edition'
+  else if FEditionId = '11000172109' then result := 'Belgian Edition'
+  else if FEditionId = '20621000087109' then result := 'Canadian English Edition'
+  else if FEditionId = '20611000087101' then result := 'Canadian Canadian French Edition'
+  else if FEditionId = '554471000005108' then result := 'Danish Edition'
+  else if FEditionId = '11000181102' then result := 'Estonian Edition'
+  else if FEditionId = '11000229106' then result := 'Finnish Edition'
+  else if FEditionId = '11000274103' then result := 'German Edition'
+  else if FEditionId = '1121000189102' then result := 'Indian Edition'
+  else if FEditionId = '11000220105' then result := 'Irish Edition'
+  else if FEditionId = '11000146104' then result := 'Netherlands Edition'
+  else if FEditionId = '21000210109' then result := 'New Zealand Edition'
+  else if FEditionId = '51000202101' then result := 'Norwegian Edition'
+  else if FEditionId = '11000267109' then result := 'Republic of Korea Edition (South Korea)'
+  else if FEditionId = '900000001000122104' then result := 'Spanish National Edition'
+  else if FEditionId = '45991000052106' then result := 'Swedish Edition'
+  else if FEditionId = '2011000195101' then result := 'Swiss Edition'
+  else if FEditionId = '83821000000107' then result := 'UK Edition'
+  else if FEditionId = '999000021000000109' then result := 'UK Clinical Edition'
+  else if FEditionId = '5631000179106' then result := 'Uruguay Edition'
+  else if FEditionId = '731000124108' then result := 'US Edition'
+  else if FEditionId = '5991000124107' then result := 'US Edition (with ICD-10-CM maps)'
   else if FEditionId = inttostr(COMBINED_MODULE_ID) then
     result := 'Combined View';
   FEditionName := result;

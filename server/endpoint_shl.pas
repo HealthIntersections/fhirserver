@@ -123,7 +123,12 @@ begin
         c.terminate;
         response.ResponseNo := 200;
         response.ResponseText := 'OK';
-        response.ContentText := TJSONWriter.writeObjectStr(resp, true);
+        response.ContentText := TJSONWriter.writeObjectStr(resp, true);  
+        c.sql := 'delete from SHL where expiry < :e';
+        c.prepare;
+        c.BindTimeStamp('e', DateTimeToTS(now));
+        c.execute;
+        c.terminate;
       finally
         resp.free;
       end;
@@ -228,6 +233,20 @@ begin
       begin
         c.Terminate;
         raise EFslException.create(request.Command+' '+request.Document+' not handled');
+      end;
+    end
+    else if (request.Document = PathWithSlash) then
+    begin   
+      c.sql := 'select count(*) from SHL';
+      c.prepare;
+      c.execute;
+      c.FetchNext;
+      begin
+        response.ResponseNo := 200;
+        response.ResponseText := 'OK';
+        response.ContentText := '{ "shlcount" : "'+c.ColString[1]+'" }';
+        response.ContentType := 'application/json';
+        c.Terminate;
       end;
     end
     else
