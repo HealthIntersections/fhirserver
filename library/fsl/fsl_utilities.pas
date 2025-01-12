@@ -12041,7 +12041,7 @@ begin
   if (zone = 'Line Islands Standard Time') and (country ='KI') then exit('Pacific/Kiritimati');
   if (zone = 'Line Islands Standard Time') and (country ='ZZ') then exit('Etc/GMT-14');
 
-  result := '';
+  result := zone;
 end;
 
 function TimeZoneIANAName : String;
