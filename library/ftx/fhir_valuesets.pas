@@ -865,7 +865,8 @@ begin
             vss.free;
             msg := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.HTTPLanguages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
+            op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);  
+            unknownSystems.add(system);
           end
           else if findCodeSystem(system, version, FParams, [cscmSupplement], true) <> nil then
           begin                                                                                
@@ -873,6 +874,7 @@ begin
             msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [system]);
             messages.add(msg);
             op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
+            unknownSystems.add(system);
           end
           else if (version <> '') then
           begin
