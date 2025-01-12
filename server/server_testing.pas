@@ -129,7 +129,7 @@ end;
 procedure runTests(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
 begin
   test_registry.registerTests(params);
-  if params.has('gui') then
+  if params.has('guitests') then
     RunTestGui(ini)
   {$IFDEF FPC}
   else if IsRunningIDETests then

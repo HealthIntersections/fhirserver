@@ -347,9 +347,9 @@ begin
     5 { Denmark } : result := '554471000005108';
     6 { Netherlands } : result := '11000146104';
     7 { Sweden } : result := '45991000052106';
-    8 { UK } : result := '999000041000000102';
+    8 { UK } : result := '83821000000107';
     9 { } : result := inttostr(COMBINED_MODULE_ID);
-  end;
+  end;!
 end;
 
 procedure TForm4.sctCallback(pct: Integer; action: String);
