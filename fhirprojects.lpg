@@ -9,7 +9,6 @@
       <Target FileName="packages/fhir_web.lpk"/>
       <Target FileName="packages/fhir.lpk"/>
       <Target FileName="packages/fhir_fui.lpk"/>
-      <Target FileName="packages/fhir2.lpk"/>
       <Target FileName="packages/fhir3.lpk"/>
       <Target FileName="packages/fhir4.lpk"/>
       <Target FileName="packages/fhir4b.lpk"/>
@@ -20,10 +19,11 @@
         <BuildModes>
           <Mode Name="default"/>
           <Mode Name="win64"/>
+          <Mode Name="win64-release"/>
           <Mode Name="linux"/>
           <Mode Name="osx"/>
           <Mode Name="osx-m1"/>
-          <Mode Name="win64-release"/>
+          <Mode Name="osx-m1-release"/>
           <Mode Name="linux-release"/>
         </BuildModes>
       </Target>
