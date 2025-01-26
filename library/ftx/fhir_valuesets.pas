@@ -1640,7 +1640,10 @@ begin
                       begin
                         m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_ERR', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
                         mid := 'NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_ERR';
-                        severity := isError;
+                        if FParams.displayWarning then
+                          severity := isWarning
+                        else
+                          severity := isError;
                       end;
                     end;
                   end
