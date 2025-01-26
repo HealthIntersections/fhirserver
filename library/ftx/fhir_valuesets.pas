@@ -597,7 +597,7 @@ begin
     else
     begin
       message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
-      op.addIssue(isError, itInvalid, addToPath(path, 'version'), message, oicVSProcessing);
+      op.addIssue(isError, itInvalid, addToPath(path, 'version'), '', message, oicVSProcessing);
       exit('');
     end;
   end;
@@ -820,7 +820,7 @@ var
   excluded, ok, bAdd : boolean;
   isabstract : boolean;
   checker : TValueSetChecker;
-  s, v, msg, u : String;
+  s, v, msg, u, mid : String;
   ics : TFHIRValueSetCodeSystemW;
   ccl : TFhirCodeSystemConceptListW;
   ccc : TFhirValueSetExpansionContainsW;
@@ -832,7 +832,7 @@ begin
   begin
     msg := FI18n.translate('Coding_has_no_system__cannot_validate', FParams.HTTPLanguages, []);
     messages.add(msg);
-    op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
+    op.addIssue(isWarning, itInvalid, path, 'Coding_has_no_system__cannot_validate', msg, oicInvalidData);
     exit(bFalse);
   end;
 
@@ -848,7 +848,7 @@ begin
       begin
         msg := FI18n.translate('Coding_has_no_system__cannot_validate_NO_INFER', FParams.HTTPLanguages, []);
         messages.add(msg);
-        op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
+        op.addIssue(isWarning, itInvalid, path, 'Coding_has_no_system__cannot_validate_NO_INFER', msg, oicInvalidData);
         exit(bFalse);
       end;
       cs := findCodeSystem(system, version, FParams, [cscmComplete, cscmFragment], true);
@@ -865,7 +865,7 @@ begin
             vss.free;
             msg := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.HTTPLanguages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);  
+            op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'Terminology_TX_System_ValueSet2', msg, oicInvalidData);
             unknownSystems.add(system);
           end
           else if findCodeSystem(system, version, FParams, [cscmSupplement], true) <> nil then
@@ -873,7 +873,7 @@ begin
             vss.free;
             msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
+            op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'CODESYSTEM_CS_NO_SUPPLEMENT', msg, oicInvalidData);
             unknownSystems.add(system);
           end
           else if (version <> '') then
@@ -882,7 +882,7 @@ begin
             messages.add(msg);
             if (unknownSystems.IndexOf(system+'|'+version) = -1) then
             begin
-              op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
+              op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', msg, oicNotFound);
               unknownSystems.add(system+'|'+version);
             end;
           end
@@ -890,7 +890,7 @@ begin
           begin
             msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
+            op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicNotFound);
             unknownSystems.add(system);
           end;
         end
@@ -913,7 +913,7 @@ begin
               FLog := 'Not found in Incomplete Code System';
               msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]);
               messages.add(msg);
-              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), 'UNKNOWN_CODE_IN_FRAGMENT', msg, oicInvalidCode);
             end
             else
             begin
@@ -922,7 +922,7 @@ begin
               FLog := 'Unknown code';
               msg := FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]);
               messages.add(msg);
-              op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
+              op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), 'Unknown_Code_in_Version', msg, oicInvalidCode);
             end;
           end
           else
@@ -938,7 +938,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [system, code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', msg, oicCodeRule);
               end
               else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(FOpContext, ctxt)) then
               begin
@@ -947,7 +947,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'STATUS_CODE_WARNING_CODE', msg, oicCodeRule);
               end
               else
               begin
@@ -957,11 +957,11 @@ begin
                 begin
                   msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(FOpContext, ctxt), cs.systemUri]);
                   messages.add(msg);
-                  op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
+                  op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), 'CODE_CASE_DIFFERENCE', msg, oicCodeRule);
                 end; 
                 msg := cs.incompleteValidationMessage(ctxt, FParams.HTTPLanguages);
                 if (msg <> '') then
-                  op.addIssue(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
+                  op.addIssueNoId(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
                 inactive := cs.IsInactive(FOpContext, ctxt);
                 if (inactive) then
                   vstatus := cs.getCodeStatus(FOpContext, ctxt);
@@ -993,7 +993,7 @@ begin
             messages.add(msg);
             if (unknownSystems.IndexOf(system+'|'+version) = -1) then
             begin
-              op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
+              op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', msg, oicNotFound);
               unknownSystems.add(system+'|'+version);
             end;
           end
@@ -1001,7 +1001,7 @@ begin
           begin
             msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
+            op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicNotFound);
             unknownSystems.add(system);
           end;
         end
@@ -1022,7 +1022,7 @@ begin
               FLog := 'Not found in Incomplete Code System';
               msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, system, version]);
               messages.add(msg);
-              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), 'UNKNOWN_CODE_IN_FRAGMENT', msg, oicInvalidCode);
             end
             else
             begin
@@ -1031,7 +1031,7 @@ begin
               FLog := 'Unknown code';
               msg := FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, system, version]);
               messages.add(msg);
-              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), 'Unknown_Code_in_Version', msg, oicInvalidCode);
             end;
           end
           else
@@ -1045,7 +1045,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'STATUS_CODE_WARNING_CODE', msg, oicCodeRule);
               end
               else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(FOpContext, ctxt)) then
               begin
@@ -1054,7 +1054,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'STATUS_CODE_WARNING_CODE', msg, oicCodeRule);
               end
               else
               begin
@@ -1081,7 +1081,7 @@ begin
         begin
           message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.HTTPLanguages, [code, FValueSet.vurl]);
           messages.add(message);
-          op.addIssue(isError, itNotFound, 'code', message, oicInferFailed);
+          op.addIssue(isError, itNotFound, 'code', 'UNABLE_TO_INFER_CODESYSTEM', message, oicInferFailed);
           exit(bFalse);
         end
         else
@@ -1143,7 +1143,7 @@ begin
                 end;
                 messages.add(message);
                 if (bAdd) then
-                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), message, oicNotFound);
+                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', message, oicNotFound);
                 exit(bUnknown);
               end
               else
@@ -1240,7 +1240,7 @@ begin
             begin
               message := 'The code system "'+ccc.systemUri+'" version "'+ccc.version+'" in the ValueSet expansion is different to the one in the value ("'+version+'")';
               messages.add(message);
-              op.addIssue(isError, itNotFound, addToPath(path, 'version'), message, oicVSProcessing);
+              op.addIssueNoId(isError, itNotFound, addToPath(path, 'version'), message, oicVSProcessing);
               exit(bFalse);
             end;
             if (v = '') then
@@ -1256,6 +1256,7 @@ begin
                 bAdd := true;
                 if (v = '') then
                 begin
+                  mid := 'UNKNOWN_CODESYSTEM';
                   message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]) ;
                   unknownSystems.add(system);
                 end
@@ -1264,13 +1265,14 @@ begin
                   badd := unknownSystems.IndexOf(system+'|'+version) = -1;
                   if (bAdd) then
                   begin
+                    mid := 'UNKNOWN_CODESYSTEM_VERSION';
                     message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, v, '['+listVersions(system)+']']);
                     unknownSystems.add(system+'|'+v);
                   end;
                 end;
                 messages.add(message);
                 if bAdd then
-                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), message, oicNotFound);
+                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, message, oicNotFound);
                 exit(bUnknown);
               end
               else
@@ -1493,7 +1495,7 @@ var
   op : TFhirOperationOutcomeW;
   log : String;
   tl : TIETFLang;
-  psys, pver, pdisp, pcode, us, baseMsg, p, normalForm : String;
+  psys, pver, pdisp, pcode, us, baseMsg, p, normalForm, mid : String;
   dc, i : integer;
   a : TStringArray;
   unknownSystems : TStringList;
@@ -1584,7 +1586,7 @@ begin
               m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.HTTPLanguages, ['', FValueSet.vurl, ''''+cc+'''']);
               msg(m);
               p := issuePath + '.coding['+inttostr(i)+'].code';
-              op.addIssue(isInformation, itCodeInvalid, p, m, oicThisNotInVS);
+              op.addIssue(isInformation, itCodeInvalid, p, 'None_of_the_provided_codes_are_in_the_value_set_one', m, oicThisNotInVS);
               if cause = itNull then
                 cause := itUnknown;
             end;
@@ -1599,7 +1601,7 @@ begin
               begin
                 m := 'The system '+c.systemUri+' was found but did not contain enough information to properly validate the code "'+c.code+'" ("'+c.display+'") (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
                 msg(m);
-                op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
+                op.addIssueNoId(isWarning, itNotFound, path, m, oicVSProcessing);
               end
               else if (c.display <> '') and (list.designations.count > 0) then
               begin
@@ -1609,6 +1611,7 @@ begin
                     baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
                   else
                     baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
+                  mid := baseMsg;
                   dc := list.displayCount(FParams.workingLanguages, nil, true);
                   severity := dispWarning;
                   if dc = 0 then
@@ -1621,17 +1624,22 @@ begin
                   begin
                     ds := list.preferredDisplay(nil, defLang);
                     if (ds = '') then
-                      m := FI18n.translate('NO_VALID_DISPLAY_AT_ALL', FParams.HTTPLanguages, [c.display, c.systemUri, c.code])
+                    begin
+                      m := FI18n.translate('NO_VALID_DISPLAY_AT_ALL', FParams.HTTPLanguages, [c.display, c.systemUri, c.code]);
+                      mid := 'NO_VALID_DISPLAY_AT_ALL';
+                    end
                     else
                     begin
                       if ds = c.display then
                       begin
                         m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_OK', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                        mid := 'NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_OK';
                         severity := isInformation;
                       end
                       else
                       begin
                         m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_ERR', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                        mid := 'NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_ERR';
                         severity := isError;
                       end;
                     end;
@@ -1643,19 +1651,25 @@ begin
                     m := FI18n.translate(baseMsg+'_other', FParams.HTTPLanguages,
                       [inttostr(dc), c.systemUri, c.code, list.present(FParams.workingLanguages, defLang, dc > 0), c.display, FParams.langSummary]);
                   msg(m);
-                  op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
+                  op.addIssue(severity, itInvalid, addToPath(path, 'display'), mid, m, oicDisplay);
                 end
                 else
                 begin
                   if (not list.hasDisplay(FParams.workingLanguages, nil, c.display, dcsCaseInsensitive, diff)) then
                   begin
                     if (list.source <> nil) and (list.source.hasAnyDisplays(FParams.workingLanguages)) then
+                    begin
+                      mid := 'NO_VALID_DISPLAY_FOUND_LANG_SOME';
                       m := FI18n.translatePlural(FParams.workingLanguages.count, 'NO_VALID_DISPLAY_FOUND_LANG_SOME', FParams.HTTPLanguages,
                         [c.systemUri, c.code, c.display, FParams.workingLanguages.source, c.display])
+                    end
                     else
+                    begin
+                      mid := 'NO_VALID_DISPLAY_FOUND_LANG_NONE';
                       m := FI18n.translatePlural(FParams.workingLanguages.count, 'NO_VALID_DISPLAY_FOUND_LANG_NONE', FParams.HTTPLanguages,
                         [c.systemUri, c.code, c.display, FParams.workingLanguages.source, c.display]);
-                    op.addIssue(isInformation, itInvalid, addToPath(path, 'display'), m, oicDisplayComment);
+                    end;
+                    op.addIssue(isInformation, itInvalid, addToPath(path, 'display'), mid, m, oicDisplayComment);
                   end;
                 end;
               end;
@@ -1680,7 +1694,7 @@ begin
                   p := issuePath + '.coding['+inttostr(i)+'].system'
                 else
                   p := issuePath;
-                op.addIssue(isError, itInvalid, p, m, oicInvalidData);
+                op.addIssue(isError, itInvalid, p, 'Terminology_TX_System_Relative', m, oicInvalidData);
               end;
               prov := findCodeSystem(ws, c.version, FParams, [cscmComplete, cscmFragment], true);
               try
@@ -1692,7 +1706,7 @@ begin
                    vss.free;
                    m := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.HTTPLanguages, [ws]);
                    msg(m);
-                   op.addIssue(isError, itInvalid, addToPath(path, 'system'), m, oicInvalidData);
+                   op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'Terminology_TX_System_ValueSet2', m, oicInvalidData);
                    cause := itInvalid;
                  end
                  else if findCodeSystem(ws, c.version, FParams, [cscmSupplement], true) <> nil then
@@ -1700,7 +1714,7 @@ begin
                    vss.free;
                    m := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [ws]);
                    msg(m);
-                   op.addIssue(isError, itInvalid, addToPath(path, 'system'), m, oicInvalidData);
+                   op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'CODESYSTEM_CS_NO_SUPPLEMENT', m, oicInvalidData);
                    cause := itInvalid;
                  end
                  else
@@ -1710,6 +1724,7 @@ begin
                      bAdd := true;
                      if (prov2 = nil) and (c.version = '') then
                      begin
+                       mid := 'UNKNOWN_CODESYSTEM';
                        m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [ws]);
                        badd := unknownSystems.IndexOf(ws) = -1;
                        if (bAdd) then
@@ -1717,18 +1732,19 @@ begin
                      end
                      else
                      begin
+                       mid := 'UNKNOWN_CODESYSTEM_VERSION';
                        m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [ws, c.version, '['+listVersions(c.systemUri)+']']);
                        badd := unknownSystems.IndexOf(ws+'|'+c.version) = -1;
                        if (bAdd) then
                          unknownSystems.add(ws+'|'+c.version);
                      end;
                      if (bAdd) then
-                       op.addIssue(isError, itNotFound, addToPath(path, 'system'), m, oicNotFound);
+                       op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, m, oicNotFound);
                      if (valueSetDependsOnCodeSystem(ws, c.version)) then
                      begin
                        m := FI18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', FParams.HTTPLanguages, [FValueSet.vurl, ws+'|'+c.version]);
                        msg(m);
-                       op.addIssue(isWarning, itNotFound, '', m, oicVSProcessing);
+                       op.addIssue(isWarning, itNotFound, '', 'UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', m, oicVSProcessing);
                      end
                      else
                        msg(m);
@@ -1750,7 +1766,7 @@ begin
                        // msg(message); we just add this as an issue, but don't put it in the base message
                        if mode <> vcmCode then
                          p := path + '.code';
-                       op.addIssue(isInformation, cause, p, message, oicInvalidCode);
+                       op.addIssueNoId(isInformation, cause, p, message, oicInvalidCode);
                        message := '';
                      end;
                      vcc.removeCoding(prov.systemUri, prov.version, c.code);
@@ -1763,14 +1779,14 @@ begin
                          m := FI18N.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [c.code, ws, prov.version]);
                          cause := itCodeInvalid;
                          msg(m);
-                         op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
+                         op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), 'Unknown_Code_in_Version', m, oicInvalidCode);
                        end
                        else
                        begin
                          m := FI18N.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [c.code, ws, prov.version]);
                          cause := itCodeInvalid;
                          msg(m);
-                         op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
+                         op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), 'UNKNOWN_CODE_IN_FRAGMENT', m, oicInvalidCode);
                        end;
                      end;
                    end
@@ -1804,7 +1820,7 @@ begin
                          m := FI18n.translate(baseMsg+'_other', FParams.HTTPLanguages,
                           [inttostr(dc), prov.systemUri, c.code, list.present(FParams.workingLanguages, defLang, true), c.display, FParams.langSummary]);
                        msg(m);
-                       op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
+                       op.addIssue(severity, itInvalid, addToPath(path, 'display'), baseMsg, m, oicDisplay);
                      end;
                      if (prov.version <> '') then
                        result.addParamStr('version', prov.version);
@@ -1822,9 +1838,15 @@ begin
           if (ok = bFalse) and not FAllValueSet then
           begin
             if mode = vcmCodeableConcept then
+            begin
+              mid := 'TX_GENERAL_CC_ERROR_MESSAGE';
               m := FI18n.translate('TX_GENERAL_CC_ERROR_MESSAGE', FParams.HTTPLanguages, [FValueSet.vurl])
+            end
             else // true... if code.codingCount = 1 then
+            begin
+              mid := 'None_of_the_provided_codes_are_in_the_value_set_one';
               m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.HTTPLanguages, ['', FValueSet.vurl, codelist]);
+            end;
             //else
             //  m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.HTTPLanguages, ['', FValueSet.vurl, codelist]);
             msg(m);
@@ -1840,7 +1862,7 @@ begin
             else
               p := issuePath;
 
-            op.addIssue(isError, itCodeInvalid, p, m, oicNotInVS);
+            op.addIssue(isError, itCodeInvalid, p, mid, m, oicNotInVS);
             if cause = itNull then
               cause := itUnknown;
           end;
@@ -1965,7 +1987,7 @@ begin
           begin
             result.AddParamBool('result', false);
             result.AddParamStr('message', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name);
-            op.addIssue(isError, cause, 'code', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name, oicNotFound);
+            op.addIssueNoId(isError, cause, 'code', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name, oicNotFound);
             //result.AddParamCode('cause', CODES_TFhirIssueType[itNotFound]);
             for us in unknownSystems do
               result.addParamCanonical('x-caused-by-unknown-system', us);
@@ -1974,7 +1996,7 @@ begin
           begin
             result.AddParamBool('result', false);
             result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
-            op.addIssue(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name, oicNotInVS);
+            op.addIssueNoId(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name, oicNotInVS);
             if (message <> '') then
               result.AddParamStr('message', message);
             if cause <> itNull then
@@ -2037,20 +2059,20 @@ begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
         if (not FParams.membershipOnly) then
           if cs.contentMode <> cscmComplete then
-            op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
+            op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), 'UNKNOWN_CODE_IN_FRAGMENT', FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
           else
-            op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode);
+            op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), 'Unknown_Code_in_Version', FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode);
       end
       else if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
         if (not FParams.membershipOnly) then
-          op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+          op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
       end
       else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'STATUS_CODE_WARNING_CODE', FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
         result := false;
         if (not FParams.membershipOnly) then
         begin
@@ -2065,7 +2087,7 @@ begin
         result := false;
         inactive := true;
         vstatus := cs.getCodeStatus(FOpContext, loc);
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'STATUS_CODE_WARNING_CODE', FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
       end
       else
       begin
@@ -2077,12 +2099,12 @@ begin
             msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(FOpContext, loc), cs.systemUri+'|'+cs.version])
           else
             msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(FOpContext, loc), cs.systemUri]);
-          op.addIssue(isInformation, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
+          op.addIssue(isInformation, itBusinessRule, addToPath(path, 'code'), 'CODE_CASE_DIFFERENCE', msg, oicCodeRule);
           normalForm := cs.Code(FOpContext, loc);
         end;
         msg := cs.incompleteValidationMessage(loc, FParams.HTTPLanguages);
         if (msg <> '') then
-          op.addIssue(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
+          op.addIssueNoId(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
         listDisplays(displays, cs, loc);
         inactive := cs.IsInactive(FOpContext, loc);
         if (inactive) then
@@ -2113,7 +2135,7 @@ begin
           if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
           begin
             if (not FParams.membershipOnly) then
-              op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+              op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
           end
           else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
           begin
@@ -2171,7 +2193,7 @@ begin
               begin
                 OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                 if (not FParams.membershipOnly) then
-                  op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+                  op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
               end
               else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
               begin
@@ -2216,7 +2238,7 @@ begin
                   begin
                     OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                     if (not FParams.membershipOnly) then
-                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
                   else
                   begin    
@@ -2251,7 +2273,7 @@ begin
                     begin
                       OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                       if (not FParams.membershipOnly) then
-                        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+                        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                     end
                     else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                     begin
@@ -2294,7 +2316,7 @@ begin
                   begin
                     OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                     if (not FParams.membershipOnly) then
-                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
                   else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                   begin
@@ -2349,12 +2371,12 @@ begin
     if loc = nil then
     begin
       if (not FParams.membershipOnly) then
-        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
+        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), 'Unknown_Code_in_Version', FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
     end
     else if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
     begin
       if (not FParams.membershipOnly) then
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
     end
     else
     begin

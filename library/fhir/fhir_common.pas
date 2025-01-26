@@ -407,7 +407,7 @@ type
     function code :  TFhirIssueType; virtual; abstract;
 
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); overload; virtual; abstract;
-    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
+    procedure addIssueNoId(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
     procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, msgId, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
     procedure addDiagsIssue(message : string); virtual; abstract;
     function hasIssues : boolean; virtual; abstract;

@@ -539,7 +539,7 @@ begin
                     begin
                       msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.HTTPLanguages, [url]);
                       oOut := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
-                      oOut.addIssue(isError, itNotFound, '', msg, oicNotFound);
+                      oOut.addIssue(isError, itNotFound, '', 'Unable_to_resolve_value_Set_', msg, oicNotFound);
                     end
                     else
                       cacheId := vs.vurl;
