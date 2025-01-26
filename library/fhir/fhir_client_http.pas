@@ -408,8 +408,10 @@ function TFHIRHTTPCommunicator.exchangeIndy(url : String; verb : TFhirHTTPClient
 var
   comp : TFHIRParser;
   ok : boolean;
-  cnt : String;
-  op : TFHIROperationOutcomeW;
+  cnt: String;
+  sText : String;
+  ecode : integer;
+  op, olink : TFHIROperationOutcomeW;
   iss : TFhirOperationOutcomeIssueW;
 begin
   if verb in [httpPost, httpPut] then
@@ -484,6 +486,7 @@ begin
         cnt := e.ErrorMessage;
         if cnt = '' then
           cnt := e.message;
+        ecode := e.ErrorCode;
         FClient.Logger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, streamToBytes(source), StringAsBytes(cnt));
         FHeaders.contentType := indy.Response.ContentType;
         FHeaders.location := indy.Response.Location;
@@ -505,7 +508,11 @@ begin
               op := opWrapper.Create(comp.resource.Link);
               try
                 if (op.hasText) then
-                  Raise EFHIRClientException.Create(e.ErrorCode, op.text, op.link)
+                begin
+                  stext := op.text+' (from server '+url+')';
+                  olink  := op.link;
+                  Raise EFHIRClientException.Create(ecode, stext, olink)
+                end
                 else if (op.issueCount > 0) then
                   for iss in op.issues.forEnum do
                     Raise EFHIRClientException.Create(e.ErrorCode, iss.display, op.link)
