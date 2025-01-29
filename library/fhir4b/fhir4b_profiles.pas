@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF} Types,
-  fsl_base, fsl_utilities, fsl_fpc, fsl_threads, fsl_stream, fsl_collections, fsl_http, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_threads, fsl_stream, fsl_collections, fsl_http, fsl_npm_cache, fsl_lang,
   fhir_objects, fhir_parser, fhir_factory, fhir_uris, fhir_common,
   fhir4b_resources, fhir4b_parser, fhir4b_enums, fhir4b_types, fhir4b_context, fhir4b_utilities, fhir4b_constants, fhir4b_resources_base;
 
@@ -129,7 +129,7 @@ Type
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(packageId : String; feed: TFHIRBundle);
   public
-    constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
+    constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR4B; overload;
     procedure Unload; override;
@@ -1560,7 +1560,7 @@ begin
     list.add(sd.link);
 end;
 
-constructor TBaseWorkerContextR4B.Create(factory : TFHIRFactory; pcm : TFHIRPackageManager);
+constructor TBaseWorkerContextR4B.Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pcm : TFHIRPackageManager);
 begin
   inherited;
   FLock := TFslLock.Create('worker-context r4');

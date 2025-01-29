@@ -102,8 +102,8 @@ end;
 
 constructor TToolkitValidatorContextR5.Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String; pcm : TFHIRPackageManager);
 begin
-  inherited Create(factory, pcm);
-  FLanguages := languages;
+  inherited Create(languages, factory, pcm);
+  FLanguages := languages.link;
   FValueSets := TFHIRMetadataResourceManager<TFHIRValueSet>.Create();
   FCodeSystems := TFHIRMetadataResourceManager<TFHIRCodeSystem>.Create();
   FUrl := TerminologyServer;

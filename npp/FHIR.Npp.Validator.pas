@@ -355,7 +355,7 @@ begin
     try
       validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, nil, '');
       try
-        params := TFHIRTxOperationParams.Create;
+        params := TFHIRTxOperationParams.Create(!);
         try
           validator.prepare(vsw, params);
           p := validator.check(system, version, code, false);
@@ -648,7 +648,7 @@ begin
     try
       validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, nil, '');
       try
-        params := TFHIRTxOperationParams.Create;
+        params := TFHIRTxOperationParams.Create(!);
         try
           validator.prepare(vsw, params);
           p := validator.check(system, version, code, false);

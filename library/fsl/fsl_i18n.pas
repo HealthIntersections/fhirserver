@@ -53,6 +53,7 @@ type
 
     function Link : TI18nSupport; overload;
 
+    property Languages : TIETFLanguageDefinitions read FLanguages;
     // the file name has the language appended to the filename
     procedure loadPropertiesFile(filename : String);
 

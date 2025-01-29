@@ -1256,7 +1256,7 @@ Begin
   redirect := false;
 
   Session := nil;
-  LangList := THTTPLanguageList.Create(request.AcceptLanguage, true);
+  LangList := THTTPLanguageList.Create(FContext.i18nSupport.Languages.link, request.AcceptLanguage, true);
   try
     if ssl then
       sHost := 'https://' + request.host
@@ -1590,7 +1590,7 @@ Begin
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, '')
         else
-          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, '');
+          SendError(response, logId, e.Code, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, e.diagnostics);
       end;
       on e: EFslException do
       begin
@@ -1681,7 +1681,7 @@ var
   check: boolean;
   langList : THTTPLanguageList;
 begin
-  langList := THTTPLanguageList.Create(request.AcceptLanguage, true);
+  langList := THTTPLanguageList.Create(FContext.i18nSupport.Languages.link, request.AcceptLanguage, true);
   try
     if request.AuthUsername = 'Bearer' then
       sCookie := request.AuthPassword
@@ -2404,7 +2404,7 @@ var
   json : TJsonObject;
   langList : THTTPLanguageList;
 begin
-  langList := THTTPLanguageList.Create(request.AcceptLanguage, true);
+  langList := THTTPLanguageList.Create(FContext.i18nSupport.Languages.link, request.AcceptLanguage, true);
   try
     if session = nil then
       raise EFHIRException.Createlang('MSG_AUTH_REQUIRED', langList);

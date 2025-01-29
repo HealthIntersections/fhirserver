@@ -100,8 +100,8 @@ end;
 
 constructor TToolkitValidatorContextR3.Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions; TerminologyServer : String; pcm : TFHIRPackageManager);
 begin
-  inherited Create(factory, pcm);
-  FLanguages := languages;
+  inherited Create(languages, factory, pcm);
+  FLanguages := languages.link;
   FValueSets := TFHIRMetadataResourceManager<TFHIRValueSet>.Create;
   FCodeSystems := TFHIRMetadataResourceManager<TFHIRCodeSystem>.Create;
   FUrl := TerminologyServer;
@@ -329,7 +329,7 @@ begin
     try
       validator := TValueSetChecker.Create(Factory.link, nil, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '', nil);
       try
-        params := TFHIRTxOperationParams.Create;
+        params := TFHIRTxOperationParams.Create(FLanguages.link);
         try
           validator.prepare(vsw, params, nil);
           p := validator.check('code', system, version, code, false);

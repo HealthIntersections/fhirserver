@@ -219,7 +219,7 @@ begin
       else if pm['op'] = 'validate' then
         vars['validate.results'] := FWorker.Factory.makeString(processValidate(pm))
       else if pm['op'] = 'expand' then
-        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, THTTPLanguageList.Create(request.AcceptLanguage, true)))
+        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, THTTPLanguageList.Create(FLanguages.link, request.AcceptLanguage, true)))
       else if pm['op'] = 'translate' then
         vars['translate.results'] := FWorker.Factory.makeString(processTranslate(pm));
 
@@ -495,7 +495,7 @@ var
   profile : TFhirTxOperationParams;
 begin
   vs := FServer.getValueSetById(pm['valueset']);
-  profile := TFhirTxOperationParams.Create;
+  profile := TFHIRTxOperationParams.Create(FLanguages.link);
   try
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;

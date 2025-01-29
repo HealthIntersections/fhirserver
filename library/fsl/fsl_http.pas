@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   {$IFDEF FPC}LazUTF8, {$ENDIF}
   Classes, Generics.Collections, Generics.Defaults,
-  fsl_base, fsl_utilities, fsl_lang;
+  fsl_base, fsl_utilities, fsl_lang, fsl_logging;
 
 const
   HTTPUtilAnonymousItemName = 'ANONYMOUS';
@@ -128,7 +128,7 @@ type
     procedure SetIetf(AValue: TIETFLang);
     function asString : String;
   public                          
-    constructor Create(index : integer; lang : string; value : double; auto : boolean);
+    constructor Create(index : integer; lang : string; ietf : TIETFLang; value : double; auto : boolean);
     destructor Destroy; override;
     function sizeInBytes(magic : integer) : cardinal;
 
@@ -157,12 +157,13 @@ type
     FWildCard : boolean;
     FSource: String;
     FLangs : TFslList<THTTPLanguageEntry>;
+    FDefinitions : TIETFLanguageDefinitions;
 
     //function codeMatches(code, spec : String) : boolean;
     function getCount: integer;
     procedure process;
   public
-    constructor Create(source : String; wildcard : boolean);
+    constructor Create(definitions: TIETFLanguageDefinitions; source : String; wildcard : boolean);
     destructor Destroy; override;
     function link : THTTPLanguageList; overload;
 
@@ -624,12 +625,13 @@ begin
     result := result + '; q='+FloatToStr(value);
 end;
 
-constructor THTTPLanguageEntry.Create(index: integer; lang: string; value: double; auto : boolean);
+constructor THTTPLanguageEntry.Create(index: integer; lang: string; ietf : TIETFLang; value: double; auto : boolean);
 begin
   inherited Create;
   FIndex := index;
   FLang := lang;
   FValue := value;
+  FIetf := ietf;
   FAuto := auto;
 end;
 
@@ -667,9 +669,10 @@ end;
 
 { THTTPLanguageList }
 
-constructor THTTPLanguageList.Create(source : String; wildcard : boolean);
+constructor THTTPLanguageList.Create(definitions: TIETFLanguageDefinitions; source : String; wildcard : boolean);
 begin
   inherited Create;
+  FDefinitions := definitions;
   FLangs := TFslList<THTTPLanguageEntry>.Create;
   FSource := source;
   FWildcard := wildcard;
@@ -679,6 +682,7 @@ end;
 destructor THTTPLanguageList.Destroy;
 begin
   FLangs.free;
+  FDefinitions.free;
   inherited Destroy;
 end;
 
@@ -701,17 +705,28 @@ begin
   VerLanguageName(GetSystemDefaultLCID, szLang, SizeOf(szLang));
   Lang := StrPas(szLang);
 {$ENDIF}
-  result := THTTPLanguageList.create(Lowercase(Lang), false);
+  result := THTTPLanguageList.create(nil, Lowercase(Lang), false);
 end;
 
 class function THTTPLanguageList.defaultWeb: THTTPLanguageList;
 begin
-  result := THTTPLanguageList.create('', true);
+  result := THTTPLanguageList.create(nil, '', true);
 end;
 
 procedure THTTPLanguageList.addCode(code: String);
+var
+  ietf : TIETFLang;
+  m : String;
 begin
-  FLangs.Add(THTTPLanguageEntry.create(FLangs.Count, code.trim, 1.0, false));
+  if (FDefinitions = nil) then
+    ietf := nil
+  else
+  begin
+    ietf := FDefinitions.parse(code.trim, m);
+    if (ietf = nil) then
+      raise EFslException.create('Language "'+code+'": '+m);
+  end;
+  FLangs.Add(THTTPLanguageEntry.create(FLangs.Count, code.trim, ietf, 1.0, false));
   FLangs.Sort(THTTPLanguageEntrySorter.create);
 end;
 
@@ -749,9 +764,10 @@ end;
 procedure THTTPLanguageList.process;
 var
   i : integer;
-  s, l, r, w : String;
+  s, l, r, w, m : String;
   v : Double;
   wc : boolean;
+  ietf : TIETFLang;
 begin
   i := 0;
   wc := false;
@@ -771,13 +787,21 @@ begin
         l := s;
         v := 1;
       end;
-      FLangs.Add(THTTPLanguageEntry.create(i, l.trim, v, false));
+      if (FDefinitions = nil) then
+        ietf := nil
+      else
+      begin
+        ietf := FDefinitions.parse(l.trim, m);
+        if (ietf = nil) then
+          raise EFslException.create('Language "'+l+'": '+m);
+      end;
+      FLangs.Add(THTTPLanguageEntry.create(i, l.trim, ietf, v, false));
       wc := wc or (l.trim = '*');
       inc(i);
     end;
   end;
   if FWildCard and not wc then
-    FLangs.Add(THTTPLanguageEntry.create(i, '*', 0.01, true));
+    FLangs.Add(THTTPLanguageEntry.create(i, '*', nil, 0.01, true));
   FLangs.Sort(THTTPLanguageEntrySorter.create);
 end;
 

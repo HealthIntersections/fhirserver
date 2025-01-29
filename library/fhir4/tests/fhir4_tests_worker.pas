@@ -99,7 +99,7 @@ var
 begin
   if GWorkerContext = nil then
   begin
-    GWorkerContext := TTestingWorkerContext4.Create(TFHIRFactoryR4.create, TFHIRPackageManager.Create(npmModeUser));
+    GWorkerContext := TTestingWorkerContext4.Create(nil, TFHIRFactoryR4.create, TFHIRPackageManager.Create(npmModeUser));
     pcm := TFHIRPackageManager.Create(npmModeUser);
     li := TPackageLoadingInformation.Create(fhir4_constants.FHIR_GENERATED_VERSION);
     try

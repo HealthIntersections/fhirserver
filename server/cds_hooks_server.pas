@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   IdHTTPServer, IdContext, IdCustomHTTPServer,
-  fsl_base, fsl_json, fsl_http,
+  fsl_base, fsl_json, fsl_http, fsl_lang,
   fhir_objects, fhir_client,
   session,
   fhir_cdshooks, utilities, server_context;
@@ -66,6 +66,7 @@ type
 
   TCDSHooksService = class (TFslObject)
   private
+    FLanguages : TIETFLanguageDefinitions;
     Procedure HandleRequest(base : String; server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
   protected
     FEngines : TList<TCDSHooksProcessorClass>;
@@ -73,7 +74,7 @@ type
     function HandleRequest(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest) : TCDSHookResponse; overload; virtual; abstract;
     function ProcessRequestEngines(server: TFHIRServerContext; secure : boolean; session : TFHIRSession; context: TIdContext; request: TCDSHookRequest; response : TCDSHookResponse) : boolean;
   public
-    constructor Create; override;
+    constructor Create(Languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
     function hook : string; virtual; abstract; // see the hook catalog (http://cds-hooks.org/#hook-catalog)
     function name : String; virtual; abstract;
@@ -183,10 +184,11 @@ end;
 
 { TCDSHooksService }
 
-constructor TCDSHooksService.Create;
+constructor TCDSHooksService.Create(Languages : TIETFLanguageDefinitions);
 begin
-  inherited;
+  inherited create;
   FEngines := TList<TCDSHooksProcessorClass>.Create;
+  FLanguages := languages;
 end;
 
 
@@ -206,7 +208,7 @@ begin
     try
       req := TCDSHookRequest.Create(jrequest);
       try
-        req.langList := THTTPLanguageList.Create(request.AcceptLanguage, true);
+        req.langList := THTTPLanguageList.Create(FLanguages.link, request.AcceptLanguage, true);
         req.baseURL := base;
         resp := HandleRequest(server, secure, session, context, req);
         try
@@ -246,6 +248,7 @@ end;
 
 destructor TCDSHooksService.Destroy;
 begin
+  FLanguages.free;
   FEngines.free;
   inherited;
 end;

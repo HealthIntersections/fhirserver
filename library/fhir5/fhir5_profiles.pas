@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_fpc, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_threads, fsl_stream, fsl_collections, fsl_fpc, fsl_npm_cache, fsl_lang,
   fhir_objects, fhir_parser, fhir_factory, fhir_uris, fhir_common,
   fhir5_resources, fhir5_resources_base, fhir5_parser, fhir5_enums, fhir5_types, fhir5_context, fhir5_utilities, fhir5_constants;
 
@@ -128,7 +128,7 @@ Type
     procedure SetProfiles(const Value: TProfileManager);
     procedure Load(packageId : String; feed: TFHIRBundle);
   public
-    constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
+    constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
     function link : TBaseWorkerContextR5; overload;
     procedure Unload; override;
@@ -1559,7 +1559,7 @@ begin
     list.add(sd.link);
 end;
 
-constructor TBaseWorkerContextR5.Create(factory : TFHIRFactory; pcm : TFHIRPackageManager);
+constructor TBaseWorkerContextR5.Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pcm : TFHIRPackageManager);
 begin
   inherited;
   FLock := TFslLock.Create('worker-context r5');

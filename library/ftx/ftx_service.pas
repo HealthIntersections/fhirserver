@@ -990,7 +990,7 @@ var
   hl : THTTPLanguageList;
   l : TIETFLang;
 begin
-  hl := THTTPLanguageList.Create('', false);
+  hl := THTTPLanguageList.Create(FLanguages.link, '', false);
   try
     for l in lang do
       hl.addCode(l.code);

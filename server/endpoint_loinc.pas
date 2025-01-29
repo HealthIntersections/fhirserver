@@ -202,7 +202,7 @@ begin
   FTx.Loinc.RecordUse;
   code := request.UnparsedParams;
   lang := request.Document.Substring(PathWithSlash.Length);
-  langList := THTTPLanguageList.Create(lang, true);
+  langList := THTTPLanguageList.Create(FTx.Languages.link, lang, true);
   try
     result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
 

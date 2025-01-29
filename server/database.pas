@@ -5861,7 +5861,7 @@ function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; lan
 var
   profile : TFHIRTxOperationParams;
 begin
-  profile := TFHIRTxOperationParams.Create;
+  profile := TFHIRTxOperationParams.Create(ServerContext.i18nSupport.Languages.link);
   try
     profile.limitedExpansion := allowIncomplete;
     if (vs <> nil) then
@@ -7665,7 +7665,7 @@ var
   prov: TCodeSystemProvider;
   params : TFHIRTxOperationParams;
 begin
-  params := TFHIRTxOperationParams.Create;
+  params := TFHIRTxOperationParams.Create(ServerContext.i18nSupport.Languages.link);
   try
     params.defaultToLatestVersion := true;
     try

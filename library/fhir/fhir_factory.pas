@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache, fsl_i18n,
-  fsl_ucum, fsl_npm, fsl_threads, fsl_web_stream,
+  fsl_ucum, fsl_npm, fsl_threads, fsl_web_stream, fsl_lang,
   fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml,
   fhir_elementmodel, fhir_client, fhir_uris;
 
@@ -266,12 +266,13 @@ type
   TFHIRWorkerContextWithFactory = class (TFHIRWorkerContextV)
   private
     FFactory : TFHIRFactory;
+    FLanguages : TIETFLanguageDefinitions;
     FLoadInfo : TPackageLoadingInformation;
     FPcm : TFHIRPackageManager;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); overload; virtual;
+    constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pcm : TFHIRPackageManager); overload; virtual;
     destructor Destroy; override;
 
     function link : TFHIRWorkerContextWithFactory;
@@ -1204,10 +1205,11 @@ end;
 
 { TFHIRWorkerContextWithFactory }
 
-constructor TFHIRWorkerContextWithFactory.Create(factory: TFHIRFactory; pcm : TFHIRPackageManager);
+constructor TFHIRWorkerContextWithFactory.Create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; pcm : TFHIRPackageManager);
 begin
   inherited Create;
   FFactory := factory;
+  FLanguages := languages;
   FLoadInfo := TPackageLoadingInformation.Create(FFactory.versionString);
   FLoadInfo.OnLoadEvent := loadResourceJson;
   FPcm := pcm;
@@ -1218,6 +1220,7 @@ begin
   FPcm.free;
   FLoadInfo.free;
   FFactory.free;
+  Flanguages.free;
   inherited;
 end;
 

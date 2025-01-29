@@ -34,7 +34,7 @@ interface
 
 Uses
   SysUtils, Classes,
-  fsl_utilities, fsl_threads, fsl_npm_cache,
+  fsl_utilities, fsl_threads, fsl_npm_cache, fsl_lang,
   fsl_base, fsl_stream,
   fhir_objects, fhir_factory, fhir_common,
   ftx_service,
@@ -61,7 +61,7 @@ type
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
     procedure loadPatientCompartment;
   public
-    constructor Create(factory : TFHIRFactory; pc : TFHIRPackageManager); Override;
+    constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pc : TFHIRPackageManager); Override;
     destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR3; overload;
@@ -103,11 +103,11 @@ begin
   FTerminologyServer.LoadCodeSystem(r);
 end;
 
-constructor TFHIRServerWorkerContextR3.Create(factory : TFHIRFactory; pc : TFHIRPackageManager);
+constructor TFHIRServerWorkerContextR3.Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; pc : TFHIRPackageManager);
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r3');
-  FProfile := TFhirTxOperationParams.Create;
+  FProfile := TFHIRTxOperationParams.Create(Languages.link);
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.questionnaires');

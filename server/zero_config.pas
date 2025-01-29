@@ -131,7 +131,7 @@ begin
   try
     conn := sql.GetConnection('install');
     try
-      installer := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(v), makeTxServerFactory(v));
+      installer := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(v), makeTxServerFactory(nil, v));
       try
         try
           installer.Upgrade;
@@ -165,7 +165,7 @@ begin
   try
     conn := sql.GetConnection('install');
     try
-      installer := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(v), makeTxServerFactory(v));
+      installer := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(v), makeTxServerFactory(nil, v));
       try
         installer.InstallTerminologyServer;
       finally

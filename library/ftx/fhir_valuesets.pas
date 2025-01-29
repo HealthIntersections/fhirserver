@@ -317,7 +317,7 @@ begin
     end;
   end;
   if not FParams.hasHTTPLanguages and (vs.language <> '') then
-    FParams.HTTPLanguages := THTTPLanguageList.create(vs.language, not isValidating);
+    FParams.HTTPLanguages := THTTPLanguageList.create(FLanguages.link, vs.language, not isValidating);
 end;
 
 function TValueSetWorker.vsHandle: TFHIRValueSetW;

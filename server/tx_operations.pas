@@ -51,6 +51,7 @@ type
     FServer : TTerminologyServer;
 
     function isValidation : boolean; virtual;
+    function parseLanguages(value : String): THTTPLanguageList;
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRTxOperationParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRTxOperationParams;
     function loadCoded(request : TFHIRRequest; loadType : TLoadCodedType; var issuePath : string; var mode : TValidationCheckMode) : TFhirCodeableConceptW;
@@ -971,7 +972,7 @@ begin
           req.loadCoding;
           profile := buildExpansionParams(request, manager, params);
           if req.displayLanguage <> '' then
-            langList := THTTPLanguageList.Create(req.displayLanguage, false)
+            langList := THTTPLanguageList.Create(FServer.CommonTerminologies.Languages.link, req.displayLanguage, false)
           else
             langList := request.langList.Link;
           try
@@ -1431,7 +1432,7 @@ begin
     else  if (p.name = 'valueset-version') then
       result.getValueSetVersionRules.add(p.valueString)
     else if (p.name = 'displayLanguage') then
-      result.DisplayLanguages := THTTPLanguageList.create(p.valueString, not isValidation)
+      result.DisplayLanguages := parseLanguages(p.valueString)
     else if (p.name = 'property') then
       result.properties.add(p.valueString)
     else if (p.name = 'lenient-display-validation') and (p.valueString = 'true') then
@@ -1458,14 +1459,24 @@ begin
   end;
 
   if not result.hasHTTPLanguages and (request.ContentLanguage <> '') then
-    result.HTTPLanguages := THTTPLanguageList.create(request.ContentLanguage, not isValidation);;
+    result.HTTPLanguages := parseLanguages(request.ContentLanguage);
   if not result.hasHTTPLanguages and (request.LangList <> nil) and (request.LangList.source <> '') then
-    result.HTTPLanguages := THTTPLanguageList.create(request.LangList.source, not isValidation);
+    result.HTTPLanguages := parseLanguages(request.LangList.source);
+end;
+
+function TFhirTerminologyOperation.parseLanguages(value : String) : THTTPLanguageList;
+begin
+  try
+    result := THTTPLanguageList.create(FServer.CommonTerminologies.Languages.link, value, not isValidation);
+  except
+    on e : Exception do
+      raise EWebServerException.create(422, 'Invalid displayLanguage: '''+value+'''', '', 'processing', e.message);
+  end;
 end;
 
 function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRTxOperationParams;
 begin
-  result := TFHIRTxOperationParams.Create;
+  result := TFHIRTxOperationParams.Create(FLanguages.link);
   try
     processExpansionParams(request, manager, params, result);
     result.link;

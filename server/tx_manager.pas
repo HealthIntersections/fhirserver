@@ -133,6 +133,7 @@ Type
     procedure SetACIR(const Value: TACIRServices);
 
     procedure getSummary(b : TFslStringBuilder);
+    procedure loadLang;
 
     procedure SetNDFRT(const Value: TNDFRTServices);
     procedure SetXIG(AValue: TXIGProvider);
@@ -1626,6 +1627,7 @@ begin
   FSettings := settings;
   FSnomed := TFslList<TSnomedServices>.Create;                        
   FI18n := i18n;
+  loadLang;
 end;
 
 procedure TCommonTerminologies.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -1783,6 +1785,31 @@ begin
         list.Add(pc.version());
 end;
 
+           
+function fixFile(name, fn : String) : String;
+begin
+  if FileExists(fn) then
+    result := fn
+  else if FileExists(FilePath([fn])) then
+    result := FilePath([fn])
+  else if FileExists(FilePath(['[exe]', fn])) then
+    result := FilePath(['[exe]', fn])
+  else if FileExists(FilePath(['[curr]', fn])) then
+    result := FilePath(['[curr]', fn])
+  else
+    raise EFslException.Create('Unable to find the '+name+' file "'+fn+'"');
+end;
+
+procedure TCommonTerminologies.loadLang;
+var
+  s : String;
+begin
+  s := fixFile('lang', FSettings.LangFile);
+  if not FileExists(s) then
+    raise EFHIRException.Create('IETF language file "'+FSettings.LangFile+'" not found - necessary for server operation');
+  FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
+end;
+
 procedure TCommonTerminologies.load(txlist: TFHIRServerConfigSection; testing : boolean);
 var
   tx : TFHIRServerConfigSection;
@@ -1791,25 +1818,8 @@ var
   sp : TSnomedProviderFactory;
   def : boolean;
   p : TUriServices;
-  function fixFile(name, fn : String) : String;
-  begin
-    if FileExists(fn) then
-      result := fn
-    else if FileExists(FilePath([fn])) then
-      result := FilePath([fn])
-    else if FileExists(FilePath(['[exe]', fn])) then
-      result := FilePath(['[exe]', fn])
-    else if FileExists(FilePath(['[curr]', fn])) then
-      result := FilePath(['[curr]', fn])
-    else
-      raise EFslException.Create('Unable to find the '+name+' file "'+fn+'"');
-  end;
 
 begin
-  s := fixFile('lang', FSettings.LangFile);
-  if not FileExists(s) then
-    raise EFHIRException.Create('IETF language file "'+FSettings.LangFile+'" not found - necessary for server operation');
-  FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
   FProviderClasses := TFslMap<TCodeSystemProviderFactory>.Create('tc.common');
 
   p := TUriServices.Create(FLanguages.link, FI18n.link);

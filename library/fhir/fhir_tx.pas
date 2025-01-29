@@ -83,6 +83,7 @@ uses
 
   TFHIRTxOperationParams = class (TFslObject)
   private
+    FLanguages : TIETFLanguageDefinitions;
     FVersionRules : TFslList<TFhirExpansionParamsVersionRule>;
     FValueSetVersionRules : TStringList;
     FactiveOnly: boolean;
@@ -141,11 +142,11 @@ uses
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create; override;
+    constructor Create(Languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
     function link : TFHIRTxOperationParams;
 
-    class function defaultProfile : TFHIRTxOperationParams;
+    class function defaultProfile(langDefs : TIETFLanguageDefinitions) : TFHIRTxOperationParams;
 
     procedure seeParameter(name : String; value : TFHIRObject; isValidation, overwrite : boolean);
 
@@ -341,8 +342,8 @@ var
   s : string;
 begin
   s := inttostr(GetTickCount64 - FStartTime)+'ms '+note;
-  if UnderDebugger then
-    Logging.log(s);
+  //if UnderDebugger then
+  //  Logging.log(s);
   FTimeTracker.step(s);
 end;
 
@@ -351,8 +352,8 @@ var
   s : string;
 begin
   s := inttostr(GetTickCount64 - FStartTime)+'ms '+vs.vurl+': '+note;
-  if UnderDebugger then
-    Logging.log(s);
+  //if UnderDebugger then
+  //  Logging.log(s);
   FTimeTracker.step(s);
 end;
 
@@ -662,7 +663,7 @@ var
       result := StringArrayExistsInsensitive(props, name) or StringArrayExistsInsensitive(props, '*') ;
   end;
 begin
-  params := TFHIRTxOperationParams.Create;
+  params := TFHIRTxOperationParams.Create(FLanguages.link);
   try
     params.defaultToLatestVersion := true;
     provider := findCodeSystem(coding.systemUri, coding.version, profile, [cscmComplete, cscmFragment], false);
@@ -708,13 +709,14 @@ end;
 
 { TFHIRTxOperationParams }
 
-constructor TFHIRTxOperationParams.Create;
+constructor TFHIRTxOperationParams.Create(Languages : TIETFLanguageDefinitions);
 begin
-  inherited;
+  inherited Create;
   FVersionRules := TFslList<TFhirExpansionParamsVersionRule>.create;
   FProperties := TStringList.create;
   FAltCodeRules := TAlternateCodeOptions.create;
   FDesignations := TStringlist.create;
+  FLanguages := languages;
 
   FGenerateNarrative := true;
 end;
@@ -827,9 +829,9 @@ begin
   inc(result, (FUid.length * sizeof(char)) + 12);
 end;
 
-class function TFHIRTxOperationParams.defaultProfile: TFHIRTxOperationParams;
+class function TFHIRTxOperationParams.defaultProfile(langDefs : TIETFLanguageDefinitions): TFHIRTxOperationParams;
 begin
-  result := TFHIRTxOperationParams.Create;
+  result := TFHIRTxOperationParams.Create(langDefs);
 end;
 
 procedure TFHIRTxOperationParams.seeParameter(name: String; value: TFHIRObject; isValidation, overwrite: boolean);
@@ -837,7 +839,7 @@ begin
   if (value <> nil) then
   begin
     if (name = 'displayLanguage') and (not HasHTTPLanguages or overwrite) then
-      DisplayLanguages := THTTPLanguageList.create(value.primitiveValue, not isValidation);
+      DisplayLanguages := THTTPLanguageList.create(FLanguages.link, value.primitiveValue, not isValidation);
 
     if (name = 'includeAlternateCodes') then
       altCodeRules.seeParam(value.primitiveValue);
@@ -939,6 +941,7 @@ begin
   FProperties.free;
   FDesignations.free;
   FValueSetVersionRules.free;
+  FLanguages.free;
   inherited;
 end;
 

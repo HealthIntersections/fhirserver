@@ -287,7 +287,7 @@ begin
         try
           html.Version := SERVER_FULL_VERSION;
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';
-          html.LangList := THTTPLanguageList.Create(request.AcceptLanguage, true);
+          html.LangList := THTTPLanguageList.Create(FTx.Languages.link, request.AcceptLanguage, true);
           pub.PublishDict(code, PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/', html);
           returnContent(request, response, request.Document, secure, 'SNOMED CT Browser', html.output);
         finally

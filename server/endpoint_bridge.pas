@@ -923,7 +923,7 @@ end;
 
 function TExampleServerFactory.makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV;
 begin
-  result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pcm.link));
+  result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(nil, TFHIRFactoryR3.create, pcm.link));
 end;
 
 procedure TExampleServerFactory.setTerminologyServer(validatorContext: TFHIRWorkerContextWithFactory; server: TFslObject);

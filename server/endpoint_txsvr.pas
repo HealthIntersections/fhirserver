@@ -34,7 +34,8 @@ interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads, fsl_i18n,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache,
+  fsl_npm, fsl_htmlgen, fsl_threads, fsl_i18n, fsl_lang,
   fdb_manager, fdb_fts,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
@@ -62,12 +63,15 @@ const
 type
   TTerminologyServerEndPoint = class;
 
-  TTerminologyServerFactory = class (TFHIRServerFactory)
-  private
-    FVersion : TFHIRVersion;
+  { TTerminologyServerFactory }
 
+  TTerminologyServerFactory = class (TFHIRServerFactory)
+  protected
+    FLanguages : TIETFLanguageDefinitions;
+    FVersion : TFHIRVersion;
   public
-    constructor Create(version : TFHIRVersion);
+    constructor Create(Languages : TIETFLanguageDefinitions; version : TFHIRVersion);
+    destructor Destroy; override;
     function makeIndexes : TFHIRIndexBuilder; override;
     function makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
@@ -299,7 +303,7 @@ type
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
-function makeTxServerFactory(version : TFHIRVersion) : TFHIRServerFactory;
+function makeTxServerFactory(Languages: TIETFLanguageDefinitions; version : TFHIRVersion) : TFHIRServerFactory;
 
 implementation
 
@@ -320,10 +324,10 @@ end;
 function TTerminologyServerFactory.makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV;
 begin
   case FVersion of
-    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pc.link));
-    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pc.link));
-    fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(TFHIRFactoryR4B.create, pc.link));
-    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create, pc.link));
+    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(FLanguages.link, TFHIRFactoryR3.create, pc.link));
+    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(FLanguages.link, TFHIRFactoryR4.create, pc.link));
+    fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(FLanguages.link, TFHIRFactoryR4B.create, pc.link));
+    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(FLanguages.link, TFHIRFactoryR5.create, pc.link));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
   end;
@@ -341,10 +345,17 @@ begin
   raise EFslException.Create('Not supported in this server');
 end;
 
-constructor TTerminologyServerFactory.Create(version: TFHIRVersion);
+constructor TTerminologyServerFactory.Create(Languages: TIETFLanguageDefinitions; version: TFHIRVersion);
 begin
   inherited Create;
+  FLanguages := Languages;
   FVersion := version;
+end;
+
+destructor TTerminologyServerFactory.Destroy;
+begin
+  FLanguages.free;
+  inherited Destroy;
 end;
 
 function TTerminologyServerFactory.makeEngine(validatorContext: TFHIRWorkerContextWithFactory; ucum: TUcumServiceImplementation): TFHIRPathEngineV;
@@ -1828,9 +1839,9 @@ begin
   end;
 end;
 
-function makeTxServerFactory(version : TFHIRVersion): TFHIRServerFactory;
+function makeTxServerFactory(Languages: TIETFLanguageDefinitions; version : TFHIRVersion): TFHIRServerFactory;
 begin
-  result := TTerminologyServerFactory.Create(version);
+  result := TTerminologyServerFactory.Create(Languages, version);
 end;
 
 function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
@@ -1854,7 +1865,7 @@ var
   pid : String;
 begin
   FStore := TTerminologyFhirServerStorage.Create(makeTxFactory(version));
-  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeTxServerFactory(version), FPcm.link);
+  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeTxServerFactory(i18n.Languages.link, version), FPcm.link);
   FStore.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
@@ -1917,7 +1928,7 @@ var
 begin
   conn := Database.getConnection('install');
   try
-    dbi := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(version), makeTxServerFactory(version));
+    dbi := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(version), makeTxServerFactory(i18n.Languages.link, version));
     try
       dbi.InstallTerminologyServer;
     finally

@@ -41,7 +41,7 @@ uses
   IdCompressorZLib, IdZLib, IdSchedulerOfThreadPool, IdGlobalProtocols, IdMessage, IdExplicitTLSClientServerBase, IdGlobal, fsl_websocket,
   IdOpenSSLIOHandlerServer, IdOpenSSLIOHandlerClient, IdOpenSSLVersion, IdOpenSSLX509,
 
-  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto, fsl_npm_cache, fsl_i18n,
+  fsl_base, fsl_utilities, fsl_logging, fsl_threads, fsl_collections, fsl_stream, fsl_msxml, fsl_crypto, fsl_npm_cache, fsl_i18n, fsl_lang,
   ftx_ucum_services, fsl_http,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_xhtml, fhir_cdshooks,
 
@@ -68,11 +68,15 @@ uses
 Type
   TFullServerEndPoint = class;
 
+  { TFullServerFactory }
+
   TFullServerFactory = class (TFHIRServerFactory)
-  private
+  protected
+    FLanguages : TIETFLanguageDefinitions;
     FVersion : TFHIRVersion;
   public
-    constructor Create(version : TFHIRVersion);
+    constructor Create(Languages : TIETFLanguageDefinitions; version : TFHIRVersion);  
+    destructor Destroy; override;
 
     function makeIndexes : TFHIRIndexBuilder; override;
     function makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV; override;
@@ -225,19 +229,26 @@ implementation
 
 { TFullServerFactory }
 
-constructor TFullServerFactory.create(version : TFHIRVersion);
+constructor TFullServerFactory.Create(Languages: TIETFLanguageDefinitions; version: TFHIRVersion);
 begin
   inherited Create;
+  FLanguages := Languages;
   FVersion := version;
+end;
+
+destructor TFullServerFactory.Destroy;
+begin
+  FLanguages.free;
+  inherited Destroy;
 end;
 
 function TFullServerFactory.makeValidator(pcm : TFHIRPackageManager): TFHIRValidatorV;
 begin
   case FVersion of
-    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pcm.link));
-    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pcm.link));
-    fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(TFHIRFactoryR4B.create, pcm.link));
-    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create, pcm.link));
+    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(FLanguages.link, TFHIRFactoryR3.create, pcm.link));
+    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(FLanguages.link, TFHIRFactoryR4.create, pcm.link));
+    fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(FLanguages.link, TFHIRFactoryR4B.create, pcm.link));
+    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(FLanguages.link, TFHIRFactoryR5.create, pcm.link));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
   end;
@@ -555,7 +566,7 @@ end;
 
 function TFullServerEndPoint.makeServerFactory: TFHIRServerFactory;
 begin
-  result := TFullServerFactory.Create(version);
+  result := TFullServerFactory.Create(i18n.Languages.link, version);
 end;
 
 function TFullServerEndPoint.makeScimServer(defaultRights : String; forInstall : boolean) : TSCIMServer;
@@ -1254,7 +1265,7 @@ begin
     begin
       if alpPatient in params then
       begin
-        enc := factory.wrapEncounter(GetResource(session, 'Encounter', THTTPLanguageList.Create(request.AcceptLanguage, true), launchContext.Substring(10), '', ''));
+        enc := factory.wrapEncounter(GetResource(session, 'Encounter', THTTPLanguageList.Create(Context.i18nSupport.Languages.link, request.AcceptLanguage, true), launchContext.Substring(10), '', ''));
         try
           result.Add('patient', enc.PatientId);
         finally
