@@ -1046,8 +1046,14 @@ begin
 end;
 
 function TCodeSystemProvider.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TCodeSystemProvider;
+var
+  s : String;
+  cs : TFhirCodeSystemW;
 begin
-  raise ETerminologyError.create('The codesystem '+systemUri()+' does not support supplements');
+  s := '';
+  for cs in supplements do 
+    CommaAdd(s, cs.vurl);
+  raise ETerminologyError.create('The codesystem '+systemUri()+' does not support supplements: '+s);
 end;
 
 function TCodeSystemProvider.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;
