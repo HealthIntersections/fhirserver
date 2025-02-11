@@ -278,7 +278,7 @@ begin
   result := true;
   value := '';
   for sp in FParams do
-    if (sp.FIndex.Name = name) then
+    if (sp.FIndex <> nil) and (sp.FIndex.Name = name) then
     begin
       value := sp.value;
       exit(true);
