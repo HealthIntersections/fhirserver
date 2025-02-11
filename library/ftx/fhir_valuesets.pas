@@ -1073,7 +1073,6 @@ begin
     end
     else
     begin
-      // todo: we can never get here?
       if (system = '') and inferSystem then
       begin
         system := determineSystem(FOpContext, code);

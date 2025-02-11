@@ -181,14 +181,18 @@ type
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     FStatusKeys : TDictionary<String, String>;
+    FSupplements : TFslList<TFhirCodeSystemW>;
     function commaListOfCodes(source: String): String;
+    procedure addSupplementDisplays(displays : TFslList<TLoincDisplay>; code : String);
     function filterBySQL(opContext : TTxOperationContext; c : TFDBConnection; d, sql, lsql : String; forExpansion : boolean) : TCodeSystemProviderFilterContext;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
+    constructor CreateInternal;
     destructor Destroy; Override;
     Function Link : TLOINCServices; Overload;
+    function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TCodeSystemProvider; override;
 
     Procedure Load(Const sFilename : String);
     class function checkFile(Const sFilename : String) : String;
@@ -325,22 +329,59 @@ begin
   FLock := TFslLock.create('LOINC');
 end;
 
+constructor TLOINCServices.CreateInternal;
+begin
+  inherited Create;
+end;
+
 destructor TLOINCServices.Destroy;
 begin
-  FRelationships.free;
-  FProperties.free;
-  FStatusKeys.free;
-
-  FCodeList.free;
-  FCodes.free;
-  FLangs.free;
-  FLock.free;
+  if FSupplements = nil then // only the root owns these
+  begin
+    FRelationships.free;
+    FProperties.free;
+    FStatusKeys.free;
+    FCodeList.free;
+    FCodes.free;
+    FLangs.free;
+    FLock.free;
+  end
+  else
+    FSupplements.free;
   inherited;
 end;
 
 function TLOINCServices.Link: TLOINCServices;
 begin
   result := TLOINCServices(inherited Link);
+end;
+
+function TLOINCServices.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TCodeSystemProvider;
+var
+  r : TLOINCServices;
+begin
+  r := TLOINCServices.createInternal;
+  try
+    r.FLangs := FLangs;
+    r.FCodes := FCodes;
+    r.FCodeList := FCodeList;
+    r.FRelationships := FRelationships;
+    r.FProperties := FProperties;
+    r.FStatusKeys := FStatusKeys;
+    r.FLock := FLock;
+
+    r.FSupplements := TFslList<TFhirCodeSystemW>.create;
+    r.FSupplements.AddAll(supplements);
+
+    r.FDB := FDB;
+    r.FVersion := FVersion;
+    r.FRoot := FRoot;
+    r.FFirstCodeKey := FFirstCodeKey;
+
+    result := r.link;
+  finally
+    r.free;
+  end;
 end;
 
 procedure TLOINCServices.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
@@ -793,6 +834,9 @@ begin
           raise;
         end;
       end;
+      if FSupplements <> nil then
+        addSupplementDisplays(displays, (context as TLoincProviderContext).Code);
+
       // now we have them all - iterate looking for a match
       for ll in langList.langs do
         for disp in displays do
@@ -1061,6 +1105,32 @@ begin
   for s in source.split([',']) do
     if FCodes.ContainsKey(s) then
         CommaAdd(result, ''''+sqlWrapString(s)+'''')
+end;
+
+procedure TLOINCServices.addSupplementDisplays(displays: TFslList<TLoincDisplay>; code: String);
+var
+  cs : TFhirCodeSystemW;
+  def : TFhirCodeSystemConceptW;
+  dsg: TFhirCodeSystemConceptDesignationW;
+begin
+  for cs in FSupplements do
+  begin
+    def := cs.getCode(code);
+    if (def <> nil) then
+    begin
+      try
+        if (def.display <> '') then
+          displays.Add(TLoincDisplay.create(cs.language, def.display));
+        for dsg in def.designations.forEnum do
+          if dsg.language <> '' then
+            displays.Add(TLoincDisplay.create(dsg.language, dsg.value))
+          else
+            displays.Add(TLoincDisplay.create(cs.language, dsg.value));
+      finally
+        def.free;
+      end;
+    end;
+  end;
 end;
 
 function TLOINCServices.filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
