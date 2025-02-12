@@ -857,6 +857,7 @@ var
   item : TCPTConcept;
   b : boolean;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   // filters supported
   //  * modified = false
   //  * modifier = true / false

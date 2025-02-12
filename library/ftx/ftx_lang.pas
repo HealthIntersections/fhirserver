@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_utilities, fsl_stream, fsl_base, fsl_http, fsl_lang,
+  fsl_utilities, fsl_stream, fsl_base, fsl_http, fsl_lang, fsl_threads,
   fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
@@ -299,6 +299,7 @@ function TIETFLanguageCodeServices.filter(opContext : TTxOperationContext; forEx
 var
   i : integer;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   i := StringArrayIndexOfSensitive(CODES_TIETFLanguageComponent, prop);
   if (i >= 0) and (op = foExists) and ((value = 'true') or (value = 'false')) then
     result := TIETFLanguageCodeFilter.Create(TIETFLanguageComponent(i), value = 'true')

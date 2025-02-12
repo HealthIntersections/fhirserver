@@ -878,6 +878,7 @@ var
   res : TUMLSFilter;
   ok : boolean;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   prop := prop.toUpper;
   res := TUMLSFilter.Create;
   try

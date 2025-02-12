@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, 
-  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang, fsl_regex, fsl_i18n,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_fpc, fsl_lang, fsl_regex, fsl_i18n, fsl_threads,
   fhir_objects, fhir_common, fhir_features, fhir_uris,
   ftx_service;
 
@@ -1058,6 +1058,7 @@ var
   list : TCountryCodeConceptFilter;
   concept : TCountryCodeConcept;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if (op = foRegex) and (prop = 'code') then
   begin
     list := TCountryCodeConceptFilter.Create;

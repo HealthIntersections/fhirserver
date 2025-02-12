@@ -67,6 +67,7 @@ Type
   TTxOperationContext = class abstract (TFslObject)
   public
     procedure log(note : String); virtual; abstract;
+    function deadCheck(var time : integer) : boolean; virtual; abstract;
   end;
 
   TCodeSystemProviderContext = class (TFslObject)
@@ -240,6 +241,7 @@ Type
     FLanguages : TIETFLanguageDefinitions;
     FI18n : TI18nSupport;
     procedure setDefLang(value : TIETFLang);
+    procedure deadCheck(opContext: TTxOperationContext; place, op: String);
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; override;
@@ -900,6 +902,14 @@ procedure TCodeSystemProvider.setDefLang(value: TIETFLang);
 begin
   FDefLang.free;
   FDefLang := value;
+end;
+
+procedure TCodeSystemProvider.deadCheck(opContext: TTxOperationContext; place, op: String);
+var
+  time : integer;
+begin
+  if opContext.deadCheck(time) then
+    raise ETooCostly.create(FI18n.translate('CODESYSTEM_TOO_COSTLY_TIME', nil, [inttostr(time), op, place]));
 end;
 
 constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);

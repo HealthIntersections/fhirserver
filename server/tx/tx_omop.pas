@@ -375,6 +375,7 @@ function TOMOPServices.filter(opContext : TTxOperationContext; forExpansion, for
 var
   f : TOMOPFilter;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if (prop = 'domain') and (op = foEqual) then
   begin
     f := TOMOPFilter.Create;

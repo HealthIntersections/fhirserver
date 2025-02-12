@@ -5262,6 +5262,7 @@ function TSnomedProvider.filter(opContext : TTxOperationContext; forExpansion, f
 var
   id : UInt64;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   result := nil;
   if (prop = 'concept') and FSct.StringIsId(value, id) then
     if op = foIsA then

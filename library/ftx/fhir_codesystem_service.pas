@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,  
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex, fsl_i18n,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex, fsl_i18n, fsl_threads,
   fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features, fhir_uris,
   ftx_service;
 
@@ -203,7 +203,7 @@ type
     function doLocate(list : TFhirCodeSystemConceptListW; code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemProviderContext; overload;
     function getParent(ctxt : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptW;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptListW; filter : TSearchFilterText);
-    procedure iterateCodes(base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
+    procedure iterateCodes(opContext : TTxOperationContext; op : String; base: TFhirCodeSystemConceptW; list: TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
     function locateParent(ctxt: TFHIRCodeSystemConceptW; code: String): String;
     function locCode(list: TFhirCodeSystemConceptListW; code, synonym: String; altOpt : TAlternateCodeOptions): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
@@ -214,7 +214,7 @@ type
     procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
     procedure iterateConceptsByEquality(positive : boolean; src : TFhirCodeSystemConceptListW; code: string; list: TFhirCodeSystemProviderFilterContext);
 
-    procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
+    procedure listChildrenByProperty(opContext : TTxOperationContext; op : String; code : String; list, children : TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -1353,16 +1353,17 @@ begin
   result := concept.conceptList.Count > 0;
 end;
 
-procedure TFhirCodeSystemProvider.listChildrenByProperty(code: String; list, children: TFhirCodeSystemConceptListW);
+procedure TFhirCodeSystemProvider.listChildrenByProperty(opContext : TTxOperationContext; op : String; code: String; list, children: TFhirCodeSystemConceptListW);
 var
   item : TFhirCodeSystemConceptW;
 begin
   for item in list do
   begin
+    deadCheck(opContext, 'listChildrenByProperty', op);
     if conceptHasProperty(item, 'http://hl7.org/fhir/concept-properties#parent', code) then
       children.Add(item.link)
     else if item.HasConcepts then
-      listChildrenByProperty(code, item.conceptList, children);
+      listChildrenByProperty(opContext, op, code, item.conceptList, children);
   end;
 end;
 
@@ -1446,7 +1447,7 @@ begin
    result := FCs.CodeSystem.version;
 end;
 
-procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
+procedure TFhirCodeSystemProvider.iterateCodes(opContext : TTxOperationContext; op : String; base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
 var
   i : integer;
   el : TFslList<TFHIRObject>;
@@ -1467,14 +1468,20 @@ begin
 
   // 1. Add children in the heirarchy
   for i := 0 to base.conceptList.count - 1 do
-    iterateCodes(base.conceptList[i], list, filter, context, true);
+  begin
+    deadCheck(opContext, 'iterate-codes-1', op);
+    iterateCodes(opContext, op, base.conceptList[i], list, filter, context, true);
+  end;
 
   // 2. find any codes that identify this as a parent in their properties
   cl := TFhirCodeSystemConceptListW.Create;
   try
-    listChildrenByProperty(base.code, FCs.CodeSystem.conceptList, cl);
+    listChildrenByProperty(opContext, op, base.code, FCs.CodeSystem.conceptList, cl);
     for i := 0 to cl.count - 1 do
-      iterateCodes(cl[i], list, filter, context, true);
+    begin
+      deadCheck(opContext, 'iterate-codes-2', op);
+      iterateCodes(opContext, op, cl[i], list, filter, context, true);
+    end;
   finally
     cl.free;
   end;
@@ -1484,10 +1491,11 @@ begin
     for e in el do
     begin
       ex := FFactory.wrapExtension(e.Link);
-      try
+      try           
+        deadCheck(opContext, 'iterate-codes-3', op);
         ctxt := doLocate(ex.value.primitiveValue, nil);
         try
-          iterateCodes(TFhirCodeSystemProviderContext(ctxt).concept, list, filter, context, true);
+          iterateCodes(opContext, op, TFhirCodeSystemProviderContext(ctxt).concept, list, filter, context, true);
         finally
           ctxt.free;
         end;
@@ -1677,6 +1685,7 @@ var
   cc : TFhirCodeSystemConceptW;
   includeRoot : boolean;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if (op in [foIsA, foDescendentOf]) and ((prop = 'concept') or (prop = 'code')) then
   begin
     code := doLocate(value, nil);
@@ -1690,7 +1699,7 @@ begin
           includeRoot := false;
         result := TFhirCodeSystemProviderFilterContext.Create;
         try
-          iterateCodes(code.concept, result as TFhirCodeSystemProviderFilterContext, allCodes, nil, includeRoot);
+          iterateCodes(opContext, 'filter('+prop+CODES_TFhirFilterOperator[op]+value+')', code.concept, result as TFhirCodeSystemProviderFilterContext, allCodes, nil, includeRoot);
           result.link;
         finally
           result.free;
@@ -1711,7 +1720,7 @@ begin
         result := TFhirCodeSystemProviderFilterContext.Create;
         try
           for cc in FCs.CodeSystem.conceptList do
-            iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, allCodes, code.concept, true);
+            iterateCodes(opContext, 'filter('+prop+CODES_TFhirFilterOperator[op]+value+')', cc, result as TFhirCodeSystemProviderFilterContext, allCodes, code.concept, true);
           result.link;
         finally
           result.free;
@@ -1732,6 +1741,7 @@ begin
         begin
           code := doLocate(value, nil);
           try
+            deadCheck(opContext, 'filter-1', 'filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
             if code = nil then
               raise ETerminologyError.Create('Unable to locate code '+value, itUnknown)
             else
@@ -1754,9 +1764,9 @@ begin
     try
       for cc in FCs.CodeSystem.conceptList do
         if value = 'true' then
-          iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, nonLeafCodes, nil, true)
+          iterateCodes(opContext, 'filter('+prop+CODES_TFhirFilterOperator[op]+value+')', cc, result as TFhirCodeSystemProviderFilterContext, nonLeafCodes, nil, true)
         else
-          iterateCodes(cc, result as TFhirCodeSystemProviderFilterContext, leafCodes, nil, true);
+          iterateCodes(opContext, 'filter('+prop+CODES_TFhirFilterOperator[op]+value+')', cc, result as TFhirCodeSystemProviderFilterContext, leafCodes, nil, true);
       result.link;
     finally
       result.free;

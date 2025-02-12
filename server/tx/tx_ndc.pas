@@ -1141,6 +1141,7 @@ var
   ctxt : TNDCFilterPreparationContext;
   res : TNDCFilterContext;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   res := nil;
   try
     ctxt := prep as TNDCFilterPreparationContext;

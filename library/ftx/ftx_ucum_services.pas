@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang, fsl_i18n,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang, fsl_i18n, fsl_threads,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
   fhir_common, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -1053,6 +1053,7 @@ end;
 
 function TUcumServices.filter(opContext : TTxOperationContext; forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if (prop = 'canonical') and (op in [foEqual]) then
     result := TUcumFilterContext.create(value)
   else

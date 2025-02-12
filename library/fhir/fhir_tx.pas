@@ -38,7 +38,7 @@ uses
     property reqId : String read FId;
     property TimeTracker : TFslTimeTracker read FTimeTracker write SetTimeTracker;
     function copy : TTerminologyOperationContext;
-    function deadCheck(var time : integer) : boolean;
+    function deadCheck(var time : integer) : boolean; override;
     procedure seeContext(vurl : String);
     procedure clearContexts;
 

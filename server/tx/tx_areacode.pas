@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_http, fsl_lang, fsl_base, fsl_stream, fsl_i18n,
+  fsl_utilities, fsl_http, fsl_lang, fsl_base, fsl_stream, fsl_i18n, fsl_threads,
   fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
@@ -544,6 +544,7 @@ var
   res : TAreaCodeConceptFilter;
   c : TAreaCodeConcept;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if ((prop = 'type') or (prop = 'class')) and (op = foEqual) then
   begin
     res := TAreaCodeConceptFilter.Create;

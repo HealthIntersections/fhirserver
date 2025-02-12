@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http, fsl_i18n,
+  fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http, fsl_i18n, fsl_threads,
   fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
@@ -250,6 +250,7 @@ var
   res : TIso4217ConceptFilter;
   c : TIso4217Currency;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if (prop = 'decimals') and (op = foEqual) then
   begin
     res := TIso4217ConceptFilter.Create;

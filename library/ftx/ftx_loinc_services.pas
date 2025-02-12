@@ -1141,6 +1141,7 @@ var
   s : string;
   d : String;
 begin
+  SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   d := prop+' '+CODES_TFhirFilterOperator[op]+' '+value;
   c := FDB.getConnection('filterBySQL');
   try
