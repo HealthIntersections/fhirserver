@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=FHIRServer v3.4.43
+AppVerName=FHIRServer v3.4.44
 
 ; compilation control
 OutputDir=..\install\build
-OutputBaseFilename=fhirserver-win64-3.4.43
+OutputBaseFilename=fhirserver-win64-3.4.44
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -34,11 +34,11 @@ UninstallFilesDir={app}\uninstall
 ; win2000+ add/remove programs support
 AppPublisher=Health Intersections P/L
 AppPublisherURL=http://www.healthintersections.com.au
-AppVersion=3.4.43
+AppVersion=3.4.44
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
 AppCopyright=Copyright (c) Health Intersections Pty Ltd 2011+
-VersionInfoVersion=3.4.43.0
+VersionInfoVersion=3.4.44.0
 
 ; dialog support
 LicenseFile=..\license
