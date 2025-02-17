@@ -1,6 +1,6 @@
 ## Change Notes:
 
-* Add denial of service protection inside CodeSystem iteration
+* update to support inactive codes in RxNorm
 
 ## Conformance Notes:
 

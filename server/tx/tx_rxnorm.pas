@@ -43,6 +43,7 @@ uses
 type
   TUMLSConcept = class (TCodeSystemProviderContext)
   private
+    FArchived : boolean;
     FCode : string;
     FDisplay : String;
     FOthers : TStringList;
@@ -105,6 +106,7 @@ type
     procedure Designations(opContext : TTxOperationContext; context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : string; override;
     function version : String; override;
+    function IsInactive(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean; override;
 
     function getPrepContext(opContext : TTxOperationContext) : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(opContext : TTxOperationContext; prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -154,6 +156,9 @@ type
     procedure makeStems(callback: TWorkProgressEvent); overload;
     procedure CreateTables(callback : TWorkProgressEvent);
     procedure loadRXNCONSO(callback : TWorkProgressEvent);
+    procedure loadRXNSAB(callback : TWorkProgressEvent);
+    procedure loadRXNCUI(callback : TWorkProgressEvent);
+    procedure loadRXNArchive(callback : TWorkProgressEvent);
     procedure loadRXNRel(callback : TWorkProgressEvent);
     procedure loadRXNSty(callback : TWorkProgressEvent);
   public
@@ -200,6 +205,9 @@ begin
     if meta.HasTable('RXNREL') then  FConn.ExecSQL('Drop table RXNREL');
     if meta.HasTable('RXNSTY') then  FConn.ExecSQL('Drop table RXNSTY');
     if meta.HasTable('RXNSTEMS') then  FConn.ExecSQL('Drop table RXNSTEMS');
+    if meta.HasTable('RXNATOMARCHIVE') then  FConn.ExecSQL('Drop table RXNATOMARCHIVE');
+    if meta.HasTable('RXNCUI') then  FConn.ExecSQL('Drop table RXNCUI');
+    if meta.HasTable('RXNSAB') then  FConn.ExecSQL('Drop table RXNSAB');
   finally
     meta.free;
   end;
@@ -219,7 +227,7 @@ begin
   FConn.ExecSQL('CREATE INDEX X_RXNCONSO_4 ON RXNCONSO(TTY, SAB)');
   FConn.ExecSQL('CREATE INDEX X_RXNCONSO_6 ON RXNCONSO(RXAUI)');
 
-  callback(self, 25, false, 'Create table RXNREL (Step 1 of 5)');
+  callback(self, 10, false, 'Create table RXNREL (Step 1 of 5)');
   FConn.ExecSQL('CREATE TABLE RXNREL ( '+
                 '  RXCUI1    varchar(8) , '+
                 '  RXAUI1    varchar(8), '+
@@ -234,19 +242,82 @@ begin
   FConn.ExecSQL('CREATE INDEX X_RXNREL_4 ON RXNREL(RELA, RXAUI2)');
   FConn.ExecSQL('CREATE INDEX X_RXNREL_5 ON RXNREL(RELA, RXCUI2)');
 
-  callback(self, 50, false, 'Create table RXNSTY (Step 1 of 5)');
+  callback(self, 20, false, 'Create table RXNSTY (Step 1 of 5)');
   FConn.ExecSQL('CREATE TABLE RXNSTY ( '+
                 '  RXCUI          varchar(8) NOT NULL, '+
                 '  TUI            varchar (4) '+
                 ') ');
   FConn.ExecSQL('CREATE INDEX X_RXNSTY_2 ON RXNSTY(TUI)');
 
-  callback(self, 75, false, 'Create table RXNSTEMS (Step 1 of 5)');
+
+  FConn.ExecSQL('CREATE TABLE RXNATOMARCHIVE   '+
+'(  '+
+'   RXAUI             varchar(8) NOT NULL, '+
+'   AUI               varchar(10), '+
+'   STR               varchar(4000) NOT NULL, '+
+'   ARCHIVE_TIMESTAMP varchar(280) NOT NULL, '+
+'   CREATED_TIMESTAMP varchar(280) NOT NULL, '+
+'   UPDATED_TIMESTAMP varchar(280) NOT NULL, '+
+'   CODE              varchar(50), '+
+'   IS_BRAND          varchar(1), '+
+'   LAT               varchar(3), '+
+'   LAST_RELEASED     varchar(30), '+
+'   SAUI              varchar(50), '+
+'   VSAB              varchar(40), '+
+'   RXCUI             varchar(8), '+
+'   SAB               varchar(20), '+
+'   TTY               varchar(20), '+
+'   MERGED_TO_RXCUI   varchar(8) , '+
+                'PRIMARY KEY (RXAUI))' );
+  callback(self, 37, false, 'Create table RXNSTEMS (Step 1 of 5)');
   FConn.ExecSQL('CREATE TABLE RXNSTEMS ( '+
                 ' stem CHAR(20) NOT NULL, '+
                 ' CUI VARCHAR(8) NOT NULL, '+
                 'PRIMARY KEY (stem, CUI))');
+  callback(self, 54, false, 'Created Tables (Step 1 of 5)');
+
+
+  callback(self, 71, false, 'Created Tables (Step 1 of 5)');
+
+  FConn.ExecSQL('CREATE TABLE RXNSAB  '+
+  '( '+
+  '   VCUI           varchar (8), '+
+  '   RCUI           varchar (8), '+
+  '   VSAB           varchar (40), '+
+  '   RSAB           varchar (20) NOT NULL, '+
+  '   SON            varchar (3000), '+
+  '   SF             varchar (20), '+
+  '   SVER           varchar (20), '+
+  '   VSTART         varchar (10), '+
+  '   VEND           varchar (10), '+
+  '   IMETA          varchar (10), '+
+  '   RMETA          varchar (10), '+
+  '   SLC            varchar (1000), '+
+  '   SCC            varchar (1000), '+
+  '   SRL            integer, '+
+  '   TFR            integer, '+
+  '   CFR            integer, '+
+  '   CXTY           varchar (50), '+
+  '   TTYL           varchar (300), '+
+  '   ATNL           varchar (1000), '+
+  '   LAT            varchar (3), '+
+  '   CENC           varchar (20), '+
+  '   CURVER         varchar (1), '+
+  '   SABIN          varchar (1), '+
+  '   SSN            varchar (3000), '+
+  '   SCIT           varchar (4000) , '+
+                'PRIMARY KEY (VCUI))');     
+  callback(self, 88, false, 'Created Tables (Step 1 of 5)');
+
+ FConn.ExecSQL('CREATE TABLE RXNCUI ( '+
+ 'cui1 VARCHAR(8), '+
+ 'ver_start VARCHAR(40), '+
+ 'ver_end   VARCHAR(40), '+
+ 'cardinality VARCHAR(8), '+
+ 'cui2       VARCHAR(8) , '+
+                'PRIMARY KEY (cui1))');    
   callback(self, 100, false, 'Created Tables (Step 1 of 5)');
+  FConn.WantLog := true;
 end;
 
 procedure TUMLSImporter.loadRXNCONSO(callback: TWorkProgressEvent);
@@ -288,6 +359,157 @@ begin
     ts.free;
   end;
   callback(self, 100, false, 'RXNCONSO Loaded (Step 2 of 5)');
+end;
+
+procedure TUMLSImporter.loadRXNSAB(callback: TWorkProgressEvent);
+var
+  ts : TStringList;
+  s : TArray<string>;
+  i : integer;
+begin
+  callback(self, 0, false, 'Load RXNSAB (Step 2 of 5)');
+  ts := TStringList.Create;
+  try
+    ts.LoadFromFile(path([FFolder, 'RXNSAB.RRF']));
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+      FConn.sql := 'insert into RXNSAB (VCUI, RCUI, VSAB, RSAB, SON, SF, SVER, VSTART, VEND, IMETA, RMETA, SLC, SCC, SRL, TFR, CFR, CXTY, TTYL, ATNL, LAT, CENC, CURVER, SABIN, SSN, SCIT)'+
+         ' values (:VCUI, :RCUI, :VSAB, :RSAB, :SON, :SF, :SVER, :VSTART, :VEND, :IMETA, :RMETA, :SLC, :SCC, :SRL, :TFR, :CFR, :CXTY, :TTYL, :ATNL, :LAT, :CENC, :CURVER, :SABIN, :SSN, :SCIT)';
+      FConn.Prepare;
+      for i := 0 to ts.count - 1 do
+      begin
+        if (i mod 135 = 0) then
+          callback(self, trunc((i / ts.count) * 100), false, 'Load RXNSAB line '+inttostr(i)+' (Step 2 of 5)');
+
+        s := ts[i].split(['|']);
+        FConn.BindString('VCUI', s[0]);
+        FConn.BindString('RCUI', s[1]);
+        FConn.BindString('VSAB', s[2]);
+        FConn.BindString('RSAB', s[3]);
+        FConn.BindString('SON', s[4]);
+        FConn.BindString('SF', s[5]);
+        FConn.BindString('SVER', s[6]);
+        FConn.BindString('VSTART', s[7]);
+        FConn.BindString('VEND', s[8]);
+        FConn.BindString('IMETA', s[9]);
+        FConn.BindString('RMETA', s[10]);
+        FConn.BindString('SLC', s[11]);
+        FConn.BindString('SCC', s[12]);
+        FConn.BindString('SRL', s[13]);
+        FConn.BindString('TFR', s[14]);
+        FConn.BindString('CFR', s[15]);
+        FConn.BindString('CXTY', s[16]);
+        FConn.BindString('TTYL', s[17]);
+        FConn.BindString('ATNL', s[18]);
+        FConn.BindString('LAT', s[19]);
+        FConn.BindString('CENC', s[20]);
+        FConn.BindString('CURVER', s[21]);
+        FConn.BindString('SABIN', s[22]);
+        FConn.BindString('SSN', s[23]);
+        FConn.BindString('SCIT', s[24]);
+        FConn.Execute;
+      end;
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
+    end;
+  finally
+    ts.free;
+  end;
+  callback(self, 100, false, 'RXNSAB Loaded (Step 2 of 5)');
+end;
+
+procedure TUMLSImporter.loadRXNCUI(callback: TWorkProgressEvent);
+var
+  ts : TStringList;
+  s : TArray<string>;
+  i : integer;
+begin
+  callback(self, 0, false, 'Load RXNCUI (Step 2 of 5)');
+  ts := TStringList.Create;
+  try
+    ts.LoadFromFile(path([FFolder, 'RXNCUI.RRF']));
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+      FConn.sql := 'insert into RXNCUI (cui1, ver_start, ver_end, cardinality, cui2) values (:cui1, :ver_start, :ver_end, :cardinality, :cui2)';
+      FConn.Prepare;
+      for i := 0 to ts.count - 1 do
+      begin
+        if (i mod 135 = 0) then
+          callback(self, trunc((i / ts.count) * 100), false, 'Load RXNCUI line '+inttostr(i)+' (Step 2 of 5)');
+
+        s := ts[i].split(['|']);
+        FConn.BindString('cui1', s[0]);
+        FConn.BindString('ver_start', s[1]);
+        FConn.BindString('ver_end', s[2]);
+        FConn.BindString('cardinality', s[3]);
+        FConn.BindString('cui2', s[4]);
+        FConn.Execute;
+      end;
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
+    end;
+  finally
+    ts.free;
+  end;
+  callback(self, 100, false, 'RXNCUI Loaded (Step 2 of 5)');
+end;
+
+procedure TUMLSImporter.loadRXNArchive(callback: TWorkProgressEvent);
+var
+  ts : TStringList;
+  s : TArray<string>;
+  i : integer;
+begin
+  callback(self, 0, false, 'Load RXNATOMARCHIVE (Step 2 of 5)');
+  ts := TStringList.Create;
+  try
+    ts.LoadFromFile(path([FFolder, 'RXNATOMARCHIVE.RRF']));
+    if FConn.Owner.Platform = kdbSQLite then
+      FConn.StartTransact;
+    try
+
+      FConn.sql := 'insert into RXNATOMARCHIVE (RXAUI, AUI, STR, ARCHIVE_TIMESTAMP, CREATED_TIMESTAMP, UPDATED_TIMESTAMP, CODE, IS_BRAND, LAT, LAST_RELEASED, SAUI, VSAB, RXCUI, SAB, TTY, MERGED_TO_RXCUI) '+
+                              ' values (:RXAUI, :AUI, :STR, :ARCHIVE_TIMESTAMP, :CREATED_TIMESTAMP, :UPDATED_TIMESTAMP, :CODE, :IS_BRAND, :LAT, :LAST_RELEASED, :SAUI, :VSAB, :RXCUI, :SAB, :TTY, :MERGED_TO_RXCUI)';
+      FConn.Prepare;
+      for i := 0 to ts.count - 1 do
+      begin
+        if (i mod 135 = 0) then
+          callback(self, trunc((i / ts.count) * 100), false, 'Load RXNATOMARCHIVE line '+inttostr(i)+' (Step 2 of 5)');
+
+        s := ts[i].split(['|']);
+        FConn.BindString('RXAUI', s[0]);
+        FConn.BindString('AUI', s[1]);
+        FConn.BindString('STR', s[2]);
+        FConn.BindString('ARCHIVE_TIMESTAMP', s[3]);
+        FConn.BindString('CREATED_TIMESTAMP', s[4]);
+        FConn.BindString('UPDATED_TIMESTAMP', s[5]);
+        FConn.BindString('CODE', s[6]);
+        FConn.BindString('IS_BRAND', s[7]);
+        FConn.BindString('LAT', s[8]);
+        FConn.BindString('LAST_RELEASED', s[9]);
+        FConn.BindString('SAUI', s[10]);
+        FConn.BindString('VSAB', s[11]);
+        FConn.BindString('RXCUI', s[12]);
+        FConn.BindString('SAB', s[13]);
+        FConn.BindString('TTY', s[14]);
+        FConn.BindString('MERGED_TO_RXCUI', s[15]);
+        FConn.Execute;
+      end;
+      FConn.Terminate;
+    finally
+      if FConn.Owner.Platform = kdbSQLite then
+        FConn.Commit;
+    end;
+  finally
+    ts.free;
+  end;
+  callback(self, 100, false, 'RXNATOMARCHIVE Loaded (Step 2 of 5)');
 end;
 
 procedure TUMLSImporter.loadRXNRel(callback: TWorkProgressEvent);
@@ -458,11 +680,31 @@ begin
   CheckFiles;
   callback(self, 1, false, 'Creating Tables');
   CreateTables(callback);
+  loadRXNSAB(callback);
+  loadRXNArchive(callback);
+  loadRXNCUI(callback);
   loadRXNCONSO(callback);
   loadRXNRel(callback);
   loadRXNSty(callback);
   makeStems(callback);
   callback(self, 1, true, 'Finished importing');
+end;
+
+function readVersion(db : TFDBManager) : String;
+var
+  d : String;
+begin
+  d := db.DBDetails;
+  if (d.Contains('.db')) then
+  begin
+    d := d.Substring(0, d.IndexOf('.db'));
+    if (d.Contains('_')) then
+      d := d.Substring(d.LastIndexOf('_')+1);
+  end;
+  if (IsNumericString(d)) then
+    result := d
+  else
+    result := '??';
 end;
 
 { TUMLSServices }
@@ -480,7 +722,7 @@ begin
   try
     FVersion := inttostr(db.CountSQL('select version from RXNVer', 'Version'));
   except
-    FVersion := '??';
+    FVersion := readVersion(db);
   end;
   rels := TStringList.Create;
   reltypes := TStringList.Create;
@@ -601,19 +843,31 @@ function TUMLSServices.locate(opContext : TTxOperationContext; code : String; al
 var
   qry : TFDBConnection;
   res : TUMLSConcept;
+  found : boolean;
+  archive : boolean;
 begin
+  archive := false;
   qry := db.GetConnection(dbprefix+'.display');
   try
     qry.SQL := 'Select STR, TTY from rxnconso where '+getCodeField+' = :code and SAB = '''+getSAB+'''';
     qry.prepare;
     qry.bindString('code', code);
     qry.execute;
-    if not qry.FetchNext then
-      result := nil
-    else
+    found := qry.FetchNext;
+    if not found then
+    begin
+      qry.Terminate;  qry.SQL := 'Select STR, TTY from RXNATOMARCHIVE where '+getCodeField+' = :code and SAB = '''+getSAB+'''';
+      qry.prepare;
+      qry.bindString('code', code);
+      qry.execute;
+      found := qry.FetchNext;
+      archive := true;
+    end;
+    if found then
     begin
       res := TUMLSConcept.Create;
       try
+        res.FArchived := archive;
         res.FCode := code;
         repeat
           if (qry.ColString[2] = 'SY') or (res.FDisplay <> '') then
@@ -652,6 +906,11 @@ end;
 function TUMLSServices.version: String;
 begin
   Result := FVersion;
+end;
+
+function TUMLSServices.IsInactive(opContext: TTxOperationContext; context: TCodeSystemProviderContext): boolean;
+begin
+  result := TUMLSConcept(context).FArchived;
 end;
 
 destructor TUMLSServices.Destroy;
