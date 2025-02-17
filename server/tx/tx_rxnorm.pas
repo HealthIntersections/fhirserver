@@ -317,7 +317,6 @@ begin
  'cui2       VARCHAR(8) , '+
                 'PRIMARY KEY (cui1))');    
   callback(self, 100, false, 'Created Tables (Step 1 of 5)');
-  FConn.WantLog := true;
 end;
 
 procedure TUMLSImporter.loadRXNCONSO(callback: TWorkProgressEvent);
