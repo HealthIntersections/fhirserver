@@ -548,6 +548,7 @@ var
   cb : TConfigurationBuilder;
   dir : String;
 begin
+  Logging.log('Zero Configuration from '+src);
   SetThreadStatus('loadRemoteConfig');
   dir := local.ReadString('config', 'local', UserFolder);
 

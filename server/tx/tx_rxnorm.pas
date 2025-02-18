@@ -908,8 +908,32 @@ begin
 end;
 
 function TUMLSServices.IsInactive(opContext: TTxOperationContext; context: TCodeSystemProviderContext): boolean;
+var
+  qry : TFDBConnection;
 begin
-  result := TUMLSConcept(context).FArchived;
+  if TUMLSConcept(context).FArchived then
+    result := true
+  else
+  begin
+    qry := db.GetConnection(dbprefix+'.extendLookup');
+    try
+      qry.SQL := 'Select suppress from rxnconso where '+getCodeField+' = :code and SAB = '''+getSAB+''' and TTY <> ''SY''';
+      qry.prepare;
+      qry.BindString('code', TUMLSConcept(context).FCode);
+      qry.execute;
+      qry.FetchNext;
+      result := qry.colinteger[1] = 1;
+      qry.Terminate;
+      qry.Release;
+    except
+      on e : Exception do
+      begin
+        qry.Error(e);
+        recordStack(e);
+        raise;
+      end;
+    end;
+  end;
 end;
 
 destructor TUMLSServices.Destroy;
@@ -939,35 +963,6 @@ var
   list: TConceptDesignations;
   cd : TConceptDesignation;
 begin
-  if hasProp(props, 'inactive', true) then
-  begin
-    qry := db.GetConnection(dbprefix+'.extendLookup');
-    try
-      qry.SQL := 'Select suppress from rxnconso where '+getCodeField+' = :code and SAB = '''+getSAB+''' and TTY <> ''SY''';
-      qry.prepare;
-      qry.BindString('code', TUMLSConcept(ctxt).FCode);
-      qry.execute;
-      qry.FetchNext;
-      b := qry.colinteger[1] = 1;
-      qry.Terminate;
-      qry.Release;
-    except
-      on e : Exception do
-      begin
-        qry.Error(e);
-        recordStack(e);
-        raise;
-      end;
-    end;
-
-    if factory.version <> fhirVersionRelease2 then
-    begin
-      p := resp.addProp('inactive');
-      p.value := factory.makeBoolean(b);
-    end
-    else
-      resp.addExtension('inactive', b);
-  end;
   list := TConceptDesignations.Create(Factory.link, FLanguages.link);
   try
     Designations(opContext, ctxt, list);
