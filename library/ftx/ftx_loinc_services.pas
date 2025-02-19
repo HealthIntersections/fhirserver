@@ -917,12 +917,12 @@ var
   reg : TRegularExpression;
 begin
   result := false;
-  if (FRelationships.ContainsKey(prop) and (op = foEqual)) then
+  if (FRelationships.ContainsKey(prop) and (op in [foEqual, foIn])) then
     if FCodes.ContainsKey(value) then
       result := true
     else
       result := true
-  else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
+  else if (FProperties.ContainsKey(prop) and (op in [foEqual, foIn])) then
     result := true
   else if (FRelationships.ContainsKey(prop) and (op = foExists)) then
     if FCodes.ContainsKey(value) then
