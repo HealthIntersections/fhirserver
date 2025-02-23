@@ -47,9 +47,12 @@ type
   ETerminologyError = class (EFslException) // problem in terminology operation
   private
     FIssueType : TFhirIssueType;
+    FopIssue : TOpIssueCode;
   public
     constructor Create(message : String; issueType : TFhirIssueType);
+    constructor Create(message : String; issueType : TFhirIssueType; opIssue : TOpIssueCode);
     property IssueType : TFhirIssueType read FIssueType;
+    property OpIssue : TOpIssueCode read FopIssue;
   end;
 
   ETerminologyTodo = Class(ETerminologyError)
@@ -1377,10 +1380,18 @@ end;
 
 { ETerminologyError }
 
-constructor ETerminologyError.create(message: String; issueType: TFhirIssueType);
+constructor ETerminologyError.Create(message: String; issueType: TFhirIssueType);
 begin
   inherited Create(message);
   FIssueType := issueType;
+  FopIssue := oicVoid;
+end;
+
+constructor ETerminologyError.Create(message: String; issueType: TFhirIssueType; opIssue: TOpIssueCode);
+begin
+  inherited Create(message);
+  FIssueType := issueType;
+  FopIssue := opIssue;
 end;
 
 { ETerminologyTodo }

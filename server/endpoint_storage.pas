@@ -169,7 +169,7 @@ type
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TFslTimeTracker): TFHIRRequest;
     Procedure ProcessOutput(start : UInt64; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
-    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; langList : THTTPLanguageList; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; messageId, diagnostics : String); overload;
+    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; langList : THTTPLanguageList; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; messageId, diagnostics : String; opIssue : TOpIssueCode); overload;
     function processProvenanceHeader(header : String; langList : THTTPLanguageList): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
     function EncodeVersionsXml(r: TFHIRResourceV): TBytes;
@@ -1548,65 +1548,65 @@ Begin
           result := result + ' (Auth needed)';
         end
         else
-          SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, true, sPath + sDoc, relativeReferenceAdjustment, itLogin, '', '');
+          SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, true, sPath + sDoc, relativeReferenceAdjustment, itLogin, '', '', oicVoid);
       end;
       on e: ETerminologyError do
       begin
         //result := result + ' (Auth needed)';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '')
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '', oicVoid)
         else if e.IssueType = itNull then
-          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '')
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '', e.OpIssue)
         else
-          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.issueType, '', '')
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.issueType, '', '', e.OpIssue)
       end;
       on e: ETerminologySetup do
       begin
         result := result + ' (msg: '+e.message+')';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '')
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '', oicVoid)
         else
-          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '');
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '', oicVoid);
       end;
       on e: ETooCostly do
       begin
         result := result + ' (msg: Too-Costly)';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly, '', e.Diagnostics)
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly, '', e.Diagnostics, oicVoid)
         else
-          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly, '', e.Diagnostics);
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly, '', e.Diagnostics, oicVoid);
       end;
       on e: ERestfulException do
       begin
         result := result + ' (msg: '+e.message+')';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code, '', '')
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code, '', '', oicVoid)
         else
-          SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code, '', '');
+          SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code, '', '', oicVoid);
       end;
       on e: EWebServerException do
       begin
         result := result + ' (msg: '+e.message+')';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, '')
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, '', oicVoid)
         else
-          SendError(response, logId, e.Code, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, e.diagnostics);
+          SendError(response, logId, e.Code, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, issueType(e.issueType), e.MessageId, e.diagnostics, oicVoid);
       end;
       on e: EFslException do
       begin
         result := result + ' (msg: '+e.message+')';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '')
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '', oicVoid)
         else
-          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '');
+          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '', oicVoid);
       end;
       on e: exception do
       begin
         result := result + ' (err: '+e.message+')';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '')
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '', oicVoid)
         else
-          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '');
+          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull, '', '', oicVoid);
       end;
     end;
   finally
@@ -2260,7 +2260,7 @@ begin
 end;
 
 procedure TStorageWebEndpoint.SendError(response: TIdHTTPResponseInfo; logid: string; status: word; format: TFHIRFormat; langList : THTTPLanguageList;
-  message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; messageId, diagnostics : String);
+  message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; messageId, diagnostics : String; opIssue : TOpIssueCode);
 var
   issue: TFhirOperationOutcomeW;
   oComp: TFHIRComposer;
@@ -2283,6 +2283,8 @@ begin
         iss.diagnostics := diagnostics;
         if (messageId <> '') then
           iss.addExtensionV('http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id', FContext.factory.makeString(messageId));
+        if (opIssue <> oicVoid) then
+          iss.addCode('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', CODES_TOpIssueCode[opIssue]);
         issue.addIssue(iss, false);
       finally
         iss.free;

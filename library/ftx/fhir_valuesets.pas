@@ -3316,7 +3316,7 @@ var
   vs : TFHIRValueSetW;
 begin
   vs := findValueSet(uri, version);
-  try
+  try 
     if vs = nil then
     begin
       if (version = '') and (uri.contains('|')) then
@@ -3327,7 +3327,7 @@ begin
       if (version = '') then
         raise ETerminologyError.create(FI18n.translate('VS_EXP_IMPORT_UNK', FLangList, [uri]), itUnknown)
       else
-        raise ETerminologyError.create(FI18n.translate('VS_EXP_IMPORT_UNK_PINNED', FLangList, [uri, version]), itUnknown);
+        raise ETerminologyError.create(FI18n.translate('VS_EXP_IMPORT_UNK_PINNED', FLangList, [uri, version]), itNotFound, oicNotFound);
     end;
   finally
     vs.free;

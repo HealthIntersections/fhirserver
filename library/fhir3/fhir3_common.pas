@@ -283,6 +283,7 @@ type
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function display : String; override;
     function severity : TIssueSeverity; override;
+    procedure addCode(systemUri, code : String); override;
     function getDiagnostics: String; override;
     procedure setDiagnostics(Value: String); override;
   end;
@@ -1773,6 +1774,11 @@ end;
 function TFHIROperationOutcomeIssue3.severity: TIssueSeverity;
 begin
   result := ISSUE_SEVERITY_MAP[issue.severity];
+end;
+
+procedure TFHIROperationOutcomeIssue3.addCode(systemUri, code: String);
+begin
+  issue.details.addCoding(systemUri, '', code, '');
 end;
 
 function TFHIROperationOutcomeIssue3.getDiagnostics: String;

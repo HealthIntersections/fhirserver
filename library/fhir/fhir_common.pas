@@ -391,6 +391,7 @@ type
     function link : TFhirOperationOutcomeIssueW; overload;
     function display : String; virtual; abstract;
     function severity : TIssueSeverity; virtual; abstract;
+    procedure addCode(systemUri, code : String); virtual; abstract;
     property diagnostics : String read GetDiagnostics write SetDiagnostics;
   end;
 

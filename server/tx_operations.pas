@@ -1429,7 +1429,7 @@ begin
       result.seeVersionRule(p.valueString, fvmCheck)
     else  if (p.name = 'force-system-version') then
       result.seeVersionRule(p.valueString, fvmOverride)
-    else  if (p.name = 'valueset-version') then
+    else  if (p.name = 'default-valueset-version') then
       result.getValueSetVersionRules.add(p.valueString)
     else if (p.name = 'displayLanguage') then
       result.DisplayLanguages := parseLanguages(p.valueString)

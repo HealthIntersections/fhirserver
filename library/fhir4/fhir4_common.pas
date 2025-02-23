@@ -281,6 +281,7 @@ type
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function display : String; override;
+    procedure addCode(systemUri, code : String); override;
     function severity : TIssueSeverity; override;
     function getDiagnostics: String; override;
     procedure setDiagnostics(Value: String); override;
@@ -1747,6 +1748,11 @@ begin
   result := i.diagnostics;
   if (i.details <> nil) and (i.details.text <> '') then
     result := i.details.text;
+end;
+
+procedure TFHIROperationOutcomeIssue4.addCode(systemUri, code: String);
+begin
+  issue.details.addCoding(systemUri, '', code, '');
 end;
 
 function TFHIROperationOutcomeIssue4.issue: TFHIROperationOutcomeIssue;
