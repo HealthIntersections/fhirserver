@@ -845,6 +845,7 @@ var
   found : boolean;
   archive : boolean;
 begin
+  result := nil;
   archive := false;
   qry := db.GetConnection(dbprefix+'.display');
   try
