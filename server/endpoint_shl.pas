@@ -215,7 +215,7 @@ begin
       result := processCreate(request, response, c)
     else if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'upload') then
       result := processUpload(request, response, c)
-    else if (request.CommandType = hcGET) and (request.Document.length > PathWithSlash.length) then
+    else if ((request.CommandType = hcGET) or (request.CommandType = hcPOST)) and (request.Document.length > PathWithSlash.length) then
     begin
       c.sql := 'select * from SHL where uuid = :u';
       c.prepare;
