@@ -52,6 +52,9 @@ type
     procedure SetDB(AValue: TFDBManager);
     function processCreate(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
     function processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
+    function processManifest(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
+    function processData(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
+    function processSummary(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon);
     destructor Destroy; override;
@@ -175,6 +178,91 @@ begin
   end;
 end;
 
+function TSHLWebServer.processManifest(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c: TFDBConnection): String;
+var
+  req, resp, f : TJsonObject;
+  uuid, b64 : String;
+begin
+  uuid := request.Document.subString(PathWithSlash.length);
+  req := TJsonParser.parse(request.PostStream);
+  try
+    resp := TJsonObject.create;
+    try
+      c.sql := 'select * from SHL where uuid = :u';
+      c.prepare;
+      c.BindString('u', uuid);
+      c.execute;
+      if c.FetchNext then
+      begin
+        f := resp.forceArr['files'].addObject;
+        f.str['contentType'] := c.GetColStringByName('mimetype');
+        f.str['location'] := 'https://'+common.host+PathWithSlash+'data/'+uuid;
+        b64 := EncodeBase64(c.GetColBlobByName('blob'));
+        if (not req.has('embeddedLengthMax')) or (b64.Length < req.int['embeddedLengthMax']) then
+          f.str['embedded'] := b64;
+        response.ResponseNo := 200;
+        response.ResponseText:= 'OK';                                 
+        response.ContentText := TJSONWriter.writeObjectStr(resp, true);
+        response.ContentType := 'application/json';
+        c.Terminate;
+      end
+      else
+      begin
+        c.Terminate;
+        response.ResponseNo := 404;
+        response.ResponseText:= 'Not Found';
+        response.ContentText := 'SHL Not Found';
+      end;
+    finally
+      resp.free;
+    end;
+  finally
+    req.free;
+  end;
+end;
+
+function TSHLWebServer.processData(request: TIdHTTPRequestInfo;
+  response: TIdHTTPResponseInfo; c: TFDBConnection): String;
+var
+  uuid, b64 : String;
+begin
+  uuid := request.Document.subString(PathWithSlash.length+5);
+  c.sql := 'select * from SHL where uuid = :u';
+  c.prepare;
+  c.BindString('u', uuid);
+  c.execute;
+  if c.FetchNext then
+  begin
+    response.ResponseNo := 200;
+    response.ResponseText:= 'OK';
+    response.ContentStream := TBytesStream.create(c.GetColBlobByName('blob'));
+    response.ContentType := c.GetColStringByName('mimetype');
+    c.Terminate;
+  end
+  else
+  begin
+    c.Terminate;
+    response.ResponseNo := 404;
+    response.ResponseText:= 'Not Found';
+    response.ContentText := 'SHL Not Found';
+  end;
+end;
+
+function TSHLWebServer.processSummary(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c: TFDBConnection): String;
+begin
+  c.sql := 'select count(*) from SHL';
+  c.prepare;
+  c.execute;
+  c.FetchNext;
+  begin
+    response.ResponseNo := 200;
+    response.ResponseText := 'OK';
+    response.ContentText := '{ "shlcount" : "'+c.ColString[1]+'" }';
+    response.ContentType := 'application/json';
+    c.Terminate;
+  end;
+end;
+
 constructor TSHLWebServer.Create(code, path: String; common: TFHIRWebServerCommon);
 begin
   inherited;
@@ -215,44 +303,14 @@ begin
       result := processCreate(request, response, c)
     else if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'upload') then
       result := processUpload(request, response, c)
-    else if ((request.CommandType = hcGET) or (request.CommandType = hcPOST)) and (request.Document.length > PathWithSlash.length) then
-    begin
-      c.sql := 'select * from SHL where uuid = :u';
-      c.prepare;
-      c.BindString('u', request.Document.subString(PathWithSlash.length));
-      c.execute;
-      if c.FetchNext then
-      begin
-        response.ResponseNo := 200;
-        response.ResponseText:= 'OK';
-        response.ContentStream := TBytesStream.create(c.GetColBlobByName('blob'));
-        response.ContentType := c.GetColStringByName('mimetype');
-        c.Terminate;
-      end
-      else
-      begin
-        c.Terminate;
-        raise EFslException.create(request.Command+' '+request.Document+' not handled');
-      end;
-    end
+    else if (request.CommandType = hcPOST) and (request.Document.startsWith(PathWithSlash+'data')) then
+      result := processData(request, response, c)
+    else if (request.CommandType = hcPOST) and (request.Document.length > PathWithSlash.length) then
+      result := processManifest(request, response, c)
     else if (request.Document = PathWithSlash) then
-    begin   
-      c.sql := 'select count(*) from SHL';
-      c.prepare;
-      c.execute;
-      c.FetchNext;
-      begin
-        response.ResponseNo := 200;
-        response.ResponseText := 'OK';
-        response.ContentText := '{ "shlcount" : "'+c.ColString[1]+'" }';
-        response.ContentType := 'application/json';
-        c.Terminate;
-      end;
-    end
+      result := processSummary(request, response, c)
     else
-    begin
       raise EFslException.create(request.Command+' '+request.Document+' not handled');
-    end;
     c.Release;
   except
     on e : Exception do
