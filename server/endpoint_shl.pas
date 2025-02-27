@@ -111,7 +111,7 @@ begin
       try
         resp.str['uuid'] := NewGuidId;
         resp.str['pword'] := NewGuidId;
-        resp.str['link'] := 'http://'+common.host+PathWithSlash+resp.str['uuid'];
+        resp.str['link'] := 'https://'+common.host+PathWithSlash+resp.str['uuid'];
 
         c.SQL := 'Insert into SHL (uuid, pword, expiry, mimetype) values (:u, :p, :e, :m)';
         c.prepare;
