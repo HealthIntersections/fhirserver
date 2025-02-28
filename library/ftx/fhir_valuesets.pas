@@ -3739,6 +3739,7 @@ begin
                     filters.Insert(offset, cs.specialFilter(FOpContext, prep, true));
                     expansion.addExtensionV('http://hl7.org/fhir/StructureDefinition/valueset-toocostly', FFactory.makeBoolean(true));
                     notClosed := true;
+                    inc(offset);
                   end;
                   for i := 0 to fcl.count - 1 do
                   begin
