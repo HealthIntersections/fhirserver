@@ -37,8 +37,8 @@ uses
   fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions, fsl_collections,
   fhir_objects, fhir_uris;
 
-function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
-function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
+function mimeTypeToFormat(mt : String; hack : boolean; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
+function mimeTypeListToFormat(mt : String; hack : boolean; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 Function RecogniseFHIRFormat(Const sName : String; langList : THTTPLanguageList): TFHIRFormat;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function IsId(s : String) : boolean;
@@ -107,13 +107,13 @@ type
 
 implementation
 
-function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
+function mimeTypeListToFormat(mt : String; hack : boolean; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 var
   ctl : TFslList<TMimeContentType>;
   ct : TMimeContentType;
 begin
   result := ffUnspecified;
-  ctl := TMimeContentType.parseList(mt);
+  ctl := TMimeContentType.parseList(mt, hack);
   try
     for ct in ctl do
     begin
@@ -147,12 +147,12 @@ begin
     result := def;
 end;
 
-function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
+function mimeTypeToFormat(mt : String; hack : boolean; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 var
   ct : TMimeContentType;
 begin
   result := def;
-  ct := TMimeContentType.parseSingle(mt);
+  ct := TMimeContentType.parseSingle(mt, hack);
   try
     if      (ct.base = 'application/json') or (ct.base = 'application/fhir+json') or (ct.base = 'application/json+fhir') then result := ffJson
     else if (ct.base = 'application/xml') or (ct.base = 'application/fhir+xml') or (ct.base = 'application/xml+fhir') then result := ffXml

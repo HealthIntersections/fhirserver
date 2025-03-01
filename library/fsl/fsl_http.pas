@@ -101,8 +101,8 @@ type
 
     function link : TMimeContentType; overload;
 
-    class function parseSingle(s : String) : TMimeContentType;
-    class function parseList(s : String) : TFslList<TMimeContentType>;
+    class function parseSingle(s : String; hack : boolean) : TMimeContentType;
+    class function parseList(s : String; hack : boolean) : TFslList<TMimeContentType>;
 
     property source : String read FSource;
     property base : String read FBase write FBase;
@@ -565,14 +565,14 @@ begin
   inc(result, (FBase.length * sizeof(char)) + 12);
 end;
 
-class function TMimeContentType.parseList(s : String): TFslList<TMimeContentType>;
+class function TMimeContentType.parseList(s : String; hack : boolean): TFslList<TMimeContentType>;
 var
   e : String;
 begin
   result := TFslList<TMimeContentType>.Create;
   try
     for e in s.Split([',']) do
-      result.add(parseSingle(e));
+      result.add(parseSingle(e, hack));
     result.link;
   finally
     result.free;
@@ -580,7 +580,7 @@ begin
 end;
 
 
-class function TMimeContentType.parseSingle(s : String): TMimeContentType;
+class function TMimeContentType.parseSingle(s : String; hack : boolean): TMimeContentType;
 var
   p : string;
 begin
@@ -591,11 +591,11 @@ begin
     begin
       if result.FBase = '' then
       begin
-        if (p = 'xml') then
+        if hack and (p = 'xml') then
           result.FBase := 'application/fhir+xml'
-        else if (p = 'json') then
+        else if hack and (p = 'json') then
           result.FBase := 'application/fhir+json'
-        else if (p = 'ttl') then
+        else if hack and (p = 'ttl') then
           result.FBase := 'application/fhir+ttl'
         else
           result.FBase := p;

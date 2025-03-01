@@ -32,7 +32,7 @@ uses
     FTimeTracker: TFslTimeTracker;
     procedure SetTimeTracker(AValue: TFslTimeTracker);
   public
-    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent; tt : TFslTimeTracker);
+    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent; tt : TFslTimeTracker; version : TFHIRVersion);
     destructor Destroy; override;
 
     property reqId : String read FId;
@@ -259,9 +259,9 @@ begin
   FTimeTracker:=AValue;
 end;
 
-constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent; tt : TFslTimeTracker);
+constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent; tt : TFslTimeTracker; version : TFHIRVersion);
 begin
-  inherited create;
+  inherited create(version);
   FI18n := i18n;
   FId := id;
   FLangList := langList;
@@ -287,7 +287,7 @@ end;
 
 function TTerminologyOperationContext.copy: TTerminologyOperationContext;
 begin
-  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FTimeLimit, OnGetCurrentRequestCount, FTimeTracker.link);
+  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FTimeLimit, OnGetCurrentRequestCount, FTimeTracker.link, Version);
   result.FContexts.assign(FContexts);
   result.FStartTime := FStartTime;
 end;

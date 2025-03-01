@@ -134,7 +134,7 @@ function TMimeTypeCodeServices.locate(opContext : TTxOperationContext; code : St
 var
   mt : TMimeContentType;
 begin
-  mt := TMimeContentType.parseSingle(code);
+  mt := TMimeContentType.parseSingle(code, opContext.version in [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4]);
   try
     if mt.isValid and (mt.sub <> '') then
       result := TMTCodeSystemProviderContext.Create(mt.Link)

@@ -749,7 +749,7 @@ begin
       if subst = nil then
         comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, ffJson, FLangList, OutputStylePretty)
       else if subst.payload <> '' then
-        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(subst.payload), FLangList, OutputStylePretty)
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(subst.payload, false), FLangList, OutputStylePretty)
       else
         comp := nil;
       try
@@ -823,7 +823,7 @@ begin
   end
   else
   begin
-    client := factory.makeClient(TFHIRServerContext(ServerContext).ValidatorContext.link, subst.endpoint, mimeTypeToFormat(subst.payload));
+    client := factory.makeClient(TFHIRServerContext(ServerContext).ValidatorContext.link, subst.endpoint, mimeTypeToFormat(subst.payload, false));
     try
       if (package.fhirType = 'Bundle') and bundleIsTransaction(package) then
         client.transactionV(package)
@@ -865,7 +865,7 @@ var
   comp : TFHIRComposer;
   b : TBytes;
 begin
-  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(subst.payload), FLangList, OutputStyleNormal);
+  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(subst.payload, false), FLangList, OutputStyleNormal);
   try
     if comp <> nil then
       b := TEncoding.UTF8.GetBytes(comp.Compose(package))
@@ -1051,7 +1051,7 @@ procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytes
 var
   p : TFHIRParser;
 begin
-  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct), FLangList);
+  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct, false), FLangList);
   try
     p.source := res;
     p.Parse;

@@ -67,10 +67,16 @@ Type
 
   TFhirFilterOperator = fhir_common.TFilterOperator;
 
+  { TTxOperationContext }
+
   TTxOperationContext = class abstract (TFslObject)
+  private
+    FVersion : TFHIRVersion;
   public
+    constructor create(version : TFhirVersion);
     procedure log(note : String); virtual; abstract;
     function deadCheck(var time : integer) : boolean; virtual; abstract;
+    property version : TFHIRVersion read FVersion;
   end;
 
   TCodeSystemProviderContext = class (TFslObject)
@@ -1399,6 +1405,14 @@ end;
 constructor ETerminologyTodo.Create(place: String);
 begin
   inherited Create('Not done yet @ '+place, itException);
+end;
+
+{ TTxOperationContext }
+
+constructor TTxOperationContext.create(version: TFhirVersion);
+begin
+  inherited Create;
+  FVersion := version;
 end;
 
 end.

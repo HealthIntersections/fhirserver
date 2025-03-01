@@ -754,7 +754,7 @@ procedure TFhirWebServer.logOutput(AContext: TIdContext;
       result := '-'
     else
     begin
-      f := mimeTypeToFormat(mt, ffUnspecified);
+      f := mimeTypeToFormat(mt, true, ffUnspecified);
       case f of
         ffUnspecified: result := '?';
         ffXml: result := 'x';

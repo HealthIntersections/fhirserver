@@ -1856,7 +1856,7 @@ Begin
     if (sCommand <> 'GET') then
     begin
       oRequest.Version := readVersion(sContentType);
-      oRequest.PostFormat := mimeTypeToFormat(sContentType, oRequest.PostFormat);
+      oRequest.PostFormat := mimeTypeToFormat(sContentType, true, oRequest.PostFormat);
       if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.has('_format') and (form = nil) and (oRequest.Parameters['_format'] <> '') then
         sContentType := oRequest.Parameters['_format'];
     end;
@@ -1864,7 +1864,7 @@ Begin
     oResponse.Version := readVersion(sContentAccept);
     if oRequest.Parameters.has('_format') and (oRequest.Parameters['_format'] <> '') then
       sContentAccept := oRequest.Parameters['_format'];
-    oResponse.format := mimeTypeListToFormat(sContentAccept, oResponse.Format);
+    oResponse.format := mimeTypeListToFormat(sContentAccept, true, oResponse.Format);
     if oRequest.Parameters.has('_pretty') and (oRequest.Parameters['_pretty'] = 'true') then
       style := OutputStylePretty
     else if sContentAccept.Contains('pretty=') and (extractProp(sContentAccept, 'pretty') = 'true') then
@@ -2834,7 +2834,7 @@ begin
   end;
   id := NewGuidId;
   if request.Parameters.has('_outputFormat') then
-    thread.Format := mimeTypeToFormat(request.Parameters['_outputFormat'])
+    thread.Format := mimeTypeToFormat(request.Parameters['_outputFormat'], true)
   else
     thread.Format := response.Format;
   thread.key := self.Context.Storage.createAsyncTask(request.url, id, thread.Format, request.secure);
