@@ -17,7 +17,7 @@
     </General>
     <VersionInfo>
       <MajorVersionNr Value="3"/>
-      <MinorVersionNr Value="5"/>
+      <MinorVersionNr Value="7"/>
       <RevisionNr Value="0"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
