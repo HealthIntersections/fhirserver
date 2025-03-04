@@ -83,5 +83,6 @@ jobs:
     # Step 9: Push the Docker image to GitHub Container Registry (GHCR)
     - name: Push Docker image to GHCR
       run: |
-        ORG_NAME=$(echo "${{ env.org_name }}" | tr '[:upper:]' '[:lower:]')
-        docker push ghcr.io/$ORG_NAME/fhirserver:${{ env.IMAGE_TAG }}
+        ORG_NAME=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+        REPO_NAME=$(echo "${{ github.repository }}" | awk -F '/' '{print tolower($2)}')
+        docker push ghcr.io/${ORG_NAME}/${REPO_NAME}:${{ env.IMAGE_TAG }}
