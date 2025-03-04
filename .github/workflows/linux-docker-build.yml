@@ -14,6 +14,12 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v4
 
+    - name: Debug Repository Names
+      run: |
+        echo "ORG_NAME=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+        echo "REPO_NAME=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
+
+
     # Step 2: Log in to GitHub Container Registry (GHCR)
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v3
