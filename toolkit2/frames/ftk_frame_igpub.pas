@@ -979,7 +979,7 @@ begin
   FJavaCmd := json.str['java-cmd'];
   FDefaultRootFolder := json.str['default-root'];
   if (FDefaultRootFolder = '') then
-    FDefaultRootFolder := FilePath(['[tmp]', 'ig-pub']);
+    FDefaultRootFolder := FilePath(['[tmp]', 'igs']);
   if FJavaCmd = '' then
     FJavaCmd := 'java';
   FDevParams := json.str['dev-params'];

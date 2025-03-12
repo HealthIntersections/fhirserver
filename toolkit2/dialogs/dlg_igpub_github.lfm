@@ -8,10 +8,10 @@ object IgGitHubDialog: TIgGitHubDialog
   Caption = 'Get IG from GitHub'
   ClientHeight = 485
   ClientWidth = 504
+  Position = poOwnerFormCenter
+  LCLVersion = '4.0.0.1'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  Position = poOwnerFormCenter
-  LCLVersion = '2.2.5.0'
   object edtGitOrg: TEdit
     Left = 8
     Height = 21
@@ -37,8 +37,8 @@ object IgGitHubDialog: TIgGitHubDialog
       Width = 75
       Anchors = [akRight, akBottom]
       Caption = 'Ok'
-      OnClick = btnOkClick
       TabOrder = 0
+      OnClick = btnOkClick
     end
     object btnCancel: TButton
       Left = 420
@@ -48,8 +48,8 @@ object IgGitHubDialog: TIgGitHubDialog
       Anchors = [akRight, akBottom]
       Cancel = True
       Caption = 'Cancel'
-      OnClick = btnCancelClick
       TabOrder = 1
+      OnClick = btnCancelClick
     end
     object btnPaste: TButton
       Left = 8
@@ -58,10 +58,10 @@ object IgGitHubDialog: TIgGitHubDialog
       Top = 6
       Width = 96
       Caption = 'Paste'
-      OnClick = btnPasteClick
       ParentShowHint = False
       ShowHint = True
       TabOrder = 2
+      OnClick = btnPasteClick
     end
     object btnCopyGHUrl: TButton
       Left = 112
@@ -70,10 +70,10 @@ object IgGitHubDialog: TIgGitHubDialog
       Top = 6
       Width = 96
       Caption = 'Copy GH'
-      OnClick = btnCopyGHUrlClick
       ParentShowHint = False
       ShowHint = True
       TabOrder = 3
+      OnClick = btnCopyGHUrlClick
     end
   end
   object Label1: TLabel

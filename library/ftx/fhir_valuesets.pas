@@ -894,6 +894,11 @@ begin
             unknownSystems.add(system);
           end;
         end
+        else if not cs.checkCodeSystem(FLangList, msg) then
+        begin                         
+          messages.add(msg);
+          op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicInvalidData);
+        end
         else
         begin
           defLang := cs.defLang();
@@ -1004,6 +1009,11 @@ begin
             op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicNotFound);
             unknownSystems.add(system);
           end;
+        end  
+        else if not cs.checkCodeSystem(FLangList, msg) then
+        begin
+          messages.add(msg);
+          op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicInvalidData);
         end
         else
         begin
@@ -1755,7 +1765,12 @@ begin
                    end;
                    cause := itNotFound;
                  end;
-               end
+               end   
+                else if not prov.checkCodeSystem(FLangList, m) then
+                begin
+                  msg(m);
+                  op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', m, oicInvalidData);
+                end
                else
                begin
                  checkCanonicalStatus(path, op, prov, FValueSet);
@@ -3415,7 +3430,7 @@ end;
 procedure TFHIRValueSetExpander.checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
 var
   cs : TCodeSystemProvider;
-  s, u : string;
+  s, u, m : string;
   imp : boolean;
 begin
   deadCheck('checkSource');
@@ -3434,7 +3449,11 @@ begin
     cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
     try
       if (cs = nil) then
-        // nothing
+        // nothing    
+      else if not cs.checkCodeSystem(FLangList, m) then
+      begin
+        raise ETerminologyError.create(m);
+      end
       else
       begin
         if cs.contentMode <> cscmComplete then
@@ -3487,7 +3506,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, u, display, ov, code, vsId, sv : String;
+  s, u, display, ov, code, vsId, sv, m : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -3562,6 +3581,11 @@ begin
         cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           if cs = nil then
+            // nothing
+          else if not cs.checkCodeSystem(FLangList, m) then
+          begin
+            raise ETerminologyError.create(m);
+          end
           else
           begin
             //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');

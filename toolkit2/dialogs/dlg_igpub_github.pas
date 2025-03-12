@@ -189,7 +189,7 @@ begin
     edtGitOrg.Text := org;
     edtGitRepoName.Text := repo;
     edtBranch.Text := branch;
-    edtLocalFolder.Text := makeFileName(org+'-'+repo+'#'+branch);
+    edtLocalFolder.Text := makeFileName(org+'-'+repo+'-'+branch);
   except
     on e : Exception do
     begin
