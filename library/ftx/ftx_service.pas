@@ -257,6 +257,7 @@ Type
 
     function Link : TCodeSystemProvider; overload;
     function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TCodeSystemProvider; virtual;
+    function checkCodeSystem(langs : THTTPLanguageList; var msg : String) : boolean; virtual;
 
     function contentMode : TFhirCodeSystemContentMode; virtual;
     function expandLimitation : Integer; virtual;
@@ -1073,6 +1074,12 @@ begin
   for cs in supplements do 
     CommaAdd(s, cs.vurl);
   raise ETerminologyError.create('The codesystem '+systemUri()+' does not support supplements: '+s);
+end;
+
+function TCodeSystemProvider.checkCodeSystem(langs: THTTPLanguageList; var msg : String) : boolean;
+begin
+  // nothing here
+  result := true;
 end;
 
 function TCodeSystemProvider.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;

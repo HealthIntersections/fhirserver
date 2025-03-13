@@ -220,6 +220,7 @@ type
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; factory : TFHIRFactory; cs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
+    function checkCodeSystem(langs : THTTPLanguageList; var msg : String) : boolean; override;
 
     function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TFhirCodeSystemProvider; override;
 
@@ -777,6 +778,15 @@ begin
   FCs.free;
   FFactory.free;
   inherited;
+end;
+
+function TFhirCodeSystemProvider.checkCodeSystem(langs: THTTPLanguageList; var msg : String) : boolean;
+begin
+  result := false;
+  if (FCs.CodeSystem.supplements <> '') or (FCs.CodeSystem.content = cscmSupplement) then
+    msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', langs, [FCs.CodeSystem.vurl])
+  else
+    result := true;
 end;
 
 function TFhirCodeSystemProvider.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TFhirCodeSystemProvider;
