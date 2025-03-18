@@ -97,6 +97,7 @@ Type
 
     function findValueSet(url, version : String) : TFHIRValueSetW;
     function pinValueSet(url : String) : String;
+    function canonical(system, version: String): String;
   protected
     FAllAltCodes : TAlternateCodeOptions;
 
@@ -220,7 +221,6 @@ Type
     function key(system, code : String): string; overload;
     function key(c : TFhirValueSetExpansionContainsW) : string;  overload;
     function expandValueSet(uri, version, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
-    function canonical(system, version: String): String;
     procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
     procedure checkCanExpandValueset(uri, version: String);
     function useDesignation(cd: TConceptDesignation): boolean;
@@ -814,7 +814,7 @@ function TValueSetChecker.check(path, system, version, code: String; abstractOk,
   var message, ver: String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
   vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string; unkCodes, messages : TStringList; out defLang : TIETFLang): TTrueFalseUnknown;
 var
-  cs : TCodeSystemProvider;
+  cs, css : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   cc : TFhirValueSetComposeIncludeW;
   excluded, ok, bAdd : boolean;
@@ -868,30 +868,38 @@ begin
             op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'Terminology_TX_System_ValueSet2', msg, oicInvalidData);
             unknownSystems.add(system);
           end
-          else if findCodeSystem(system, version, FParams, [cscmSupplement], true) <> nil then
-          begin                                                                                
-            vss.free;
-            msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [system]);
-            messages.add(msg);
-            op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'CODESYSTEM_CS_NO_SUPPLEMENT', msg, oicInvalidData);
-            unknownSystems.add(system);
-          end
-          else if (version <> '') then
-          begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, version, '['+listVersions(system)+']']);
-            messages.add(msg);
-            if (unknownSystems.IndexOf(system+'|'+version) = -1) then
-            begin
-              op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', msg, oicNotFound);
-              unknownSystems.add(system+'|'+version);
-            end;
-          end
           else
           begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
-            messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicNotFound);
-            unknownSystems.add(system);
+            css := findCodeSystem(system, version, FParams, [cscmSupplement], true);
+            try
+              if css <> nil then
+              begin
+                vss.free;
+                msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [canonical(css.systemUri(), css.version)]);
+                messages.add(msg);
+                op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'CODESYSTEM_CS_NO_SUPPLEMENT', msg, oicInvalidData);
+                unknownSystems.add(system);
+              end
+              else if (version <> '') then
+              begin
+                msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, version, '['+listVersions(system)+']']);
+                messages.add(msg);
+                if (unknownSystems.IndexOf(system+'|'+version) = -1) then
+                begin
+                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', msg, oicNotFound);
+                  unknownSystems.add(system+'|'+version);
+                end;
+              end
+              else
+              begin
+                msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
+                messages.add(msg);
+                op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM', msg, oicNotFound);
+                unknownSystems.add(system);
+              end;
+            finally
+              css.free;
+            end;
           end;
         end
         else if not cs.checkCodeSystem(FLangList, msg) then
@@ -1497,7 +1505,7 @@ var
   contentMode : TFhirCodeSystemContentMode;
   cc, codelist, message, ver, pd, ws, impliedSystem, path, m, tsys, tcode, tver,vs, tdisp, ds: String;
   defLang : TIETFLang;
-  prov, prov2 : TCodeSystemProvider;
+  prov, prov2, provS : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
   cause : TFhirIssueType;
@@ -1721,51 +1729,59 @@ begin
                    op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'Terminology_TX_System_ValueSet2', m, oicInvalidData);
                    cause := itInvalid;
                  end
-                 else if findCodeSystem(ws, c.version, FParams, [cscmSupplement], true) <> nil then
-                 begin
-                   vss.free;
-                   m := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [ws]);
-                   msg(m);
-                   op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'CODESYSTEM_CS_NO_SUPPLEMENT', m, oicInvalidData);
-                   cause := itInvalid;
-                 end
                  else
                  begin
-                   prov2 := findCodeSystem(ws, '', FParams, [cscmComplete, cscmFragment], true);
+                   provS := findCodeSystem(ws, c.version, FParams, [cscmSupplement], true);
                    try
-                     bAdd := true;
-                     if (prov2 = nil) and (c.version = '') then
+                     if provS <> nil then
                      begin
-                       mid := 'UNKNOWN_CODESYSTEM';
-                       m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [ws]);
-                       badd := unknownSystems.IndexOf(ws) = -1;
-                       if (bAdd) then
-                         unknownSystems.add(ws);
+                       vss.free;
+                       m := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [canonical(provS.systemUri, provS.version)]);
+                       msg(m);
+                       op.addIssue(isError, itInvalid, addToPath(path, 'system'), 'CODESYSTEM_CS_NO_SUPPLEMENT', m, oicInvalidData);
+                       cause := itInvalid;
                      end
                      else
                      begin
-                       mid := 'UNKNOWN_CODESYSTEM_VERSION';
-                       m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [ws, c.version, '['+listVersions(c.systemUri)+']']);
-                       badd := unknownSystems.IndexOf(ws+'|'+c.version) = -1;
-                       if (bAdd) then
-                         unknownSystems.add(ws+'|'+c.version);
+                       prov2 := findCodeSystem(ws, '', FParams, [cscmComplete, cscmFragment], true);
+                       try
+                         bAdd := true;
+                         if (prov2 = nil) and (c.version = '') then
+                         begin
+                           mid := 'UNKNOWN_CODESYSTEM';
+                           m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [ws]);
+                           badd := unknownSystems.IndexOf(ws) = -1;
+                           if (bAdd) then
+                             unknownSystems.add(ws);
+                         end
+                         else
+                         begin
+                           mid := 'UNKNOWN_CODESYSTEM_VERSION';
+                           m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [ws, c.version, '['+listVersions(c.systemUri)+']']);
+                           badd := unknownSystems.IndexOf(ws+'|'+c.version) = -1;
+                           if (bAdd) then
+                             unknownSystems.add(ws+'|'+c.version);
+                         end;
+                         if (bAdd) then
+                           op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, m, oicNotFound);
+                         if (valueSetDependsOnCodeSystem(ws, c.version)) then
+                         begin
+                           m := FI18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', FParams.HTTPLanguages, [FValueSet.vurl, ws+'|'+c.version]);
+                           msg(m);
+                           op.addIssue(isWarning, itNotFound, '', 'UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', m, oicVSProcessing);
+                         end
+                         else
+                           msg(m);
+                       finally
+                         prov2.free;
+                       end;
+                       cause := itNotFound;
                      end;
-                     if (bAdd) then
-                       op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, m, oicNotFound);
-                     if (valueSetDependsOnCodeSystem(ws, c.version)) then
-                     begin
-                       m := FI18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', FParams.HTTPLanguages, [FValueSet.vurl, ws+'|'+c.version]);
-                       msg(m);
-                       op.addIssue(isWarning, itNotFound, '', 'UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', m, oicVSProcessing);
-                     end
-                     else
-                       msg(m);
                    finally
-                     prov2.free;
+                     provS.free;
                    end;
-                   cause := itNotFound;
                  end;
-               end   
+               end
                 else if not prov.checkCodeSystem(FLangList, m) then
                 begin
                   msg(m);
@@ -2956,7 +2972,7 @@ begin
   end;
 end;
 
-function TFHIRValueSetExpander.canonical(system, version : String) : String;
+function TValueSetWorker.canonical(system, version : String) : String;
 begin
   if FFactory.version = fhirVersionRelease2 then
     result := system + '?version='+version
