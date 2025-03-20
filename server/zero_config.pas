@@ -187,6 +187,7 @@ function TConfigurationBuilder.fixDBPath(fn : String) : String;
 begin
   if (fn.StartsWith('http:') or fn.StartsWith('https:')) then
   begin
+    Logging.log('Fetch '+fn);
     result := FilePath([FFolder, fn.Substring(fn.LastIndexOf('/')+1)]);
     downloadFile(fn, result);
   end

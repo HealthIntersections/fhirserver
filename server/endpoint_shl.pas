@@ -303,7 +303,7 @@ begin
       result := processCreate(request, response, c)
     else if (request.CommandType = hcPOST) and (request.Document = PathWithSlash+'upload') then
       result := processUpload(request, response, c)
-    else if (request.CommandType = hcPOST) and (request.Document.startsWith(PathWithSlash+'data')) then
+    else if (request.Document.startsWith(PathWithSlash+'data')) then
       result := processData(request, response, c)
     else if (request.CommandType = hcPOST) and (request.Document.length > PathWithSlash.length) then
       result := processManifest(request, response, c)
