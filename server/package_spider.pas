@@ -94,6 +94,7 @@ Type
     FIni : TIniFile;
     FZulip : TZulipTracker;
     FCrawlerLog : TJsonObject;
+    FBucketFolder : String;
 
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
@@ -110,7 +111,7 @@ Type
     procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions; clFeed : TJsonObject);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
-    constructor Create(zulip : TZulipTracker);
+    constructor Create(zulip : TZulipTracker; BucketFolder : String);
     destructor Destroy; override;
 
     procedure update(DB : TFDBConnection);
@@ -119,7 +120,7 @@ Type
     property CrawlerLog : TJsonObject read FCrawlerLog write SetCrawlerLog;
     property OnSendEmail : TSendEmailEvent read FOnSendEmail write FOnSendEmail;
 
-    class procedure test(db : TFDBManager);
+    class procedure test(db : TFDBManager; BucketFolder : String);
 
     class procedure processURLs(npm : TNpmPackage; ts : TStringList);
     class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; urls : TStringList; kind : TFHIRPackageKind);
@@ -187,11 +188,12 @@ begin
   end;
 end;
 
-constructor TPackageUpdater.Create(zulip: TZulipTracker);
+constructor TPackageUpdater.Create(zulip: TZulipTracker; BucketFolder : String);
 begin
   inherited Create;
   FZulip := zulip;
   FCrawlerLog := TJsonObject.create;
+  FBucketFolder := BucketFolder;
 end;
 
 destructor TPackageUpdater.Destroy;
@@ -338,6 +340,9 @@ begin
       clog(clItem, 'warning', 'actually found '+id+'#'+version+' in the package');
     end;
 
+    if FBucketFolder <> '' then
+      BytesToFile(package, FilePath([FBucketFolder, id+'-'+version+'.tgz']));
+
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
@@ -374,14 +379,14 @@ begin
   end;
 end;
 
-class procedure TPackageUpdater.test(db: TFDBManager);
+class procedure TPackageUpdater.test(db: TFDBManager; BucketFolder : String);
 var
   conn : TFDBConnection;
   this : TPackageUpdater;
 begin
   conn := db.GetConnection('test');
   try
-    this := TPackageUpdater.Create(nil);
+    this := TPackageUpdater.Create(nil, BucketFolder);
     try
       this.update(conn);
     finally

@@ -85,7 +85,7 @@ type
     procedure downloadFile(fn : String); overload;
     procedure downloadFile(src, tgt : String); overload;
     procedure DownloadFiles;
-    function fixDBPath(fn: String): String;
+    function fixDBPath(fn: String; optional : boolean): String;
     procedure readConfig;
     procedure buildEndPoint(ep : TEndPointInfo);
     procedure setupEndPoints;
@@ -183,12 +183,24 @@ begin
   end;
 end;
 
-function TConfigurationBuilder.fixDBPath(fn : String) : String;
+function TConfigurationBuilder.fixDBPath(fn : String; optional : boolean) : String;
 begin
   if (fn.StartsWith('http:') or fn.StartsWith('https:')) then
   begin
-    result := FilePath([FFolder, fn.Substring(fn.LastIndexOf('/')+1)]);
-    downloadFile(fn, result);
+    Logging.log('Fetch '+fn);
+    if (optional) then
+    begin
+      try
+        result := FilePath([FFolder, fn.Substring(fn.LastIndexOf('/')+1)]);
+        downloadFile(fn, result);
+      except
+      end;
+    end
+    else
+    begin
+      result := FilePath([FFolder, fn.Substring(fn.LastIndexOf('/')+1)]);
+      downloadFile(fn, result);
+    end;
   end
   else if (ExtractFilePath(fn) = '') then
     result := FilePath([FFolder, fn])
@@ -327,10 +339,19 @@ begin
         sct['active'].value := 'true';
         sct['db-type'].value := o.str['db-type'];
         sct['db-source'].value := o.str['db-file'];
-        sct['db-file'].value := fixDbPath(o.str['db-file']);
+        sct['db-file'].value := fixDbPath(o.str['db-file'], o.bool['db-optional']);
         sct['db-auto-create'].value := o.str['db-auto-create'];
         if o.has('folder') then
           sct['folder'].value := o.str['folder'].Replace('{local}', FFolder);
+        sct['db-auto-create'].value := o.str['db-auto-create'];
+        if o.has('bucket-folder') then
+          sct['bucket-folder'].value := o.str['bucket-folder'].Replace('{local}', FFolder)
+        else if local.ReadString('web', 'bucket-folder', '') <> '' then
+          sct['bucket-folder'].value := local.ReadString('web', 'bucket-folder', '');
+        if o.has('bucket-path') then
+          sct['bucket-path'].value := o.str['bucket-path']
+        else if local.ReadString('web', 'bucket-path', '') <> '' then
+          sct['bucket-path'].value := local.ReadString('web', 'bucket-path', '')
       end;
     end;
 
