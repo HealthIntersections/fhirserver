@@ -78,6 +78,7 @@ type
     FScanning: boolean;
     FSystemToken : String;
     FCrawlerLog : TJsonObject;
+    FBucketFolder, FBucketPath : String;
 
     procedure setDB(value : TFDBManager);
     function status : String;
@@ -90,7 +91,7 @@ type
     function serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
 
     procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
-    procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
+    procedure serveDownload(secure : boolean; id, version : String; response : TIdHTTPResponseInfo);
     procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
@@ -124,7 +125,8 @@ type
   private
     FPackageServer : TFHIRPackageWebServer;
     FUpdater : TPackageUpdaterThread;
-    FSystemToken : String;
+    FSystemToken, FBucketFolder, FBucketPath : String;
+    procedure dumpVersions;
     procedure upgradeDatabase;         
     procedure generateHashes(conn : TFDBConnection);
   public
@@ -171,6 +173,10 @@ begin
   inherited Create(config, settings, db, common, nil, i18n);
   upgradeDatabase;
   FSystemToken := settings.Ini.service.prop['system-token'].value;
+  FBucketFolder := config['bucket-folder'].value;
+  FBucketPath := config['bucket-path'].value;
+  if (FBucketFolder <> '') then
+    dumpVersions;
 end;
 
 destructor TPackageServerEndPoint.Destroy;
@@ -204,7 +210,8 @@ begin
   FUpdater := nil;
 end;
 
-procedure TPackageServerEndPoint.InstallDatabase;
+procedure TPackageServerEndPoint.InstallDatabase(params: TCommandLineParameters
+  );
 var
   dbi : TFHIRDatabaseInstaller;
   conn : TFDBConnection;
@@ -268,6 +275,8 @@ begin
   FPackageServer.DB := Database.Link;
   FPackageServer.NextScan := FUpdater.FNextRun;
   FPackageServer.SystemToken := FSystemToken;
+  FPackageServer.FBucketPath := FBucketPath;
+  FPackageServer.FBucketFolder := FBucketFolder;
   WebEndPoint := FPackageServer;
   FUpdater.Start;
   result := FPackageServer.link;
@@ -283,9 +292,33 @@ begin
   result := 'Package Server using '+describeDatabase(Config);
 end;
 
-procedure TPackageServerEndPoint.updateAdminPassword;
+procedure TPackageServerEndPoint.updateAdminPassword(pw: String);
 begin
   raise EFslException.Create('This is not applicable to this endpoint');
+end;
+
+procedure TPackageServerEndPoint.dumpVersions;
+var
+  c : TFDBConnection;
+  fn : String;
+begin
+  c := Database.GetConnection('Populate Bucket');
+  try
+    c.SQL := 'select Id, Version, Content from PackageVersions';
+    c.prepare;
+    c.execute;
+    while c.FetchNext do
+    begin
+      fn := FilePath([FBucketFolder, c.ColStringByName['Id']+'-'+c.ColStringByName['Version']+'.tgz']);
+      if not FileExists(fn) then
+        BytesToFile(c.ColBlobByName['Content'], fn);
+    end;
+    c.terminate;
+    c.Release;
+  except
+    on e: Exception do
+      c.Error(e);
+  end;
 end;
 
 procedure TPackageServerEndPoint.upgradeDatabase;
@@ -420,7 +453,7 @@ var
 begin
   conn := FDB.getConnection('server.packages.update');
   try
-    upd := TPackageUpdater.Create(FZulip.link);
+    upd := TPackageUpdater.Create(FZulip.link, FEndPoint.FBucketFolder);
     try
       upd.OnSendEmail := doSendEmail;
       try
@@ -695,28 +728,38 @@ begin
   result := 'PK';
 end;
 
-procedure TFHIRPackageWebServer.serveDownload(id, version : String; response : TIdHTTPResponseInfo);
+procedure TFHIRPackageWebServer.serveDownload(secure : boolean; id, version : String; response : TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   procedure sendRow;
   var
     pvk : integer;
   begin
-    response.ResponseNo := 200;
-    response.ResponseText := 'OK';
-    response.ContentType := 'application/tar+gzip';
-    response.ContentStream := TBytesStream.Create(conn.GetColBlobByName('Content'));
-    response.ContentDisposition := 'attachment; filename="'+id+'#'+version+'.tgz"';
-    response.FreeContentStream := true;
-    pvk := conn.GetColIntegerByName('PackageVersionKey');
-    conn.Terminate;
-    conn.SQL := 'Update PackageVersions set DownloadCount = DownloadCount + 1 where PackageVersionKey = '+inttostr(pvk);
-    conn.Prepare;
-    conn.Execute;
-    conn.Terminate;
-    conn.SQL := 'Update Packages set DownloadCount = DownloadCount + 1 where Id = '''+SQLWrapString(id)+'''';
-    conn.Prepare;
-    conn.Execute;
+    if FBucketPath <> '' then
+    begin
+      if (secure) then
+        response.Redirect(FBucketPath.replace('http:', 'https:')+'/'+id+'-'+version+'.tgz')
+      else
+        response.Redirect(FBucketPath+'/'+id+'-'+version+'.tgz');
+    end
+    else
+    begin
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      response.ContentType := 'application/tar+gzip';
+      response.ContentStream := TBytesStream.Create(conn.GetColBlobByName('Content'));
+      response.ContentDisposition := 'attachment; filename="'+id+'#'+version+'.tgz"';
+      response.FreeContentStream := true;
+      pvk := conn.GetColIntegerByName('PackageVersionKey');
+      conn.Terminate;
+      conn.SQL := 'Update PackageVersions set DownloadCount = DownloadCount + 1 where PackageVersionKey = '+inttostr(pvk);
+      conn.Prepare;
+      conn.Execute;
+      conn.Terminate;
+      conn.SQL := 'Update Packages set DownloadCount = DownloadCount + 1 where Id = '''+SQLWrapString(id)+'''';
+      conn.Prepare;
+      conn.Execute;
+    end;
   end;
 begin
   conn := FDB.getConnection('Package.server.download');
@@ -966,7 +1009,14 @@ begin
             v['url'] := URLPath([AbsoluteUrl(secure), id, conn.ColStringByName['Version']]);
             dist := v.forceObj['dist'];
             dist['shasum'] := conn.ColStringByName['Hash'];
-            if (secure) then
+            if (FBucketPath <> '') then
+            begin
+              if (secure) then
+                dist['tarball'] := FBucketPath.replace('http:', 'https:')+'/'+id+'-'+conn.ColStringByName['Version']+'.tgz'
+              else
+                dist['tarball'] := FBucketPath+'/'+id+'-'+conn.ColStringByName['Version']+'.tgz';
+            end
+            else if (secure) then
               dist['tarball'] := 'https://'+request.Host+'/'+id+'/'+conn.ColStringByName['Version']
             else
               dist['tarball'] := 'http://'+request.Host+'/'+id+'/'+conn.ColStringByName['Version'];
@@ -1591,7 +1641,7 @@ begin
       end
       else if length(s) = 2 then
       begin
-        serveDownload(s[0], s[1], response);
+        serveDownload(secure, s[0], s[1], response);
         result := 'Package Download for '+s[0]+'#'+s[1];
       end
       else if (request.Accept.contains('/html')) then
