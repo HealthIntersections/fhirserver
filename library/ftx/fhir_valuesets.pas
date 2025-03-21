@@ -2206,7 +2206,8 @@ begin
         for fc in cfl do
         begin
           deadCheck('checkConceptSet#2');
-          // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
+          if (fc.value = '') then      
+            raise ETerminologyError.create(FI18n.translate('UNABLE_TO_HANDLE_SYSTEM_FILTER_WITH_NO_VALUE', FParams.HTTPLanguages, [cs.systemUri, fc.prop, CODES_TFhirFilterOperator[fc.Op]]), itInvalid, oicVSProcessing);
           f := cs.filter(FOpContext, false, false, fc.prop, fc.Op, fc.value, prep);
           if f = nil then
             raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vs.vurl+' was not understood in the context of '+cs.systemUri, itNotSupported);
@@ -3784,7 +3785,9 @@ begin
                   for i := 0 to fcl.count - 1 do
                   begin
                     deadCheck('processCodes#4a');
-                    fc := fcl[i];
+                    fc := fcl[i];     
+                    if (fc.value = '') then
+                      raise ETerminologyError.create(FI18n.translate('UNABLE_TO_HANDLE_SYSTEM_FILTER_WITH_NO_VALUE', FParams.HTTPLanguages, [cs.systemUri, fc.prop, CODES_TFhirFilterOperator[fc.Op]]), itInvalid, oicVSProcessing);
                     ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                     f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
                     if f = nil then

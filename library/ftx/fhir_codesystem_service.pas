@@ -1701,7 +1701,7 @@ begin
     code := doLocate(value, nil);
     try
       if code = nil then
-        raise ETerminologyError.Create('Unable to locate code '+value, itUnknown)
+        raise ETerminologyError.Create('Unable to locate code '''+value+'''', itUnknown)
       else
       begin
         includeRoot := true;

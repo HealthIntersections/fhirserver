@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 const
-  TX_TESTS_VERSION = '1.6.4';
+  TX_TESTS_VERSION = '1.7.6';
 
   {$i version.inc}
   SERVER_FULL_VERSION = FHIR_CODE_FULL_VERSION;
