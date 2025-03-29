@@ -242,10 +242,13 @@ begin
 end;
 
 function TPackageUpdater.fetchXml(url: string): TMXmlElement;
+var
+  cnt : TBytes;
 begin
   if Logging.shuttingDown then
     Abort;
-  result := TMXmlParser.Parse(fetchUrl(url, 'application/xml'), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
+  cnt := fetchUrl(url, 'application/xml');
+  result := TMXmlParser.Parse(cnt, [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
 end;
 
 function TPackageUpdater.hasStored(guid: String): boolean;
@@ -358,7 +361,7 @@ begin
       raise EPackageCrawlerException.Create('NPM Version "'+version+'" is not valid from '+source);
     if (canonical = '') then
     begin
-      log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
+      // log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
       clog(clItem, 'warning', 'No canonical found in npm (from '+url+')');
       canonical := 'http://simplifier.net/packages/fictitious/'+id;
     end;
@@ -631,12 +634,12 @@ var
 begin
   result := true;
   list := '';
+  p := fix(package);
   if FJson <> nil then
   begin
     for e in FJson do
     begin
       eo := e as TJsonObject;
-      p := fix(package);
       m := fix(eo.str['mask']);
       if matches(p, m) then
       begin
@@ -658,10 +661,15 @@ function TPackageRestrictions.matches(package, mask: String): boolean;
 var
   i : integer;
 begin
-  i := mask.IndexOf('*');
-  package := package.Substring(0, i);
-  mask := mask.Substring(0, i);
-  result := package = mask;
+  if (mask.contains('*')) then
+  begin
+    i := mask.IndexOf('*');
+    package := package.Substring(0, i);
+    mask := mask.Substring(0, i);
+    result := package = mask;
+  end
+  else
+    result := mask = package;
 end;
 
 { TZulipTracker }

@@ -3081,10 +3081,12 @@ end;
 
 function TFHIRValueSetExpander.redundantDisplay(n : TFhirValueSetExpansionContainsW; lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW) : boolean;
 begin
-  if ((lang = nil) or lang.code.StartsWith(FValueSet.language)) and ((use = nil) or (use.code = 'display')) then
-    result := value.AsString = n.display
+  if not ((lang = nil) and (FValueSet.language = '')) or ((lang <> nil) and lang.code.StartsWith(FValueSet.language)) then
+    result := false
+  else if not ((use = nil) or (use.code = 'display')) then
+    result := false
   else
-    result := false;
+    result := value.AsString = n.display;
 end;
 
 function TFHIRValueSetExpander.includeCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; system, version, code : String;
