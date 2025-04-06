@@ -765,6 +765,7 @@ function FindCardinalInArray(a : TCardinalArray; iValue : Cardinal; var iIndex :
 function readDate(s : String) : TSnomedDate;
 function readLang(s : String) : byte;
 function codeForLang(lang : byte):String;
+function langForCode(s : String) : byte;
 
 function genCheckDigit(s : String): char;
 
@@ -2168,7 +2169,7 @@ begin
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
     if (active) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
-      list.addDesignation(iLoop = 0, true, '', Strings.GetEntry(iDesc).trim);
+      list.addDesignation(iLoop = 0, true, codeForLang(lang), Strings.GetEntry(iDesc).trim);
   End;
 end;
 
@@ -4671,6 +4672,28 @@ begin
   else
     result := '??';
   end;
+end;
+
+function langForCode(s: String): byte;
+begin
+  if (s = 'en') or (s.startsWith('en-')) then
+    result := 1
+  else if (s = 'fr') or (s.startsWith('fr-')) then
+    result := 2
+  else if (s = 'nl') or (s.startsWith('nl-')) then
+    result := 3
+  else if (s = 'es') or (s.startsWith('es-')) then
+    result := 4
+  else if (s = 'sv') or (s.startsWith('sv-')) then
+    result := 5
+  else if (s = 'da') or (s.startsWith('da-')) then
+    result := 6
+  else if (s = 'de') or (s.startsWith('de-')) then
+    result := 7
+  else if (s = 'it') or (s.startsWith('it-')) then
+    result := 8
+  else
+    result := 0;
 end;
 
 function TSnomedExpressionContext.sizeInBytesV(magic : integer) : cardinal;

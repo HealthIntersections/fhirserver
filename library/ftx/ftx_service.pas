@@ -190,6 +190,8 @@ Type
     function preferredDesignation(langList : THTTPLanguageList = nil; defLang : TIETFLang = nil) : TConceptDesignation;
     function preferredDisplay(langList : THTTPLanguageList = nil; defLang : TIETFLang = nil) : String;
     function summary : String;
+    function present : String;
+    function langCode : String;
 
     property factory : TFHIRFactory read FFactory;
     property baseLang : TIETFLang read FBaseLang write SetBaseLang;
@@ -615,6 +617,24 @@ begin
   result := '';
   for cd in FDesignations do
     CommaAdd(result, cd.present);
+end;
+
+function TConceptDesignations.present: String;
+begin
+  if (FBaseLang = nil) then
+    result := 'Lang: ??'
+  else
+    result := 'Lang: '+FBaseLang.Code;
+  if FSource <> nil then
+    result := result + '; source: '+FSource.ClassName;
+end;
+
+function TConceptDesignations.langCode: String;
+begin
+  if FBaseLang = nil then
+    result := 'en'
+  else
+    result := FBaseLang.code;
 end;
 
 

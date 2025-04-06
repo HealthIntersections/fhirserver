@@ -98,6 +98,7 @@ Type
     function findValueSet(url, version : String) : TFHIRValueSetW;
     function pinValueSet(url : String) : String;
     function canonical(system, version: String): String;
+    procedure logDisplays(cds : TConceptDesignations);
   protected
     FAllAltCodes : TAlternateCodeOptions;
 
@@ -223,6 +224,7 @@ Type
     function expandValueSet(uri, version, filter: String; dependencies: TStringList; var notClosed: boolean): TFHIRValueSetW;
     procedure checkSource(cset: TFhirValueSetComposeIncludeW; exp: TFHIRValueSetExpansionW; filter : TSearchFilterText; srcURL : String);
     procedure checkCanExpandValueset(uri, version: String);
+    function redundantDisplay(n: TFhirValueSetExpansionContainsW; lang: TIETFLang; use: TFHIRCodingW; value: TFHIRPrimitiveW): boolean;
     function useDesignation(cd: TConceptDesignation): boolean;
   protected
     function isValidating : boolean; override;
@@ -2206,7 +2208,8 @@ begin
         for fc in cfl do
         begin
           deadCheck('checkConceptSet#2');
-          // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
+          if (fc.value = '') then      
+            raise ETerminologyError.create(FI18n.translate('UNABLE_TO_HANDLE_SYSTEM_FILTER_WITH_NO_VALUE', FParams.HTTPLanguages, [cs.systemUri, fc.prop, CODES_TFhirFilterOperator[fc.Op]]), itInvalid, oicVSProcessing);
           f := cs.filter(FOpContext, false, false, fc.prop, fc.Op, fc.value, prep);
           if f = nil then
             raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vs.vurl+' was not understood in the context of '+cs.systemUri, itNotSupported);
@@ -2982,6 +2985,15 @@ begin
     result := system + '|'+version
 end;
 
+procedure TValueSetWorker.logDisplays(cds: TConceptDesignations);
+var
+  cd : TConceptDesignation;
+begin
+  Logging.log('Designations: '+cds.present);
+  for cd in cds.designations do
+    Logging.log('  '+cd.present);
+end;
+
 function TFHIRValueSetExpander.passesImport(import: TFHIRImportedValueSet; system, code: String): boolean;
 begin
   import.buildMap;
@@ -3065,6 +3077,16 @@ begin
   finally
     pl.free;
   end;
+end;
+
+function TFHIRValueSetExpander.redundantDisplay(n : TFhirValueSetExpansionContainsW; lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW) : boolean;
+begin
+  if not ((lang = nil) and (FValueSet.language = '')) or ((lang <> nil) and lang.code.StartsWith(FValueSet.language)) then
+    result := false
+  else if not ((use = nil) or (use.code = 'display')) then
+    result := false
+  else
+    result := value.AsString = n.display;
 end;
 
 function TFHIRValueSetExpander.includeCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; system, version, code : String;
@@ -3192,7 +3214,7 @@ begin
         if FParams.includeDesignations then
         begin
           for t in displays.designations do
-            if (t <> pref) and useDesignation(t) and (t.value <> nil) then
+            if (t <> pref) and useDesignation(t) and (t.value <> nil) and not redundantDisplay(n, t.language, t.use, t.value) then
               n.addDesignation(t.language, t.use, t.value, t.extensions);
         end;
 
@@ -3784,7 +3806,9 @@ begin
                   for i := 0 to fcl.count - 1 do
                   begin
                     deadCheck('processCodes#4a');
-                    fc := fcl[i];
+                    fc := fcl[i];     
+                    if (fc.value = '') then
+                      raise ETerminologyError.create(FI18n.translate('UNABLE_TO_HANDLE_SYSTEM_FILTER_WITH_NO_VALUE', FParams.HTTPLanguages, [cs.systemUri, fc.prop, CODES_TFhirFilterOperator[fc.Op]]), itInvalid, oicVSProcessing);
                     ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                     f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
                     if f = nil then
@@ -3815,6 +3839,7 @@ begin
                           if passesImports(valueSets, cs.systemUri, cs.code(FOpContext, c), 0) then
                           begin
                             listDisplays(cds, cs, c);
+                            //logDisplays(cds);
                             if cs.canParent then
                               parent := FMap[key(cs.systemUri, cs.parent(FOpContext, c))]
                             else
