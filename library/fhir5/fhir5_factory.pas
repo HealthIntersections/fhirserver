@@ -178,7 +178,10 @@ begin
       iss.details := TFHIRCodeableConcept.create;
       iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[exception.Code], '');
       if (exception.MsgId <> '') then
-        iss.details.text := i18n.translate(exception.msgId, langlist, exception.Params)
+      begin
+        exception.Message := i18n.translate(exception.msgId, langlist, exception.Params);
+        iss.details.text := exception.Message;
+      end
       else
         iss.details.text := exception.message;
       op.issueList.add(iss.link);
