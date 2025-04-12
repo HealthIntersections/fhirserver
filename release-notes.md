@@ -1,6 +1,6 @@
-## Change Notes for 3.7.7:
+## Change Notes for 3.7.8:
 
-* Fix error loading German Snomed CT
+* Test new release pipeline for windows
 
 ## Conformance Notes:
 
