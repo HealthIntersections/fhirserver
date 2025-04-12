@@ -704,7 +704,7 @@ end;
 
 function TSnomedCombiner.LoadReferenceSet(svc: TSnomedServices; i: integer): boolean;
 var
-  definition, members, dummy, types, t, iFilename, name, names : cardinal;
+  definition, members, dummy, types, t, iFilename, name, names, iLangs : cardinal;
   ui, s, uid : string;
   rs : TSnomedCombinedReferenceSet;
   nl, tl, vl :  TCardinalArray;
@@ -715,7 +715,7 @@ var
   new : boolean;
   guid  : TGuid;
 begin
-  svc.RefSetIndex.GetReferenceSet(i, name, iFilename, definition, members, dummy, types, names);
+  svc.RefSetIndex.GetReferenceSet(i, name, iFilename, definition, members, dummy, types, names, iLangs);
 
   ui := svc.GetConceptId(definition);
   if (ui = '900000000000534007') then

@@ -637,6 +637,7 @@ type
     procedure uniiCallback(sender : TObject; pct : integer; done : boolean; desc : String);
     Procedure SetUpTerminologyPage;
     function getSnomedModule: String;
+    function getSnomedLang : byte;
     procedure connectToServer(server : String);
     procedure GetODBCDriversList(list : TStrings);
     procedure SetConfigEditable;
@@ -2449,6 +2450,7 @@ var
   module, version : String;
   start : TDateTime;
   nb : boolean;
+  lang : byte;
 begin
   if not FolderExists(edtSource.Text) then
     ShowMessage('Folder "'+edtSource.Text+'" not found')
@@ -2464,6 +2466,7 @@ begin
     FIni.WriteInteger('snomed-import', 'date', trunc(edtDate.Date));
     FIni.WriteString('snomed-import', 'dest', edtDestination.text);
     module := getSnomedModule;
+    lang := getSnomedLang;
     nb := needsBaseForImport(module);
     if nb and not FolderExists(edtBase.Text) then
       ShowMessage('Base Folder "'+edtSource.Text+'" not found')
@@ -2484,9 +2487,9 @@ begin
       try
         start := now;
         if nb then
-          importSnomedRF2(edtSource.text, edtBase.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback)
+          importSnomedRF2(edtSource.text, edtBase.text, edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, lang, sctCallback)
         else
-          importSnomedRF2(edtSource.text, '', edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, sctCallback);
+          importSnomedRF2(edtSource.text, '', edtDestination.text, 'http://snomed.info/sct/'+module+'/version/'+version, lang, sctCallback);
       finally
         cursor := crDefault;
         btnSnomedImportStop.Visible := false;
@@ -3222,6 +3225,40 @@ begin
    25: { US (with ICD-10-CM maps) } result := '5991000124107';
    26: { IPS Terminology } result := '827022005';
    27: { Combined } result := inttostr(COMBINED_MODULE_ID);
+  end;
+end;
+
+function TMainConsoleForm.getSnomedLang: byte;
+begin
+  case cbxEdition.itemindex of
+    0: { International } result := 1;
+    1: { International Spanish } result := 4;
+    2: { Argentinian } result := 4;
+    3: { Australian (with drug extension) } result := 1;
+    4: { Austrian } result := 4;
+    5: { Belgian } result := 2;
+    6: { Canadian English } result := 1;
+    7: { Canadian Canadian French } result := 2;
+    8: { Danish } result := 6;
+    9: { Estonian } result := 1;
+   10: { Finnish } result := 1;
+   11: { German } result := 7;
+   12: { Indian } result := 1;
+   13: { Irish } result := 1;
+   14: { Netherlands } result := 3;
+   15: { New Zealand } result := 1;
+   16: { Norwegian } result := 1;
+   17: { Republic of Korea (South Korea) } result := 1;
+   18: { Spanish National } result := 4;
+   19: { Swedish } result := 5;
+   20: { Swiss } result := 2;
+   21: { UK } result := 1;
+   22: { UK Clinical } result := 1;
+   23: { Uruguay } result := 4;
+   24: { US } result := 1;
+   25: { US (with ICD-10-CM maps) } result := 1;
+   26: { IPS Terminology } result := 1;
+   27: { Combined } result := 1;
   end;
 end;
 

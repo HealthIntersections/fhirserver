@@ -547,7 +547,13 @@ end;
 
 procedure TLogging.logToFile(filename : String);
 begin
-  FFileLogger := TLogger.Create(filename);
+  if (FFileLogger <> nil) then
+  begin
+    FFileLogger.free;
+    FFileLogger := nil;
+  end;
+  if (filename <> '') then
+    FFileLogger := TLogger.Create(filename);
 end;
 
 const

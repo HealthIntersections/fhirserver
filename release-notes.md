@@ -1,4 +1,4 @@
-## Change Notes:
+## Change Notes for 3.7.6:
 
 * Fix R5 bug in terminology error handling
 
