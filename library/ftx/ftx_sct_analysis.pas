@@ -904,7 +904,7 @@ function TSnomedAnalysis.prepSubColumn(json : TJsonObject) : TColumnDetail;
 var
   src, key : String;
   refset : cardinal;
-  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
+  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs: Cardinal;
   names : TCardinalArray;
   i : integer;
 begin
@@ -925,7 +925,7 @@ begin
     if not FSnomed.Services.Concept.FindConcept(StrToInt64(json['refset']), refset) then
       raise ETerminologyError.create('Specified refset '+json['refset']+' not found', itException);
     refset := FSnomed.Services.RefSetIndex.GetRefSetByConcept(refset);
-    FSnomed.Services.RefSetIndex.GetReferenceSet(refset, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
+    FSnomed.Services.RefSetIndex.GetReferenceSet(refset, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs);
     result.members := FSnomed.Services.RefSetMembers.GetMembers(iMembersByRef);
     key := json['key'];
     if key = 'rel-id' then

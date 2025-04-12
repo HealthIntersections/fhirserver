@@ -52,8 +52,12 @@ Uses
   ftx_sct_expressions, ftx_service;
 
 Const
-  SNOMED_CACHE_VERSION_CURRENT = '16'; // 15: add default language refset - 16: change to 8 byte strings not 16 byte strings
-  SNOMED_CACHE_VERSION_UTF16 = '15';
+  SNOMED_CACHE_VERSION_CURRENT = '17';
+    // 15: add default language refset
+    // 16: change to 8 byte strings not 16 byte strings
+    // 17: track refset languages
+    SNOMED_CACHE_VERSION_UTF8 = '16';
+    SNOMED_CACHE_VERSION_UTF16 = '15';
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
@@ -334,7 +338,8 @@ Type
 // 5. a list of relationships
 Const
   RELATIONSHIP_SIZE = 40;
-  REFSET_SIZE = 28;
+  REFSET_SIZE_NOLANG = 28;
+  REFSET_SIZE_LANG = 32;
 
 Type
   TSnomedRelationshipList = class (TFslObject)
@@ -392,22 +397,28 @@ Type
   End;
 
 
+  { TSnomedReferenceSetIndex }
+
   TSnomedReferenceSetIndex = class (TFslObject)
   Private
     FMaster : TBytes;
     FLength : Cardinal;
     FBuilder : TFslBytesBuilder;
+    FHasLangs : boolean;
+    FRecordSize : integer;
     procedure clear;
+    procedure SetHasLangs(AValue: boolean);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    Procedure GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+    property HasLangs : boolean read FHasLangs write SetHasLangs;
+    Procedure GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
     Function GetRefSetByConcept(iIndex : Cardinal) : Cardinal;
     Function Count : Integer;
 
     Procedure StartBuild;
-    Procedure AddReferenceSet(iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+    Procedure AddReferenceSet(iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs: Cardinal);
     Procedure DoneBuild;
   End;
 
@@ -584,6 +595,7 @@ operations
     function GetDefaultLanguage: Cardinal;
     function GetInActiveRoots: UInt64Array;
     function GetIs_a_Index: Cardinal;
+    function getDefaultLangRefSetName() : String;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -766,6 +778,7 @@ function readDate(s : String) : TSnomedDate;
 function readLang(s : String) : byte;
 function codeForLang(lang : byte):String;
 function langForCode(s : String) : byte;
+function describeLangs(langs : integer) : string;
 
 function genCheckDigit(s : String): char;
 
@@ -1457,7 +1470,7 @@ begin
       oread := TReader.Create(oFile, 8192);
       try
         v := oRead.ReadString;
-        if (v = SNOMED_CACHE_VERSION_CURRENT) or (v = SNOMED_CACHE_VERSION_UTF16) Then
+        if (v = SNOMED_CACHE_VERSION_CURRENT) or (v = SNOMED_CACHE_VERSION_UTF8) or (v = SNOMED_CACHE_VERSION_UTF16) Then
         begin
           v := oRead.ReadString;
           s := v.split(['/']);
@@ -1499,8 +1512,11 @@ begin
   try
     oread := TReader.Create(oFile, 8192);
     try
+      FRefSetIndex.hasLangs := false;
       v := oRead.ReadString;
       if v = SNOMED_CACHE_VERSION_CURRENT Then
+        FRefSetIndex.hasLangs := true
+      else if v = SNOMED_CACHE_VERSION_UTF8 then
         FStrings.IsUTF16 := false
       else if v = SNOMED_CACHE_VERSION_UTF16 Then
         FStrings.IsUTF16 := true
@@ -1547,7 +1563,8 @@ begin
     End;
   Finally
     oFile.free;
-  End;
+  End;        
+  Logging.log('Loaded SCT from '+FSourceFile+' for '+VersionUri+'/'+VersionDate+', language = '+getDefaultLangRefSetName);
   if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
     FPreferredTerm := 0;
   if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
@@ -1575,12 +1592,12 @@ end;
 function TSnomedServices.RefSetCount: cardinal;
 var
   i : integer;
-  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
+  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs: Cardinal;
 begin
   result := RefSetIndex.Count;
   for i := 0 to RefSetIndex.Count - 1 do
   begin
-    RefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
+    RefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs);
     result := result + RefSetMembers.GetMemberCount(iMembersByRef);
   end;
 end;
@@ -2101,6 +2118,7 @@ begin
   else if FEditionId = '11000229106' then result := 'Finnish Edition'
   else if FEditionId = '11000274103' then result := 'German Edition'
   else if FEditionId = '1121000189102' then result := 'Indian Edition'
+  else if FEditionId = '827022005' then result := 'IPS Terminology'
   else if FEditionId = '11000220105' then result := 'Irish Edition'
   else if FEditionId = '11000146104' then result := 'Netherlands Edition'
   else if FEditionId = '21000210109' then result := 'New Zealand Edition'
@@ -2146,6 +2164,19 @@ end;
 function TSnomedServices.GetIs_a_Index: Cardinal;
 begin
   Result := FIs_a_Index;
+end;
+
+function TSnomedServices.getDefaultLangRefSetName(): String;
+var
+  i, j, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs: Cardinal;
+begin
+  for i := 0 to FRefSetIndex.Count - 1 do
+  begin
+    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs);
+    if iMembersByRef = FDefaultLanguage then
+      exit(FStrings.GetEntry(iName)+ ': '+describeLangs(iLangs)+' ('+inttostr(FDefaultLanguage)+' )');
+  end;
+  result := '?? ('+inttostr(FDefaultLanguage)+')';
 end;
 
 procedure TSnomedServices.ListDisplayNames(list: TConceptDesignations; const iConcept, iLang: Cardinal; FlagMask: Byte);
@@ -2426,7 +2457,7 @@ begin
         begin
           cc := inc.addConcept;
           try
-            RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy, iDummy, iDummy, iDummy, iDummy);
+            RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy, iDummy, iDummy, iDummy, iDummy, iDummy);
             cc.code := GetConceptId(code);
           finally
             cc.free;
@@ -2528,15 +2559,15 @@ function TSnomedServices.GetConceptRefSet(iConcept: Cardinal; bByName : Boolean;
 var
   i : integer;
   c : Cardinal;
-  iFilename, iDummy : cardinal;
+  iFilename, iDummy, iLangs : cardinal;
 begin
   result := 0;
   For i := 0 to FRefSetIndex.Count - 1 do
   Begin
     if bByName Then
-      FRefSetIndex.GetReferenceSet(i, iName, iFilename, c, iDummy, iMembers, iTypes, iFieldNames)
+      FRefSetIndex.GetReferenceSet(i, iName, iFilename, c, iDummy, iMembers, iTypes, iFieldNames, iLangs)
     else
-      FRefSetIndex.GetReferenceSet(i, iName, iFilename, c, iMembers, iDummy, iTypes, iFieldNames);
+      FRefSetIndex.GetReferenceSet(i, iName, iFilename, c, iMembers, iDummy, iTypes, iFieldNames, iLangs);
     if c = iConcept Then
     Begin
       result := c;
@@ -2558,7 +2589,7 @@ end;
 function TSnomedServices.GetDescRefsets(iDesc: Cardinal): TRefSetMemberEntryArray;
 var
   i : integer;
-  iDefinition, iFilename, iMembersByRef, iMembersByName: Cardinal;
+  iDefinition, iFilename, iMembersByRef, iMembersByName, iLangs: Cardinal;
   aMembers : TSnomedReferenceSetMemberArray;
   iIndex : Integer;
   iName, iTypes, iFieldNames : Cardinal;
@@ -2567,7 +2598,7 @@ begin
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
   Begin
-    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iTypes, iFieldNames);
+    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iTypes, iFieldNames, iLangs);
     aMembers := FRefSetMembers.GetMembers(iMembersByRef);
     if FindMember(aMembers, iDesc, iIndex) Then
     begin
@@ -2595,7 +2626,7 @@ end;
 function TSnomedServices.GetConceptRefsets(iDesc: Cardinal): TRefSetMemberEntryArray;
 var
   i : integer;
-  iDefinition, iFilename, iMembersByRef, iMembersByName: Cardinal;
+  iDefinition, iFilename, iMembersByRef, iMembersByName, iLangs: Cardinal;
   aMembers : TSnomedReferenceSetMemberArray;
   iIndex : Integer;
   iName, iTypes, iFieldNames : Cardinal;
@@ -2604,7 +2635,7 @@ begin
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
   Begin
-    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iTypes, iFieldNames);
+    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iTypes, iFieldNames, iLangs);
     aMembers := FRefSetMembers.GetMembers(iMembersByRef);
     if FindMember(aMembers, iDesc, iIndex) Then
     begin
@@ -3035,7 +3066,9 @@ end;
 
 { TSnomedReferenceSetIndex }
 
-Procedure TSnomedReferenceSetIndex.AddReferenceSet(iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+procedure TSnomedReferenceSetIndex.AddReferenceSet(iName, iFilename,
+  iDefinition, iMembersByRef, iMembersByName, iFieldTypes,
+  iFieldNames, iLangs: Cardinal);
 begin
   FBuilder.AddCardinal(iDefinition);
   FBuilder.AddCardinal(iFilename);
@@ -3044,6 +3077,7 @@ begin
   FBuilder.AddCardinal(iFieldTypes);
   FBuilder.AddCardinal(iName);
   FBuilder.AddCardinal(iFieldNames);
+  FBuilder.AddCardinal(iLangs);
 end;
 
 procedure TSnomedReferenceSetIndex.clear;
@@ -3052,9 +3086,18 @@ begin
   FLength := 0;
 end;
 
+procedure TSnomedReferenceSetIndex.SetHasLangs(AValue: boolean);
+begin
+  FHasLangs:=AValue;
+  if FHasLangs then
+    FRecordSize := REFSET_SIZE_LANG
+  else
+    FRecordSize := REFSET_SIZE_NOLANG;
+end;
+
 function TSnomedReferenceSetIndex.Count: Integer;
 begin
-  result := FLength div REFSET_SIZE;
+  result := FLength div FRecordSize;
 end;
 
 procedure TSnomedReferenceSetIndex.DoneBuild;
@@ -3071,21 +3114,23 @@ begin
   result := 0;
   For i := 0 to Count - 1 Do
   begin
-    Move(FMaster[i * REFSET_SIZE], v, 4);
+    Move(FMaster[i * FRecordSize], v, 4);
     if v = iIndex Then
     Begin
       if bByName Then
-        Move(FMaster[i * REFSET_SIZE + 8], result, 4)
+        Move(FMaster[i * FRecordSize + 8], result, 4)
       Else
-        Move(FMaster[i * REFSET_SIZE + 4], result, 4);
+        Move(FMaster[i * FRecordSize + 4], result, 4);
       exit;
     End;
   End;
 end;
 
-procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; out iName,
+  iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes,
+  iFieldNames, iLangs: Cardinal);
 begin
-  iIndex := iIndex * REFSET_SIZE;
+  iIndex := iIndex * FRecordSize;
   if (iIndex >= FLength) then
     Raise ETerminologyError.Create('Wrong length index getting snomed relationship Details', itException);
   Move(FMaster[iIndex+0], iDefinition, 4);
@@ -3095,6 +3140,10 @@ begin
   Move(FMaster[iIndex+16], iFieldTypes, 4);
   Move(FMaster[iIndex+20], iName, 4);
   Move(FMaster[iIndex+24], iFieldNames, 4);
+  if (FHasLangs) then
+    Move(FMaster[iIndex+28], iLangs, 4)
+  else
+    iLangs := 0;
 end;
 
 function TSnomedReferenceSetIndex.GetRefSetByConcept(iIndex: Cardinal): Cardinal;
@@ -3104,7 +3153,7 @@ begin
   result := 0;
   For i := 0 to Count - 1 Do
   begin
-    Move(FMaster[i * REFSET_SIZE], v, 4);
+    Move(FMaster[i * FRecordSize], v, 4);
     if v = iIndex Then
       exit(i);
   End;
@@ -3529,7 +3578,7 @@ end;
 function TSnomedServices.getRelationshipValues(index: cardinal): String;
 var
   i, j : integer;
-  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal;
+  iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs: Cardinal;
   members : TSnomedReferenceSetMemberArray;
   member : TSnomedReferenceSetMember;
   tl, vl : TCardinalArray;
@@ -3537,7 +3586,7 @@ begin
   result := '';
   for i := 0 to FRefSetIndex.Count - 1 do
   begin
-    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames);
+    FRefSetIndex.GetReferenceSet(i, iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames, iLangs);
     members := FRefSetMembers.GetMembers(iMembersByRef);
     for member in members do
       if (member.kind = 2) and (member.Ref = index) then
@@ -4694,6 +4743,19 @@ begin
     result := 8
   else
     result := 0;
+end;
+
+function describeLangs(langs: integer): string;
+begin
+  result := '';
+  if (langs and (1 shl 1) > 0) then CommaAdd(result, 'en');
+  if (langs and (1 shl 2) > 0) then CommaAdd(result, 'fr');
+  if (langs and (1 shl 3) > 0) then CommaAdd(result, 'nl');
+  if (langs and (1 shl 4) > 0) then CommaAdd(result, 'es');
+  if (langs and (1 shl 5) > 0) then CommaAdd(result, 'sv');
+  if (langs and (1 shl 6) > 0) then CommaAdd(result, 'da');
+  if (langs and (1 shl 7) > 0) then CommaAdd(result, 'de');
+  if (langs and (1 shl 8) > 0) then CommaAdd(result, 'it');
 end;
 
 function TSnomedExpressionContext.sizeInBytesV(magic : integer) : cardinal;

@@ -186,18 +186,6 @@ var
   iRef : Cardinal;
   aRefs : TCardinalArray;
 Begin
-{  html.StartParagraph;
-  if oMap.ExistsByKey('id') Or oMap.ExistsByKey('srch') Then
-  Begin
-    html.AddTextPlain('Snomed-CT: ');
-    html.URL(FSnomed.Version, sURL);
-  End
-  Else
-    html.AddTextPlain('Snomed: '+FSnomed.Version);
-  html.EndParagraph;
-  html.AddLine(1);
-}
-
   html.Heading(1, 'Snomed-CT Definitions (e: '+FSnomed.EditionName+', v: '+FSnomed.VersionDate+')');
   html.StartForm('GET', sPrefix);
   html.StartParagraph;
@@ -1762,15 +1750,18 @@ end;
 
 procedure TSnomedPublisher.RefsetRef(html: THtmlPublisher; const sPrefix: String; iIndex: cardinal);
 var
-  iDefinition, iMembersByName, iMembersByRef, iTypes, iFilename, iName, iFields: Cardinal;
+  iDefinition, iMembersByName, iMembersByRef, iTypes, iFilename, iName, iFields, iLangs: Cardinal;
   types : TCardinalArray;
   id : String;
   i : integer;
 begin
-  FSnomed.RefSetIndex.GetReferenceSet(iIndex, iFilename, iName, iDefinition, iMembersByName, iMembersByRef, iTypes, iFields);
+  FSnomed.RefSetIndex.GetReferenceSet(iIndex, iFilename, iName, iDefinition, iMembersByRef, iMembersByName, iTypes, iFields, iLangs);
   id := inttostr(FSnomed.Concept.GetIdentity(iDefinition));
   html.URL(id+' '+FSnomed.GetPNForConcept(iDefinition), sPrefix+'id='+id);
   html.AddTextPlain('(');
+  if iMembersByRef = FSnomed.DefaultLanguageRefSet then
+    html.AddText(' (Default Language)', true, false);
+  html.AddTextPlain(' (');
   html.AddTextPlain(inttostr(FSnomed.RefSetMembers.GetMemberCount(iMembersByRef))+' members)');
   if iTypes <> 0 then
   begin
@@ -1801,7 +1792,7 @@ function TSnomedPublisher.GetConceptForRefset(iRefset: Cardinal): Cardinal;
 var
   iDummy : Cardinal;
 begin
-  FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, iDummy, result, iDummy, iDummy, iDummy, iDummy);
+  FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, iDummy, result, iDummy, iDummy, iDummy, iDummy, iDummy);
 end;
 
            

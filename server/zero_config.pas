@@ -92,7 +92,7 @@ type
     procedure CreateDatabase(v : TFHIRVersion; fn : String);
     function doUpgrade(v : TFHIRVersion; fn : String) : boolean;
     procedure buildConfig(fn : String; local : TCustomIniFile);
-    procedure DownloadFileList(files: TJsonObject);
+    procedure DownloadFileList(files: TJsonObject; n : String);
     procedure seePackages(realm : TJsonObject);
   public
     constructor Create(params : TCommandLineParameters);
@@ -396,10 +396,11 @@ begin
   end;
 end;
 
-procedure TConfigurationBuilder.DownloadFileList(files : TJsonObject);
+procedure TConfigurationBuilder.DownloadFileList(files : TJsonObject; n : String);
 var
   fn : String;
 begin
+  Logging.log('Download files for '+n);
   for fn in files.properties.Keys do
   begin
     FFiles.Add(fn, (files.node[fn] as TJsonString).value);
@@ -417,7 +418,7 @@ begin
   realm := content.forceObj['uv'];
   SeePackages(realm);
   files := realm.forceObj['files'];
-  DownloadFileList(files);
+  DownloadFileList(files, 'uv');
 
   if not FParams.get('realm', r) then
     r := '*';
@@ -431,7 +432,7 @@ begin
         realm := content.forceObj[i];
         SeePackages(realm);
         files := realm.forceObj['files'];
-        DownloadFileList(files);
+        DownloadFileList(files, i);
       end;
   end
   else
@@ -442,7 +443,7 @@ begin
       realm := content.forceObj[i];
       SeePackages(realm);
       files := realm.forceObj['files'];
-      DownloadFileList(files);
+      DownloadFileList(files, i);
     end;
   end;
 end;

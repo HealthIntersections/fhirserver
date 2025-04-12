@@ -35,7 +35,7 @@ Interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Inifiles, Generics.Collections, DateUtils,
-  fsl_base, fsl_stream, fsl_utilities, fsl_collections, fsl_fpc,
+  fsl_base, fsl_stream, fsl_utilities, fsl_collections, fsl_fpc, fsl_logging,
   fhir_utilities,
   ftx_loinc_services, ftx_sct_services, ftx_sct_expressions, ftx_service;
 
@@ -86,6 +86,7 @@ Type
     noStoreIds : boolean;
     isLangRefset : boolean;
     title : String;
+    langs : integer;
     aMembers : TSnomedReferenceSetMemberArray;
     iMemberLength : Integer;
     membersByRef : Cardinal;
@@ -199,6 +200,7 @@ Type
     FDirectoryReferenceSets: TStringList;
     FStart : TDateTime;
     FoutputFile : String;
+    FPrefLang : byte;
 
     FFSN : cardinal;
 
@@ -232,6 +234,7 @@ Type
     procedure Progress(Step : integer; pct : real; msg : String);
     procedure QuickSortPairsByName(var a: TSnomedReferenceSetMemberArray);
     procedure SetVersion(s : String);
+    function getLanguageForDescription(iindex : cardinal) : byte;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -247,7 +250,7 @@ Type
   end;
 
 function needsBaseForImport(moduleId : String): boolean;
-function importSnomedRF2(dir, base : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
+function importSnomedRF2(dir, base : String; dest, uri : String; lang : byte; callback : TInstallerCallback = nil) : String;
 
 Implementation
 
@@ -274,7 +277,7 @@ var
   sr: TSearchRec;
   s : String;
 begin
-  if FindFirst(IncludeTrailingPathDelimiter(dir) + '*.*', faAnyFile, sr) = 0 then
+  if FindFirst(IncludeTrailingPathDelimiter(dir) + AllFilesMask, faAnyFile, sr) = 0 then
   begin
     repeat
       if (sr.Attr = faDirectory) then
@@ -308,13 +311,16 @@ var
   sr: TSearchRec;
   s : String;
 begin
-  if FindFirst(IncludeTrailingPathDelimiter(dir) + '*.*', faAnyFile, sr) = 0 then
+  if FindFirst(IncludeTrailingPathDelimiter(dir) + AllFilesMask, faAnyFile, sr) = 0 then
   begin
     repeat
-      if (sr.Attr = faDirectory) then
+      if ((sr.Attr and faDirectory) > 0) then
       begin
         if SameText(sr.Name, 'Reference Sets') or SameText(sr.Name, 'RefSet') then
-          imp.DirectoryReferenceSets.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
+        begin
+          Logging.log('Reference Set Directory: '+IncludeTrailingPathDelimiter(dir) + sr.Name);
+          imp.DirectoryReferenceSets.Add(IncludeTrailingPathDelimiter(dir) + sr.Name);
+        end
         else if not (StringstartsWith(sr.Name, '.'))  then
           AnalyseDirectoryRF2(IncludeTrailingPathDelimiter(dir) + sr.Name, imp);
       end
@@ -323,12 +329,19 @@ begin
         s := ReadFirstLine(IncludeTrailingPathDelimiter(dir) + sr.Name);
         if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'definitionStatusId')) then
         begin
+          Logging.log('Concept File: '+IncludeTrailingPathDelimiter(dir) + sr.Name);
           imp.ConceptFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name);
         end
         else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'conceptId'#9'languageCode'#9'typeId'#9'term'#9'caseSignificanceId')) then
+        begin
+          Logging.log('Description File: '+IncludeTrailingPathDelimiter(dir) + sr.Name);
           imp.DescriptionFiles.add(IncludeTrailingPathDelimiter(dir) + sr.Name)
+        end
         else if (s.StartsWith('id'#9'effectiveTime'#9'active'#9'moduleId'#9'sourceId'#9'destinationId'#9'relationshipGroup'#9'typeId'#9'characteristicTypeId'#9'modifierId')) and (pos('StatedRelationship', sr.Name) = 0) then
+        begin
+          Logging.log('Relationship File: '+IncludeTrailingPathDelimiter(dir) + sr.Name);
           imp.RelationshipFiles.Add(IncludeTrailingPathDelimiter(dir) + sr.Name)
+        end
         else
           ;  // we ignore the file
       end;
@@ -337,26 +350,32 @@ begin
   end;
 end;
 
-function importSnomedRF2(dir, base : String; dest, uri : String; callback : TInstallerCallback = nil) : String;
+function importSnomedRF2(dir, base : String; dest, uri : String; lang : byte; callback : TInstallerCallback = nil) : String;
 var
   imp : TSnomedImporter;
 begin
-  imp := TSnomedImporter.Create;
+  Logging.logToFile(FilePath(['[tmp]', 'sct-import.log']));
   try
-    imp.callback := callback;
-    imp.progress(STEP_START, 0, 'Import Snomed (RF2) from '+dir);
-    imp.setVersion(uri);
-    imp.usingBase := base <> '';
-    imp.OutputFile := dest;
-    if (base <> '') then
-    begin
-      analyseDirectoryRF2(base, imp);
+    imp := TSnomedImporter.Create;
+    try
+      imp.callback := callback;
+      imp.progress(STEP_START, 0, 'Import Snomed (RF2) from '+dir);
+      imp.setVersion(uri);
+      imp.usingBase := base <> '';
+      imp.OutputFile := dest;
+      imp.FPrefLang := lang;
+      if (base <> '') then
+      begin
+        analyseDirectoryRF2(base, imp);
+      end;
+      analyseDirectoryRF2(dir, imp);
+      imp.Go;
+      result := imp.outputFile;
+    finally
+      imp.free;
     end;
-    analyseDirectoryRF2(dir, imp);
-    imp.Go;
-    result := imp.outputFile;
   finally
-    imp.free;
+    Logging.logToFile('');
   end;
 end;
 
@@ -642,6 +661,7 @@ Begin
   Progress(STEP_READ_CONCEPT, 0, 'Read Concept Files');
   for fi := 0 to ConceptFiles.Count - 1 do
   begin
+    Logging.log('Process file '+ ConceptFiles[fi]);
     s := LoadFile(ConceptFiles[fi]);
     iCursor := -1;
 //    iCount := 0;
@@ -834,6 +854,7 @@ begin
   aIndexLength := 0;
   for fi := 0 to DescriptionFiles.Count - 1 do
   begin
+    Logging.log('Process file '+ DescriptionFiles[fi]);
     s := LoadFile(DescriptionFiles[fi]);
     iCursor := -1;
     iCursor := Next(13) + 2;
@@ -1019,6 +1040,7 @@ Begin
   for fi := 0 to RelationshipFiles.Count - 1 do
   begin
     s := LoadFile(RelationshipFiles[fi]);
+    Logging.log('Process file '+ RelationshipFiles[fi]);
     line := 1; // going to skip the first line
     iCursor := -1;
     iCursor := Next(13) + 2;
@@ -1603,15 +1625,15 @@ procedure TSnomedImporter.LoadReferenceSets(pfxLen : integer; path : String; var
 var
   sr: TSearchRec;
 begin
-  if FindFirst(IncludeTrailingPathDelimiter(path) + '*.*', faAnyFile, sr) = 0 then
+  if FindFirst(IncludeTrailingPathDelimiter(path) + AllFilesMask, faAnyFile, sr) = 0 then
   begin
     repeat
-      if (sr.Attr = faDirectory) then
+      if ((sr.Attr and faDirectory) > 0) then
       begin
         if not StringStartsWith(sr.Name, '.') then
           LoadReferenceSets(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name, count);
       end
-      else if (sr.Attr <> faDirectory) and (ExtractFileExt(sr.Name) = '.txt') then
+      else if ((sr.Attr and faDirectory) = 0) and (ExtractFileExt(sr.Name) = '.txt') then
       begin
         LoadReferenceSet(pfxLen, IncludeTrailingPathDelimiter(path) + sr.Name, path.endsWith('Language'));
         inc(count);
@@ -1651,7 +1673,7 @@ begin
   for i := 0 to FRefSets.Count - 1 Do
   begin
     refset := FRefsets[i] as TRefSet;
-    FRefsetindex.AddReferenceSet(FStrings.AddString(refset.title), refset.filename, refset.index, refset.membersByRef, refset.membersByName, refset.fieldTypes, refset.fieldNames);
+    FRefsetindex.AddReferenceSet(FStrings.AddString(refset.title), refset.filename, refset.index, refset.membersByRef, refset.membersByName, refset.fieldTypes, refset.fieldNames, refset.langs);
   end;
 
   Progress(STEP_INDEX_REFSET, 0, 'Indexing Reference Sets');
@@ -1890,6 +1912,19 @@ begin
     result := result + ',' + inttostr(a[i]);
 end;
 
+function TSnomedImporter.getLanguageForDescription(iindex : cardinal) : byte;
+var
+  iDesc : Cardinal;
+  id : UInt64;
+  date : TSnomedDate;
+  concept, module, kind, caps, refsets, valueses : Cardinal;
+  active : Boolean;
+  lang : byte;
+begin
+  FDesc.GetDescription(iIndex, iDesc, id, date, concept, module, kind, caps, refsets, valueses, active, lang);
+  result := lang;
+end;
+
 procedure TSnomedImporter.LoadReferenceSet(pfxLen : integer; sFile: String; isLangRefset : boolean);
 var
   s : TBytes;
@@ -1911,6 +1946,7 @@ var
   ti : cardinal;
   fieldnames : TStringList;
   line : Integer;
+  lang : byte;
   Function Next(ch : Byte) : integer;
   begin
     inc(iCursor);
@@ -1919,6 +1955,7 @@ var
     result := iCursor;
   End;
 begin
+  Logging.log('Import Reference Set '+ExtractFileName(sFile));
   Progress(STEP_IMPORT_REFSET, 0, 'Import Reference Set '+ExtractFileName(sFile));
   ss := ExtractFileName(sFile);
   parts := ss.Split(['_']);
@@ -1998,6 +2035,7 @@ begin
       sRefSetId := memU8toString(s, iModule+1, iRefSetId - (iModule + 1));
       sRefComp := memU8toString(s, iRefSetId+1, iRefComp - (iRefSetId + 1));
 
+      lang := 0;
 
       if not FConcept.FindConcept(StrToUInt64(sModule), iMod) then
         raise ETerminologySetup.create('Module '+sModule+' not found');
@@ -2067,8 +2105,9 @@ begin
         else if FDescRef.FindDescription(iRef, iTermRef) then
         begin
           bDesc := 1;
-          refset.noStoreIds := true;
-
+          refset.noStoreIds := true;      
+          lang := getLanguageForDescription(iTermRef); 
+          refset.langs := refset.langs or (1 shl lang);
         end
         Else if FRels.TryGetValue(iRef, iTermRef) then
           bDesc := 2
@@ -2104,18 +2143,33 @@ Procedure TSnomedImporter.CloseReferenceSets;
 var
   i : integer;
   RefSet : TRefSet;
+  b : boolean;
 begin
   for i := 0 to Frefsets.Count - 1  do
   begin
     refset := Frefsets[i] as TRefSet;
     Progress(STEP_IMPORT_REFSET, 0, 'Closing Reference Set '+refset.Name+' ('+pct(i, FRefSets.Count)+')');
+    Logging.log('Closing Reference Set '+refset.Name+' ('+pct(i, FRefSets.Count)+'): langs='+describeLangs(refset.langs));
     SetLength(refset.aMembers, refset.iMemberLength);
     QuickSortPairsByName(refset.aMembers);
     refset.membersByName := FRefsetMembers.AddMembers(false, refset.aMembers);
     QuickSortPairs(refset.aMembers);
     refset.membersByRef := FRefsetMembers.AddMembers(not refset.noStoreIds, refset.aMembers);
-    if refset.isLangRefset then // it's a description refset...
+    if refset.isLangRefset and ((refset.langs and (1 shl (FPrefLang))) <> 0) then // it's a description refset...
+    begin
       Fsvc.DefaultLanguageRefSet := refset.membersByRef;
+      b := true;
+    end;
+  end;
+  if not b then
+  begin
+    for i := 0 to Frefsets.Count - 1  do
+    begin
+      if refset.isLangRefset then // it's a description refset...
+      begin
+        Fsvc.DefaultLanguageRefSet := refset.membersByRef;
+      end;
+    end;
   end;
 end;
 
@@ -2150,6 +2204,7 @@ begin
     result := ObjectByIndex[iIndex] as TRefSet
   else
   begin
+    Logging.log('See Reference Set '+id);
     result := TRefSet.Create;
     try
       result.Name := id;
