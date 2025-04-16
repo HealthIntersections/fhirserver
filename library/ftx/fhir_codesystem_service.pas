@@ -1522,7 +1522,7 @@ end;
 
 procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
 var
-  c, cc : TFhirCodeSystemConceptW;
+  c : TFhirCodeSystemConceptW;
   css : TFhirCodeSystemW;
   cp : TFhirCodeSystemConceptPropertyW;
   ok, val : boolean;
@@ -1532,7 +1532,7 @@ begin
   begin
     ok := not include;
     val := false;
-    for cp in cc.properties.forEnum do
+    for cp in c.properties.forEnum do
     begin
       if (ok <> include) and (cp.code = pp.code) then
       begin
@@ -1555,10 +1555,10 @@ begin
       end;
     end;
     if ok then
-      list.Add(c.Link, 0);
+      list.Add(c.Link, 0); 
+    if (c.hasConcepts) then
+      iterateConceptsByProperty(c.conceptList, pp, values, list, include);
   end;
-  if (c.hasConcepts) then
-    iterateConceptsByProperty(c.conceptList, pp, values, list, include);
 end;
 
 procedure TFhirCodeSystemProvider.iterateConceptsByPropertyRegex(src: TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; regex: TRegularExpression; list: TFhirCodeSystemProviderFilterContext; include: boolean);
