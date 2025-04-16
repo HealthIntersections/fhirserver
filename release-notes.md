@@ -1,6 +1,6 @@
-## Change Notes for 3.7.9:
+## Change Notes for 3.7.10:
 
-* Adds support for regex filters on property values
+* Fix access violation
 
 ## Conformance Notes:
 
