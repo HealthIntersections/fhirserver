@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI}IOUtils, {$ENDIF} zlib,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads, fsl_versions, fsl_gzip;
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads, fsl_versions, fsl_gzip, fsl_logging;
 
 Type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
@@ -707,8 +707,13 @@ begin
     result := fpkGroup
   else if StringArrayExistsSensitive(['hl7.fhir.r2.core', 'hl7.fhir.r3.core', 'hl7.fhir.r4.core'], name) then
     result := fpkCore
+  else if (s = '') then
+    result := fpkNull
   else
+  begin
+    Logging.log('unknown Package type: '+s);
     result := fpkNull;
+  end;
 end;
 
 function TNpmPackage.GetLicense: String;

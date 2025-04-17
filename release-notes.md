@@ -1,6 +1,6 @@
-## Change Notes for 3.7.10:
+## Change Notes for 3.7.11:
 
-* Fix access violation
+* more work on NPM compliance, and add depends-on search in package
 
 ## Conformance Notes:
 
