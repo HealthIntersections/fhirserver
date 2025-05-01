@@ -197,6 +197,7 @@ type
   private
     FCs : TFhirCodeSystemEntry;
     FFactory : TFHIRFactory;
+    FHasHeirarchy : boolean;
 
     function LocateCode(code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemConceptW;
     function doLocate(code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemProviderContext; overload;
@@ -601,12 +602,20 @@ end;
 { TFhirCodeSystemProvider }
 
 constructor TFhirCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport; factory: TFHIRFactory; cs: TFhirCodeSystemEntry);
+var
+  cc : TFhirCodeSystemConceptW;
 begin
   Create(languages, i18n);
   FCs := cs;
   FFactory := factory;
   if FCs.CodeSystem.language <> '' then
     setDefLang(FLanguages.parse(FCs.CodeSystem.language));
+  for cc in FCs.CodeSystem.conceptList do
+    if cc.hasConcepts then
+    begin
+      FHasHeirarchy := true;
+      break;
+    end;
 end;
 
 procedure TFhirCodeSystemProvider.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
@@ -761,7 +770,7 @@ end;
 
 function TFhirCodeSystemProvider.canParent: boolean;
 begin
-  Result := true;
+  Result := FHasHeirarchy;
 end;
 
 function TFhirCodeSystemProvider.hasAnyDisplays(langs: THTTPLanguageList): boolean;
