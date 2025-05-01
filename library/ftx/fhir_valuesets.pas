@@ -829,6 +829,7 @@ var
   ts : TStringList;
   vss : TFHIRValueSetW;
 begin
+  defLang := FLanguages.parse('en');
   FOpContext.addNote(FValueSet, 'Check "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"');
   if (system = '') and not inferSystem then
   begin
@@ -2307,13 +2308,13 @@ begin
                     listDisplays(displays, cs, loc);
                     if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                     begin
-                      OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
+                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                       if (not FParams.membershipOnly) then
                         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                     end
                     else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                     begin
-                      OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
+                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
                       result := false;
                       if (not FParams.membershipOnly) then
                       begin
@@ -2323,7 +2324,7 @@ begin
                     end
                     else
                     begin   
-                      OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                       if vcc <> nil then
                         vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                       result := true;
@@ -2332,7 +2333,7 @@ begin
                   end;
                 end
                 else
-                  OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
+                  OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
               finally
                 loc.free;
               end;

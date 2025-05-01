@@ -1316,6 +1316,8 @@ begin
         package.addStringUtf8(#13#10);
       end;
 
+
+      package.addStringUtf8(#13#10);
       package.addStringUtf8('-- Response --------------------------------------------------'#13#10);
       package.addStringUtf8(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
       package.addStringUtf8(#13#10);
