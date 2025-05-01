@@ -1,4 +1,4 @@
-## Change Notes for {ver}:
+## Change Notes for 3.7.12:
 
 * Performance Improvements for non-heirarchical value set expansion
 
