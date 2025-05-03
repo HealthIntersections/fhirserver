@@ -1,6 +1,6 @@
-## Change Notes for 3.7.8:
+## Change Notes for {ver}:
 
-* Test new release pipeline for windows
+* 
 
 ## Conformance Notes:
 

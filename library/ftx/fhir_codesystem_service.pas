@@ -197,6 +197,7 @@ type
   private
     FCs : TFhirCodeSystemEntry;
     FFactory : TFHIRFactory;
+    FHasHeirarchy : boolean;
 
     function LocateCode(code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemConceptW;
     function doLocate(code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemProviderContext; overload;
@@ -210,8 +211,9 @@ type
     function hasPropForCode(code : String) : boolean;
     function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
+    procedure iterateConceptsByPropertyRegex(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; regex: TRegularExpression; list: TFhirCodeSystemProviderFilterContext; include : boolean);
     procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; values: TStringArray; List: TFhirCodeSystemProviderFilterContext; include : boolean);
-    procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: TRegularExpression; list: TFhirCodeSystemProviderFilterContext);
     procedure iterateConceptsByEquality(positive : boolean; src : TFhirCodeSystemConceptListW; code: string; list: TFhirCodeSystemProviderFilterContext);
 
     procedure listChildrenByProperty(opContext : TTxOperationContext; op : String; code : String; list, children : TFhirCodeSystemConceptListW);
@@ -600,12 +602,20 @@ end;
 { TFhirCodeSystemProvider }
 
 constructor TFhirCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport; factory: TFHIRFactory; cs: TFhirCodeSystemEntry);
+var
+  cc : TFhirCodeSystemConceptW;
 begin
   Create(languages, i18n);
   FCs := cs;
   FFactory := factory;
   if FCs.CodeSystem.language <> '' then
     setDefLang(FLanguages.parse(FCs.CodeSystem.language));
+  for cc in FCs.CodeSystem.conceptList do
+    if cc.hasConcepts then
+    begin
+      FHasHeirarchy := true;
+      break;
+    end;
 end;
 
 procedure TFhirCodeSystemProvider.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);
@@ -760,7 +770,7 @@ end;
 
 function TFhirCodeSystemProvider.canParent: boolean;
 begin
-  Result := true;
+  Result := FHasHeirarchy;
 end;
 
 function TFhirCodeSystemProvider.hasAnyDisplays(langs: THTTPLanguageList): boolean;
@@ -1521,59 +1531,81 @@ end;
 
 procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
 var
-  c, cc : TFhirCodeSystemConceptW;
-  concepts : TFhirCodeSystemConceptListW;
+  c : TFhirCodeSystemConceptW;
   css : TFhirCodeSystemW;
   cp : TFhirCodeSystemConceptPropertyW;
   ok, val : boolean;
   coding : TFHIRCodingW;
 begin
-  concepts := TFhirCodeSystemConceptListW.Create;
-  try
-    for c in src do
+  for c in src do
+  begin
+    ok := not include;
+    val := false;
+    for cp in c.properties.forEnum do
     begin
-      concepts.Clear;
-      concepts.Add(c.Link);
-      for css in FCs.Supplements do
+      if (ok <> include) and (cp.code = pp.code) then
       begin
-        cc := locCode(css.conceptList, c.code, css.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), nil);
-        if (cc <> nil) then
-          concepts.Add(cc.Link);
-      end;
-      for cc in concepts do
-      begin
-        ok := not include;
-        val := false;
-        for cp in cc.properties.forEnum do
-        begin
-          if (ok <> include) and (cp.code = pp.code) then
-          begin
-            val := true;
-            case pp.type_ of
-              cptCode, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal:
-                begin
-                  ok := StringArrayExistsSensitive(values, cp.value.primitiveValue) = include;
-                end;
-              cptCoding:
-                begin
-                  coding := FFactory.wrapCoding(cp.value.Link);
-                  try
-                    ok := StringArrayExistsSensitive(values, coding.code) = include;
-                  finally
-                    coding.free;
-                  end;
-                end;
+        val := true;
+        case pp.type_ of
+          cptCode, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal:
+            begin
+              ok := StringArrayExistsSensitive(values, cp.value.primitiveValue) = include;
             end;
-          end;
+          cptCoding:
+            begin
+              coding := FFactory.wrapCoding(cp.value.Link);
+              try
+                ok := StringArrayExistsSensitive(values, coding.code) = include;
+              finally
+                coding.free;
+              end;
+            end;
         end;
-        if ok then
-          list.Add(c.Link, 0);
       end;
-      if (c.hasConcepts) then
-        iterateConceptsByProperty(c.conceptList, pp, values, list, include);
     end;
-  finally
-    concepts.free;
+    if ok then
+      list.Add(c.Link, 0); 
+    if (c.hasConcepts) then
+      iterateConceptsByProperty(c.conceptList, pp, values, list, include);
+  end;
+end;
+
+procedure TFhirCodeSystemProvider.iterateConceptsByPropertyRegex(src: TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; regex: TRegularExpression; list: TFhirCodeSystemProviderFilterContext; include: boolean);
+var
+  c, cc : TFhirCodeSystemConceptW;
+  css : TFhirCodeSystemW;
+  cp : TFhirCodeSystemConceptPropertyW;
+  ok, val : boolean;
+  coding : TFHIRCodingW;
+begin
+  for c in src do
+  begin
+    ok := not include;
+    val := false;
+    for cp in c.properties.forEnum do
+    begin
+      if (ok <> include) and (cp.code = pp.code) then
+      begin
+        val := true;
+        case pp.type_ of
+          cptCode, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal:
+            ok := regex.isMatch(cp.value.primitiveValue) = include;
+          cptCoding:
+            begin
+            coding := FFactory.wrapCoding(cp.value.Link);
+            try
+              ok := regex.isMatch(coding.code) = include;
+            finally
+              coding.free;
+            end;
+            end;
+        end;
+      end;
+    end;
+    if ok then
+      list.Add(c.Link, 0);  
+    if (c.hasConcepts) then
+      iterateConceptsByPropertyRegex(c.conceptList, pp, regex, list, include);
   end;
 end;
 
@@ -1636,7 +1668,7 @@ begin
   end;
 end;
 
-procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemConceptListW; regex: TRegularExpression; list: TFhirCodeSystemProviderFilterContext);
 var
   c : TFhirCodeSystemConceptW;
   ok : boolean;
@@ -1644,13 +1676,7 @@ var
 begin
   for c in src do
   begin
-    rx := TRegularExpression.create('^'+regex+'$');
-    try
-      ok := rx.isMatch(c.code);
-    finally
-      rx.free;
-    end;
-    //ok := c.code.length = 5;
+    ok := regex.isMatch(c.code);
     if ok then
       list.Add(c.Link, 0);
     iterateConceptsByRegex(c.conceptList, regex, list);
@@ -1694,6 +1720,7 @@ var
   pp : TFhirCodeSystemPropertyW;
   cc : TFhirCodeSystemConceptW;
   includeRoot : boolean;
+  regex : TRegularExpression;
 begin
   SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   if (op in [foIsA, foDescendentOf]) and ((prop = 'concept') or (prop = 'code')) then
@@ -1795,13 +1822,14 @@ begin
   else if (op = foRegex) and (prop = 'code') then
   begin
     result := TFhirCodeSystemProviderFilterContext.Create;
+    regex := TRegularExpression.create('^'+value+'$');
     try
-      iterateConceptsByRegex(FCs.CodeSystem.conceptList, value, result as TFhirCodeSystemProviderFilterContext);
+      iterateConceptsByRegex(FCs.CodeSystem.conceptList, regex, result as TFhirCodeSystemProviderFilterContext);
       result.link;
     finally
+      regex.free;
       result.free;
     end;
-
   end
   else
   begin
@@ -1826,7 +1854,19 @@ begin
         finally
           result.free;
         end;
-      end    
+      end
+      else if (pp <> nil) and (op = foRegex) then
+      begin
+        result := TFhirCodeSystemProviderFilterContext.Create;     
+        regex := TRegularExpression.create('^'+value+'$');
+        try
+          iterateConceptsByPropertyRegex(FCs.CodeSystem.conceptList, pp, regex, result as TFhirCodeSystemProviderFilterContext, true);
+          result.link;
+        finally        
+          regex.free;
+          result.free;
+        end;
+      end
       else if (pp <> nil) and (op = foNotIn) then
       begin
         result := TFhirCodeSystemProviderFilterContext.Create;

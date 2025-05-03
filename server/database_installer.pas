@@ -395,6 +395,9 @@ begin
        ' Canonical         nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' FhirVersions      nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Hash              nchar(128)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Author            nchar(128)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' License           nchar(128)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' HomePage          nchar(128)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Description       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
        ' Content           '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_PackageVersions', 'PackageVersionKey')+') '+CreateTableInfo(FConn.owner.platform));

@@ -145,14 +145,17 @@ var
 begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
   conn.SQL := 'Insert into PackageVersions '+
-    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Hash, Content) values ('+
-    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, '+DBGetDate(conn.dialect)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :hash, :c)';
+    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Hash, Author, License, HomePage, Content) values ('+
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, '+DBGetDate(conn.dialect)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :hash, :aut, :lic, :hp, :c)';
   conn.prepare;
   conn.BindDateTimeEx('d', date);
   conn.BindString('u', canonical);
   conn.BindString('f', npm.fhirVersionList);
   conn.BindBlobFromString('desc', description);
   conn.BindString('mt', token);
+  conn.BindString('aut', npm.author);
+  conn.BindString('hp', npm.url);
+  conn.BindString('lic', npm.license);
   conn.BindString('hash', genHash(pck));
   conn.BindBlob('c', pck);
   conn.Execute;

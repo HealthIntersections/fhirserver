@@ -22,6 +22,7 @@ Search the Catalog:
 <input type="hidden" name="op" value="find"/>
 <table> 
   <tr><td>Id</td><td><input type="text" name="name" value="[%name%]"></td></tr>
+  <tr><td>Depends On</td><td><input type="text" name="dependson" value="[%dependson%]"> <i>includes both direct and indirect dependencies</i></td></tr>
   <tr><td>Canonical (Package)</td><td><input type="text" name="pkgcanonical" value="[%canonicalPkg%]"></td></tr>
   <tr><td>Canonical (Resource)</td><td><input type="text" name="canonical" value="[%canonicalUrl%]"></td></tr>
   <tr><td>FHIR Version</td><td><select name="fhirversion">
@@ -29,6 +30,7 @@ Search the Catalog:
   <option value="R2" [%r2selected%]>R2</option>
   <option value="R3" [%r3selected%]>R3</option>
   <option value="R4" [%r4selected%]>R4</option>
+  <option value="R5" [%r5selected%]>R5</option>
 </select></td></tr>
   
   

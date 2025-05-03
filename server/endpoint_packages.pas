@@ -86,14 +86,14 @@ type
     function getVersion(v : String) : String;
     function interpretVersion(v : String) : String;
 
-    function genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch, secure, packageLevel: boolean): String;
+    function genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch, secure, packageLevel, versioned: boolean): String;
 
     function serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
 
     procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
     procedure serveDownload(secure : boolean; id, version : String; response : TIdHTTPResponseInfo);
     procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure serveSearch(name, dependson, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
     procedure serveLog(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
@@ -361,6 +361,12 @@ begin
           begin
             c.ExecSQL('ALTER TABLE PackageVersions ADD Hash nchar(128) NULL');
           end;
+          if not t.hasColumn('Author') then
+          begin
+            c.ExecSQL('ALTER TABLE PackageVersions ADD HomePage nchar(128) NULL');
+            c.ExecSQL('ALTER TABLE PackageVersions ADD Author nchar(128) NULL');
+            c.ExecSQL('ALTER TABLE PackageVersions ADD License nchar(128) NULL');
+          end;
         end;
         if not m.HasTable('PackageURLs') then
         begin
@@ -592,20 +598,11 @@ begin
   end;
 end;
 
-function TFHIRPackageWebServer.genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch, secure, packageLevel: boolean): String;
+function TFHIRPackageWebServer.genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch, secure, packageLevel, versioned: boolean): String;
 var
   b : TFslStringBuilder;
   i : TJsonObject;
-  ss : String;
-  function securityLink(i : TJsonObject) : String;
-  begin
-    if i.str['security'] = 'all' then
-      result := '<img src="/sec_secure.png" title="New versions of this package must be posted manually, and a password is required"/> Locked'
-    else if i.str['security'] = 'current' then
-      result := '<img src="/sec_protected.png" title="The web spider maintains this package. A password is required to post new #current versions"/> Protected'
-    else
-      result := '<img src="/spacer.png"/><a href="protect?id='+i['name']+'">Protect me</a>';
-  end;
+  ss, v : String;
 begin
   if inSearch then
     ss := '&sort='
@@ -617,6 +614,15 @@ begin
     list.sort(TFHIRPackageWebServerSorter.Create(sort, 1));
   b := TFslStringBuilder.Create;
   try
+    if versioned then
+      v := 'Version Specific Mode'
+    else
+      v := 'All Versions Mode';
+
+    if list.count = 1 then   
+      b.Append('<p>1 match <i>('+v+')</i></p>'#13#10)
+    else
+      b.Append('<p>'+inttostr(list.count)+' matches <i>('+v+')</i></p>'#13#10);
     b.Append('<table class="grid pck-matches">'#13#10);
     b.Append('<tr class="pck-header">'#13#10);
     if (inSearch) then
@@ -627,9 +633,8 @@ begin
     if (inSearch) then
       b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsCanonical, sort, rev)+'">Canonical</a></td>'#13#10);
     b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsKind, sort, rev)+'">Kind</a></td>'#13#10);
-    b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsDownloads, sort, rev)+'"># Downloads</a></td>'#13#10);
-    if packageLevel then
-      b.Append('  <td class="pck-col" style="white-space:nowrap; width:150px">Security</td>'#13#10);
+    if (not versioned) then
+      b.Append('  <td class="pck-col"><a href="'+url+ss+genSort(mtsDownloads, sort, rev)+'"># Downloads</a></td>'#13#10);
     b.Append('</tr">'#13#10);
     for i in list do
     begin
@@ -637,7 +642,10 @@ begin
       if (inSearch) then
         b.Append('  <td class="pck-cell"><a href="'+i['url']+'" title="'+FormatTextToHTML(i['description'])+'">'+i['name']+'</a></td>'#13#10);
       if (inSearch) then
-        b.Append('  <td class="pck-cell" style="white-space:nowrap; width:100px">'+i['version']+' (<a href="'+URLPath([AbsoluteURL(secure), i['name']])+'">all</a>)</td>'#13#10)
+        if versioned then
+          b.Append('  <td class="pck-cell" style="white-space:nowrap; width:100px">'+i['version']+'</td>'#13#10)
+        else
+          b.Append('  <td class="pck-cell" style="white-space:nowrap; width:100px">'+i['version']+' (<a href="'+URLPath([AbsoluteURL(secure), i['name']])+'">all</a>)</td>'#13#10)
       else
         b.Append('  <td class="pck-cell" style="white-space:nowrap; width:100px"><a href="'+i['url']+'" title="'+FormatTextToHTML(i['description'])+'">'+i['version']+'</a></td>'#13#10);
       b.Append('  <td class="pck-cell" style="white-space:nowrap; width:100px">'+i['date'].Substring(0, 10)+'</td>'#13#10);
@@ -645,9 +653,8 @@ begin
       if (inSearch) then
         b.Append('  <td class="pck-cell"><a href="'+i['canonical']+'">'+i['canonical']+'</a></td>'#13#10);
       b.Append('  <td class="pck-cell">'+i['kind']+'</td>'#13#10);
-      b.Append('  <td class="pck-cell">'+i['count']+'</td>'#13#10);
-      if packageLevel then
-        b.Append('  <td class="pck-cell" style="white-space:nowrap; width:150px">'+securityLink(i)+'</td>'#13#10);
+      if (not versioned) then
+        b.Append('  <td class="pck-cell">'+i['count']+'</td>'#13#10);
       b.Append('</tr">'#13#10);
     end;
     b.Append('</table>'#13#10);
@@ -659,12 +666,16 @@ end;
 
 function TFHIRPackageWebServer.getVersion(v : String) : String;
 begin
-  if v.StartsWith('4.0') then
+  if v.StartsWith('5.0') then
     result := '4.0'
+  else if v.StartsWith('4.0') then
+    result := '5.0'
   else if v.StartsWith('3.0') then
     result := '3.0'
   else if v.StartsWith('1.0') then
     result := '1.0'
+  else if SameText(v, 'r5') then
+    result := '5.0'
   else if SameText(v, 'r4') then
     result := '4.0'
   else if SameText(v, 'r3') then
@@ -956,6 +967,7 @@ end;
 function codeForKind(kind : integer): String;
 begin
   case TFHIRPackageKind(kind) of
+    fpkNull : result := '';
     fpkCore : result := 'Core';
     fpkIG : result := 'IG';
     fpkIGTemplate : result := 'Template';
@@ -970,21 +982,24 @@ end;
 
 procedure TFHIRPackageWebServer.serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
 var
-conn : TFDBConnection;
-json, v, dist: TJsonObject;
-src : String;
-vars : TFslMap<TFHIRObject>;
-list : TFslList<TJsonObject>;
+  conn : TFDBConnection;
+  json, v, dist: TJsonObject;
+  src, keys, n, vs : String;
+  vars : TFslMap<TFHIRObject>;
+  vers : TFslMap<TJsonObject>;
+  list : TFslList<TJsonObject>;
 begin
   conn := FDB.getConnection('Package.server.versions');
   try
-    conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, DownloadCount, Kind, Hash, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
+    conn.sql := 'Select PackageVersionKey, Version, PubDate, FhirVersions, Canonical, DownloadCount, Kind, HomePage, Author, License, Hash, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
     conn.prepare;
     conn.Execute;
     list := TFslList<TJsonObject>.Create;
     try
+      vers := TFslMap<TJsonObject>.Create('vers');
       vars := TFslMap<TFHIRObject>.Create('vars');
       try
+        keys := '';
         json := TJsonObject.Create;
         try
           json['_id'] := id;
@@ -994,13 +1009,22 @@ begin
             json.forceObj['dist-tags']['latest'] := conn.ColStringByName['Version'];
             v := json.forceObj['versions'].forceObj[conn.ColStringByName['Version']];
             list.Add(v.link);
+            vers.add(conn.ColStringByName['PackageVersionKey'], v.link);
+            CommaAdd(keys, conn.ColStringByName['PackageVersionKey']);
             v['name'] := id;
+            v['_id'] := id+'@'+interpretVersion(conn.ColStringByName['FhirVersions']);
             v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
             v['version'] := conn.ColStringByName['Version'];
             v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
             v['kind'] := codeForKind(conn.ColIntegerByName['Kind']);
             v['count'] := conn.ColStringByName['DownloadCount'];
             v['canonical'] := conn.ColStringByName['Canonical'];
+            if (conn.ColStringByName['HomePage'] <> '') then
+              v['homepage'] := conn.ColStringByName['HomePage'];
+            if (conn.ColStringByName['License'] <> '') then
+              v['license'] := conn.ColStringByName['License'];
+            if (conn.ColStringByName['Author'] <> '') then
+              v.forceObj['author']['name'] := conn.ColStringByName['Author'];
             if not conn.ColNullByName['Description'] then
             begin
               json['description'] := conn.ColBlobAsStringByName['Description'];
@@ -1021,6 +1045,17 @@ begin
             else
               dist['tarball'] := 'http://'+request.Host+'/'+id+'/'+conn.ColStringByName['Version'];
           end;
+          conn.terminate;
+          conn.sql := 'Select PackageVersionKey, Dependency from PackageDependencies where PackageVersionKey in ('+keys+')';
+          conn.prepare;
+          conn.Execute;
+          while conn.FetchNext do
+          begin
+            n := conn.ColStringByName['Dependency'];
+            vs := n.substring(n.indexOf('#')+1);
+            n := n.substring(0, n.indexOf('#'));
+            vers[conn.ColStringByName['PackageVersionKey']].forceObj['dependencies'][n] := vs;
+          end;
 
           vars.add('name', TFHIRObjectText.Create(json['name']));
           vars.add('desc', TFHIRObjectText.Create(FormatTextToHTML(json['description'])));
@@ -1035,7 +1070,7 @@ begin
         begin
           vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
           vars.add('ver', TFHIRObjectText.Create('4.0.1'));
-          vars.add('matches', TFHIRObjectText.Create(genTable(AbsoluteUrl(secure)+'/'+ID, list, readSort(sort), sort.startsWith('-'), false, secure, false)));
+          vars.add('matches', TFHIRObjectText.Create(genTable(AbsoluteUrl(secure)+'/'+ID, list, readSort(sort), sort.startsWith('-'), false, secure, false, false)));
           vars.add('status', TFHIRObjectText.Create(status));
           vars.add('count', TFHIRObjectText.Create(conn.CountSQL('Select count(*) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
           vars.add('downloads', TFHIRObjectText.Create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
@@ -1048,6 +1083,7 @@ begin
         end;
       finally
         vars.free;
+        vers.free;
       end;
     finally
       list.free;
@@ -1171,108 +1207,147 @@ begin
     result := '';
 end;
 
-procedure TFHIRPackageWebServer.serveSearch(name, canonicalPkg, canonicalUrl,
+procedure TFHIRPackageWebServer.serveSearch(name, dependson, canonicalPkg, canonicalUrl,
   FHIRVersion, dependency, sort: String; secure: boolean;
   request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   json : TJsonArray;
-    v : TJsonObject;
-    filter, src : String;
-    vars : TFslMap<TFHIRObject>;
-    list : TFslList<TJsonObject>;
-    dt : TFslDateTime;
+  v : TJsonObject;
+  filter, src, dep : String;
+  vars : TFslMap<TFHIRObject>;
+  list : TFslList<TJsonObject>;
+  dt : TFslDateTime;
+  versioned : boolean;
+  index : integer;
+  deps, depsDone : TStringList;
 begin
   conn := FDB.getConnection('Package.server.search');
   try
-    filter := '';
-    if name <> '' then
-      filter := filter + ' and PackageVersions.id like ''%'+SQLWrapString(name)+'%''';
-    if canonicalPkg <> '' then
-      if canonicalPkg.EndsWith('%') then
-        filter := filter + ' and PackageVersions.canonical like '''+SQLWrapString(canonicalPkg)+''''
-      else
-        filter := filter + ' and PackageVersions.canonical = '''+SQLWrapString(canonicalPkg)+'''';
-    if canonicalUrl <> '' then
-      filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageURLs where URL like '''+SQLWrapString(canonicalUrl)+'%'')';
-    if FHIRVersion <> '' then
-      filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+SQLWrapString(getVersion(FHIRVersion))+'%'')';
-
-    if dependency <> '' then
-      if dependency.Contains('#') then
-        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'%'')'
-      else if dependency.Contains('|') then
-        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency.Replace('|', '#'))+'%'')'
-      else
-        filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'#%'')';
-
-    conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Kind, PackageVersions.Canonical, Packages.DownloadCount, Security, Packages.ManualToken, Description from Packages, PackageVersions '+
-      'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
-    conn.prepare;
-    conn.Execute;
     list := TFslList<TJsonObject>.Create;
     try
+      versioned := false;
+      deps := TStringList.create;
+      depsDone := TStringList.create;
       json := TJsonArray.Create;
       try
-        while conn.FetchNext do
-        begin
-          v := TJsonObject.Create;
-          json.add(v);
-          list.Add(v.Link);
-          v['name'] := conn.ColStringByName['Id'];
-          dt := conn.ColDateTimeExByName['PubDate'];
-          if (dt.year > 0) then
-            v['date'] := dt.toXML;
-          v['version'] := conn.ColStringByName['Version'];
-          v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
-            v['count'] := conn.ColStringByName['DownloadCount'];
-          v['canonical'] := conn.ColStringByName['Canonical'];
-          if not conn.ColNullByName['Description'] then
-            v['description'] := conn.ColBlobAsStringByName['Description'];
-          if conn.ColStringByName['ManualToken'] = '' then
-            v.str['security'] := 'none'
-          else if conn.ColIntegerByName['Security'] = 0 then
-            v.str['security'] := 'all'
-          else
-            v.str['security'] := 'current';
-          v['kind'] := codeForKind(conn.ColIntegerByName['Kind']);
-          v['url'] := URLPath([AbsoluteUrl(secure), conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
-        end;
+        depsDone.Sorted := true;
+        repeat
+          filter := '';
+          if name <> '' then
+          begin
+            versioned := name.contains('#');
+            if (name.Contains('#')) then
+            begin
+              filter := filter + ' and PackageVersions.id like ''%'+SQLWrapString(name.Substring(0, name.IndexOf('#')))+'%'' and PackageVersions.version like '''+SQLWrapString(name.Substring(name.IndexOf('#')+1))+'%''';
 
-        src := TJsonWriterDirect.writeArrayStr(json, true);
+            end
+            else
+              filter := filter + ' and PackageVersions.id like ''%'+SQLWrapString(name)+'%''';
+          end;
+          if deps.count > 0 then
+            filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageDependencies.PackageVersionKey from PackageDependencies where PackageDependencies.Dependency in ('+deps.CommaText+'))'
+          else if dependson <> '' then
+          begin
+            filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageDependencies.PackageVersionKey from PackageDependencies where PackageDependencies.Dependency like ''%'+SQLWrapString(dependson)+'%'')';
+            versioned := dependson.contains('#');
+          end;
+
+          if canonicalPkg <> '' then
+            if canonicalPkg.EndsWith('%') then
+              filter := filter + ' and PackageVersions.canonical like '''+SQLWrapString(canonicalPkg)+''''
+            else
+              filter := filter + ' and PackageVersions.canonical = '''+SQLWrapString(canonicalPkg)+'''';
+          if canonicalUrl <> '' then
+            filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageURLs where URL like '''+SQLWrapString(canonicalUrl)+'%'')';
+          if FHIRVersion <> '' then
+            filter := filter + ' and PackageVersions.PackageVersionKey in (Select PackageVersionKey from PackageFHIRVersions where Version like '''+SQLWrapString(getVersion(FHIRVersion))+'%'')';
+
+          if dependency <> '' then
+            if dependency.Contains('#') then
+              filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'%'')'
+            else if dependency.Contains('|') then
+              filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency.Replace('|', '#'))+'%'')'
+            else
+              filter := filter + ' and PackageVersions.PackageVersionKey in (select PackageVersionKey from PackageDependencies where Dependency like '''+SQLWrapString(dependency)+'#%'')';
+
+          Logging.log(filter);
+          if versioned then
+            conn.sql := 'select Id, Version, PubDate, FhirVersions, Kind, Canonical, Description from PackageVersions '+
+              'where PackageVersions.PackageVersionKey > 0 '+filter+' order by PubDate'
+          else
+            conn.sql := 'select Packages.Id, Version, PubDate, FhirVersions, Kind, PackageVersions.Canonical, Packages.DownloadCount, Description from Packages, PackageVersions '+
+              'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
+          conn.prepare;
+          conn.Execute;
+          deps.clear;
+          while conn.FetchNext do
+          begin
+            dep := ''''+conn.ColStringByName['Id']+'#'+conn.ColStringByName['Version']+'''';
+            if (not versioned) or not depsDone.Find(dep, index) then
+            begin
+              if (versioned) then
+              begin
+                depsDone.add(dep);
+                if (dependson <> '') then
+                  deps.add(dep);
+              end;
+              v := TJsonObject.Create;
+              json.add(v);
+              list.Add(v.Link);
+              v['name'] := conn.ColStringByName['Id'];
+              dt := conn.ColDateTimeExByName['PubDate'];
+              if (dt.year > 0) then
+                v['date'] := dt.toXML;
+              v['version'] := conn.ColStringByName['Version'];
+              v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
+                v['count'] := conn.ColStringByName['DownloadCount'];
+              v['canonical'] := conn.ColStringByName['Canonical'];
+              if not conn.ColNullByName['Description'] then
+                v['description'] := conn.ColBlobAsStringByName['Description'];
+              v['kind'] := codeForKind(conn.ColIntegerByName['Kind']);
+              v['url'] := URLPath([AbsoluteUrl(secure), conn.ColStringByName['Id'], conn.ColStringByName['Version']]);
+            end;
+          end;
+          conn.terminate;
+        until deps.count = 0;
+
+        response.ResponseNo := 200;
+        response.ResponseText := 'OK';
+        if (request.Accept.contains('/html')) then
+        begin
+          vars := TFslMap<TFHIRObject>.Create('vars');
+          try
+            vars.add('name', TFHIRObjectText.Create(name));
+            vars.add('dependson', TFHIRObjectText.Create(dependson));
+            vars.add('canonicalPkg', TFHIRObjectText.Create(canonicalPkg));
+            vars.add('canonicalUrl', TFHIRObjectText.Create(canonicalUrl));
+            vars.add('FHIRVersion', TFHIRObjectText.Create(FHIRVersion));
+            vars.add('count', TFHIRObjectText.Create(conn.CountSQL('Select count(*) from PackageVersions')));
+            vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(secure)));
+            vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+            vars.add('r2selected', TFHIRObjectText.Create(sel('R2', FHIRVersion)));
+            vars.add('r3selected', TFHIRObjectText.Create(sel('R3', FHIRVersion)));
+            vars.add('r4selected', TFHIRObjectText.Create(sel('R4', FHIRVersion)));
+            vars.add('r5selected', TFHIRObjectText.Create(sel('R5', FHIRVersion)));
+            vars.add('matches', TFHIRObjectText.Create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&dependson='+EncodeMIME(dependson)+'&fhirVersion='+FHIRVersion+'&canonicalPkg='+canonicalPkg+'&canonical='+canonicalUrl, list, readSort(sort), sort.startsWith('-'), true, secure, true, versioned)));
+            vars.add('status', TFHIRObjectText.Create(status));
+            vars.add('downloads', TFHIRObjectText.Create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions')));
+            returnFile(request, response, nil, request.Document, 'packages-search.html', secure, vars);
+          finally
+            vars.free;
+          end;
+        end
+        else
+        begin
+          src := TJsonWriterDirect.writeArrayStr(json, true);
+          response.ContentType := 'application/json';
+          response.ContentText := src;
+        end;   
       finally
         json.free;
-      end;
-
-      conn.terminate;
-      response.ResponseNo := 200;
-      response.ResponseText := 'OK';
-      if (request.Accept.contains('/html')) then
-      begin
-        vars := TFslMap<TFHIRObject>.Create('vars');
-        try
-          vars.add('name', TFHIRObjectText.Create(name));
-          vars.add('canonicalPkg', TFHIRObjectText.Create(canonicalPkg));
-          vars.add('canonicalUrl', TFHIRObjectText.Create(canonicalUrl));
-          vars.add('FHIRVersion', TFHIRObjectText.Create(FHIRVersion));
-          vars.add('count', TFHIRObjectText.Create(conn.CountSQL('Select count(*) from PackageVersions')));
-          vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(secure)));
-          vars.add('ver', TFHIRObjectText.Create('4.0.1'));
-          vars.add('r2selected', TFHIRObjectText.Create(sel('R2', FHIRVersion)));
-          vars.add('r3selected', TFHIRObjectText.Create(sel('R3', FHIRVersion)));
-          vars.add('r4selected', TFHIRObjectText.Create(sel('R4', FHIRVersion)));
-          vars.add('matches', TFHIRObjectText.Create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonicalPkg='+canonicalPkg+'&canonical='+canonicalUrl, list, readSort(sort), sort.startsWith('-'), true, secure, true)));
-          vars.add('status', TFHIRObjectText.Create(status));
-          vars.add('downloads', TFHIRObjectText.Create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions')));
-          returnFile(request, response, nil, request.Document, 'packages-search.html', secure, vars);
-        finally
-          vars.free;
-        end;
-      end
-      else
-      begin
-        response.ContentType := 'application/json';
-        response.ContentText := src;
+        deps.free;
+        depsDone.free;
       end;
     finally
       list.free;
@@ -1410,7 +1485,7 @@ begin
         c.ExecSQL('Insert into PackageDependencies (PackageVersionKey, Dependency) values('+inttostr(vkey)+', '''+SQLWrapString(s)+''')');
 
       if new then
-        c.ExecSQL('Insert into Packages (PackageKey, Id, Canonical, CurrentVersion, DownloadCount, ManualToken, Security) values ('+
+        c.ExecSQL('Insert into Packages (PackageKey, Id, Canonical, CurrentVersion, DownloadCount) values ('+
           inttostr(c.CountSQL('Select Max(PackageKey) from Packages') + 1)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(npm.canonical)+''', '+inttostr(vkey)+', 0, null, 0)');
       
       response.ResponseNo := 200;
@@ -1591,7 +1666,7 @@ begin
     begin
       if not pm.has('lastUpdated') then
       begin
-        serveSearch(pm['name'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, request, response);
+        serveSearch(pm['name'], pm['dependson'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, request, response);
         result := 'Search Packages';
       end
       else if pm['lastUpdated'].startsWith('-') then
