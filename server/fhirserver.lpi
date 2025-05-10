@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -848,7 +849,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="57">
+    <Exceptions Count="58">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -1017,7 +1018,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>
@@ -1037,6 +1038,9 @@
       <Item57>
         <Name Value="EDefinitionException"/>
       </Item57>
+      <Item58>
+        <Name Value="EWebServerException"/>
+      </Item58>
     </Exceptions>
   </Debugging>
 </CONFIG>
