@@ -1521,7 +1521,7 @@ begin
       else if v = SNOMED_CACHE_VERSION_UTF16 Then
         FStrings.IsUTF16 := true
       else
-        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities', itException);
+        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities ('+v+'/'+SNOMED_CACHE_VERSION_CURRENT+')', itException);
       VersionUri := oread.ReadString;
       VersionDate := oread.ReadString;
       s := VersionUri.split(['/']);
