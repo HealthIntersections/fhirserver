@@ -93,7 +93,7 @@ type
     procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
     procedure serveDownload(secure : boolean; id, version : String; response : TIdHTTPResponseInfo);
     procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    procedure serveSearch(name, dependson, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure serveSearch(name, dependson, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure, objWrapper : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
     procedure serveLog(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
@@ -1208,12 +1208,13 @@ begin
 end;
 
 procedure TFHIRPackageWebServer.serveSearch(name, dependson, canonicalPkg, canonicalUrl,
-  FHIRVersion, dependency, sort: String; secure: boolean;
+  FHIRVersion, dependency, sort: String; secure, objWrapper: boolean;
   request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   json : TJsonArray;
-  v : TJsonObject;
+  v, obj, w : TJsonObject;
+  e : TJsonNode;
   filter, src, dep : String;
   vars : TFslMap<TFHIRObject>;
   list : TFslList<TJsonObject>;
@@ -1340,10 +1341,26 @@ begin
         end
         else
         begin
-          src := TJsonWriterDirect.writeArrayStr(json, true);
+          if objWrapper then
+          begin
+            obj := TJsonObject.create;
+            try
+              for e in json do
+              begin
+                w := TJsonObject.create;
+                obj.forceArr['objects'].add(w);
+                w.obj['package'] := (e as TJsonObject).link;
+              end;
+              src := TJsonWriterDirect.writeObjectStr(obj, true);
+            finally
+              obj.free;
+            end;
+          end
+          else
+            src := TJsonWriterDirect.writeArrayStr(json, true);
           response.ContentType := 'application/json';
           response.ContentText := src;
-        end;   
+        end;
       finally
         json.free;
         deps.free;
@@ -1666,7 +1683,7 @@ begin
     begin
       if not pm.has('lastUpdated') then
       begin
-        serveSearch(pm['name'], pm['dependson'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, request, response);
+        serveSearch(pm['name'], pm['dependson'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, false, request, response);
         result := 'Search Packages';
       end
       else if pm['lastUpdated'].startsWith('-') then
@@ -1682,7 +1699,7 @@ begin
     end
     else if (request.CommandType = hcGET) and (request.Document = '/packages/-/v1/search') then
     begin
-      serveSearch(pm['text'], pm['dependson'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, request, response);
+      serveSearch(pm['text'], pm['dependson'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, true, request, response);
       result := 'Search Packages (v1)';
     end
     else if (request.CommandType = hcGET) and (request.Document = '/packages/log') then
