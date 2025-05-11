@@ -197,7 +197,8 @@ begin
         f := resp.forceArr['files'].addObject;
         f.str['contentType'] := c.GetColStringByName('mimetype');
         f.str['location'] := 'https://'+common.host+PathWithSlash+'data/'+uuid;
-        b64 := EncodeBase64(c.GetColBlobByName('blob'));
+        b64 := c.GetColStringByName('blob'); // it's already base64 encoded
+            // EncodeBase64(c.GetColBlobByName('blob'));
         if (not req.has('embeddedLengthMax')) or (b64.Length < req.int['embeddedLengthMax']) then
           f.str['embedded'] := b64;
         response.ResponseNo := 200;
