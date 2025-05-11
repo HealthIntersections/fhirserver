@@ -1680,6 +1680,11 @@ begin
         result := 'Packages updates since '+pm['lastUpdated'];
       end;
     end
+    else if (request.CommandType = hcGET) and (request.Document = '/packages/-/v1/search') then
+    begin
+      serveSearch(pm['text'], pm['dependson'], pm['pkgcanonical'], pm['canonical'], pm['fhirversion'], pm['dependency'], pm['sort'], secure, request, response);
+      result := 'Search Packages (v1)';
+    end
     else if (request.CommandType = hcGET) and (request.Document = '/packages/log') then
     begin
       serveLog(request, response);
