@@ -1531,8 +1531,23 @@ begin
 end;
 
 function  TFhirWebServer.insertValue(n : String; secure: boolean; variables: TFslMap<TFHIRObject>) : String;
+var localfilePath:string;
 begin
-  if n.startsWith('include ') then
+  if n.StartsWith('host_include ') then
+  begin
+    localfilePath := filePath(['/root/fhirserver/web_files',n.Substring(13).Trim]);
+    try
+      if FileExists(localfilePath) then
+        result := FileToString(localfilePath, TEncoding.UTF8)
+      else
+        result := '';
+    except
+      on E: Exception do
+        result := '';
+        //Logging.Log('Error reading host file: '+E.Message); 
+    end;
+  end
+  else if n.startsWith('include ') then
     result := SourceProvider.getSource(n.subString(8))
   else if n = 'id' then
     result := Common.Name
