@@ -78,6 +78,7 @@ type
     function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri : String; override;
+    function defaultToLatest : boolean; override;
     function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(opContext : TTxOperationContext; code : String):String; override;
     function locate(opContext : TTxOperationContext; code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -131,6 +132,11 @@ end;
 function TUSStateServices.systemUri : String;
 begin
   result := 'https://www.usps.com/';
+end;
+
+function TUSStateServices.defaultToLatest: boolean;
+begin
+  Result := true;
 end;
 
 function TUSStateServices.getDefinition(opContext : TTxOperationContext; code: String): String;

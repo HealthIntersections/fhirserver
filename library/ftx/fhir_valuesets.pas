@@ -730,7 +730,7 @@ begin
       FFactory.checkNoModifiers(ccf, 'ValueSetChecker.prepare', desc + '.filter');
       if not (('concept' = ccf.prop) and (ccf.Op in [foIsA, foDescendentOf])) then
         if not cs.doesFilter(FOpContext, ccf.prop, ccf.Op, ccf.value) then
-          raise ETerminologyError.create('The filter "' + ccf.prop + ' ' + CODES_TFhirFilterOperator[ccf.Op] + ' ' + ccf.value + '"  from the value set '+FValueSet.url+' was not understood in the context of ' + cs.systemUri, itNotSupported);
+          raise ETerminologyError.create(FI18n.translate('FILTER_NOT_UNDERSTOOD', FParams.HTTPLanguages, [ccf.prop, CODES_TFhirFilterOperator[ccf.Op], ccf.value, FValueSet.url, cs.systemUri])+' (1)', itNotSupported);
     end;
   end
   else if cc.systemUri <> '' then
@@ -2213,7 +2213,7 @@ begin
             raise ETerminologyError.create(FI18n.translate('UNABLE_TO_HANDLE_SYSTEM_FILTER_WITH_NO_VALUE', FParams.HTTPLanguages, [cs.systemUri, fc.prop, CODES_TFhirFilterOperator[fc.Op]]), itInvalid, oicVSProcessing);
           f := cs.filter(FOpContext, false, false, fc.prop, fc.Op, fc.value, prep);
           if f = nil then
-            raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vs.vurl+' was not understood in the context of '+cs.systemUri, itNotSupported);
+            raise ETerminologyError.create(FI18n.translate('FILTER_NOT_UNDERSTOOD', FParams.HTTPLanguages, [fc.prop, CODES_TFhirFilterOperator[fc.Op], fc.value, vs.vurl, cs.systemUri])+' (2)', itNotSupported);
           f.summary := '"'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'"';
           filters[i] := f;
           inc(i);
@@ -3813,7 +3813,7 @@ begin
                     ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                     f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
                     if f = nil then
-                      raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
+                      raise ETerminologyError.create(FI18n.translate('FILTER_NOT_UNDERSTOOD', FParams.HTTPLanguages, [fc.prop, CODES_TFhirFilterOperator[fc.Op], fc.value, vsSrc.url, cs.systemUri])+' (3)', itNotSupported);
                     filters.Insert(offset, f);
                     if cs.isNotClosed(FOpContext, filter, f) then
                       notClosed := true;
@@ -4137,7 +4137,7 @@ begin
                   ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
                   f := cs.filter(FOpContext, true, i = 0, fc.prop, fc.Op, fc.value, prep);
                   if f = nil then
-                    raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
+                    raise ETerminologyError.create(FI18n.translate('FILTER_NOT_UNDERSTOOD', FParams.HTTPLanguages, [fc.prop, CODES_TFhirFilterOperator[fc.Op], fc.value, vsSrc.url, cs.systemUri])+' (4)', itNotSupported);
                   filters.Insert(offset, f);
                   if cs.isNotClosed(FOpContext, filter, f) then
                     notClosed := true;

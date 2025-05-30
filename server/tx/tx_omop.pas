@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_i18n,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_i18n, fsl_logging,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -113,6 +113,7 @@ type
     procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
     procedure extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
+    function buildValueSet(factory : TFHIRFactory; id : String) : TFhirValueSetW;
 
     procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
   end;
@@ -192,7 +193,7 @@ end;
 
 function TOMOPServices.systemUri: String;
 begin
-  result := 'http://fhir.ohdsi.org/CodeSystem/concepts';
+  result := 'https://fhir-terminology.ohdsi.org';
 end;
 
 function TOMOPServices.version: String;
@@ -243,10 +244,10 @@ var
 begin
   conn := db.GetConnection('locate');
   try
-    conn.sql := 'Select concept_name, domain_id from Concepts where concept_id = '''+SQLWrapString(code)+'''';
+    conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and concept_id = '''+SQLWrapString(code)+'''';
     conn.Prepare;
     conn.Execute;
-    if conn.FetchNext then
+    if conn.FetchNext and (conn.ColStringByName['concept_id'] = code) then
     begin
       c := TOMOPConcept.Create;
       try
@@ -381,9 +382,17 @@ begin
     f := TOMOPFilter.Create;
     try
       f.conn := db.GetConnection('filter');
-      f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where domain_id = '''+SQLWrapString(value)+'''';
-      f.conn.Prepare;
-      f.conn.Execute;
+      if (forExpansion or forIteration) then
+      begin
+        f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and domain_id = '''+SQLWrapString(value)+'''';
+        f.conn.Prepare;
+        f.conn.Execute;
+      end
+      else
+      begin
+        f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and domain_id = '''+SQLWrapString(value)+''' and concept_id = :cid';
+        f.conn.Prepare;
+      end;
       result := f.link;
     finally
       f.free;
@@ -394,8 +403,28 @@ begin
 end;
 
 function TOMOPServices.filterLocate(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
+var
+  filter : TOMOPFilter;
+  c : TOMOPConcept;
 begin
-  raise ETerminologyError.Create('not done yet: filterLocate', itBusinessRule);
+  result := nil;
+  filter := ctxt as TOMOPFilter;
+  filter.conn.BindString('cid', code);
+  filter.conn.execute;
+  if (filter.conn.FetchNext) and (filter.conn.ColStringByName['concept_id'] = code) then
+  begin
+    c := TOMOPConcept.Create;
+    try
+      c.code := code;
+      c.display := filter.conn.ColStringByName['concept_name'];
+      c.domain := filter.conn.ColStringByName['domain_id'];
+      result := c.link;
+    finally
+      c.free;
+    end;
+  end
+  else
+    message := 'Code '''+code+''' is not in the value set';
 end;
 
 function TOMOPServices.FilterMore(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): boolean;
@@ -446,13 +475,84 @@ var
 begin
   if hasProp(props, 'domain', true) then
     resp.addProp('domain').value := factory.makeCode((ctxt as TOMOPConcept).domain);
-  conn := db.GetConnection('display');
+  conn := db.GetConnection('lookup');
   try
     conn.sql := 'Select concept_synonym_name from ConceptSynonyms where concept_id = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
     conn.Prepare;
     conn.Execute;
     while conn.FetchNext do    
-     resp.addDesignation('en', '', '', '', conn.ColStringByName['concept_synonym_name']);
+      resp.addDesignation('en', '', '', '', conn.ColStringByName['concept_synonym_name']);
+    conn.terminate;
+    conn.sql := 'Select * from Concepts where concept_id = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
+    conn.Prepare;
+    conn.Execute;
+    if conn.FetchNext then
+    begin           
+      if hasProp(props, 'class_id', true) then
+        resp.addProp('class_id').value := factory.makeCode(conn.ColStringByName['concept_class_id']);
+      if hasProp(props, 'start_date', true) and not conn.ColNullByName['valid_start_date'] then
+        resp.addProp('start_date').value := factory.makeCode(conn.ColStringByName['valid_start_date']);
+      if hasProp(props, 'end_date', true) and not conn.ColNullByName['valid_end_date'] then
+        resp.addProp('end_date').value := factory.makeCode(conn.ColStringByName['valid_end_date']);
+    end;
+    conn.terminate;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise
+    end;
+  end;
+end;
+
+function TOMOPServices.buildValueSet(factory: TFHIRFactory; id: String): TFhirValueSetW;
+var
+  domain : String;
+  msg : String;
+  inc : TFhirValueSetComposeIncludeW;
+  filt :  TFhirValueSetComposeIncludeFilterW;
+  conn : TFDBConnection;
+begin
+  result := nil;
+  domain := id.subString(44);
+  conn := db.GetConnection('locate');
+  try
+    conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where concept_id = '''+SQLWrapString(domain)+'''';
+    conn.Prepare;
+    conn.Execute;
+    if conn.FetchNext and (conn.ColStringByName['concept_id'] = domain) then
+    begin
+      result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
+      try
+        result.url := id;
+        result.status := psActive;
+        result.version := version;
+        result.name := 'OMOPDomain'+domain;
+        result.description := 'OMOP value set for domain '+conn.ColStringByName['concept_name'];
+        result.date := TFslDateTime.makeUTC;
+        result.experimental := false;
+        inc := result.addInclude;
+        try
+          inc.systemUri := systemUri;
+          filt := inc.addFilter;
+          try
+            filt.prop := 'domain';
+            filt.op := foEqual;
+            filt.value := domain;
+          finally
+            filt.free;
+          end;
+        finally
+          inc.free;
+        end;
+        result.link;
+      finally
+        result.free;
+      end;
+    end
+    else    
+      raise ETerminologyError.create('Unknown Value Domain '+id);
     conn.terminate;
     conn.Release;
   except
