@@ -323,6 +323,7 @@ Type
     procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); virtual;
     procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); virtual;
 
+    procedure registerConceptMaps(list : TFslList<TFHIRConceptMapW>); virtual;
     procedure RecordUse(count : integer = 1);
     procedure checkReady; virtual;
     function defToThisVersion(specifiedVersion : String) : boolean; virtual;
@@ -997,6 +998,11 @@ end;
 procedure TCodeSystemProvider.getCDSInfo(opContext : TTxOperationContext; card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   card.summary := 'No CDSHook Implementation for code system '+systemUri+' for code '+code+' ('+display+')';
+end;
+
+procedure TCodeSystemProvider.registerConceptMaps(list: TFslList<TFHIRConceptMapW>);
+begin
+  // nothing
 end;
 
 function TCodeSystemProvider.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
