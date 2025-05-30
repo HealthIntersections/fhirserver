@@ -62,6 +62,7 @@ type
     function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri : String; override;
     function version : String; override;
+    function defaultToLatest : boolean; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(opContext : TTxOperationContext; code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(opContext : TTxOperationContext; code : String):String; override;
@@ -308,6 +309,11 @@ end;
 function THGVSProvider.version: String;
 begin
   result := '2.0';
+end;
+
+function THGVSProvider.defaultToLatest: boolean;
+begin
+  Result := true;
 end;
 
 end.

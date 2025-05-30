@@ -1102,8 +1102,22 @@ begin
 end;
 
 function TTerminologyServerStore.defToLatestForSystem(system : String) : boolean;
+var
+  p : TCodeSystemProvider;
 begin
-  result := system <> URI_SNOMED;
+  if system = URI_SNOMED then
+    result := false
+  else if ProviderClasses.ContainsKey(system) then
+  begin
+    p := ProviderClasses[system].getProvider;
+    try
+      result := p.defaultToLatest;
+    finally
+      p.free;
+    end;
+  end
+  else
+    result := false;
 end;
 
 function TTerminologyServerStore.getProvider(system: String; version: String;
@@ -1553,6 +1567,8 @@ begin
     vs := CommonTerminologies.Loinc.buildValueSet(Factory, id)
   else if id = 'http://loinc.org/vs' then
     vs := CommonTerminologies.Loinc.buildValueSet(Factory, '')
+  else if id.startsWith('https://fhir-terminology.ohdsi.org/ValueSet') then
+    vs := CommonTerminologies.OMOP.buildValueSet(Factory, id)
   else if id = ANY_CODE_VS then
     vs := makeAnyValueSet
   else

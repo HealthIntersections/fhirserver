@@ -271,6 +271,7 @@ Type
     function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri() : String; virtual; abstract;
     function version() : String; virtual;
+    function defaultToLatest : boolean; virtual;
     function defLang() : TIETFLang; virtual;
     function hasAnyDisplays(disp : THTTPLanguageList) : boolean; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
@@ -1190,6 +1191,11 @@ end;
 function TCodeSystemProvider.version(): String;
 begin
   result := '';
+end;
+
+function TCodeSystemProvider.defaultToLatest: boolean;
+begin
+  result := false;
 end;
 
 function TCodeSystemProvider.defLang(): TIETFLang;
