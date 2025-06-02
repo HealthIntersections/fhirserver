@@ -47,21 +47,6 @@ const
   URI_VERSION_BREAK = '#';
 
 Type
-
-  { TCodeSystemProviderFactory }
-
-  TCodeSystemProviderFactory = class (TFslObject)
-  public
-    function link : TCodeSystemProviderFactory; overload;
-    function getProvider : TCodeSystemProvider; virtual; abstract;
-    function systemUri : String; virtual; abstract;
-    function version : String; virtual; abstract;
-    function name : String; virtual; abstract;
-    function TotalCount : integer; virtual; abstract;
-    function versionDesc : String; virtual; abstract;
-    function description : String; virtual; abstract;
-  end;
-
   { TCodeSystemProviderGeneralFactory }
 
   TCodeSystemProviderGeneralFactory = class (TCodeSystemProviderFactory)
@@ -220,7 +205,8 @@ Type
     procedure AddCodeSystemToCache(packageId : String; cs : TFHIRCodeSystemW; base : boolean); overload;
     procedure RemoveCodeSystemFromCache(id : String);
     function getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
-    function defToLatestForSystem(system : String) : boolean;       
+    function defToLatestForSystem(system : String) : boolean;
+    procedure LoadImplicitConceptMaps;
   protected
     FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TFDBManager;
@@ -296,13 +282,6 @@ Type
   end;
 
 implementation
-
-{ TCodeSystemProviderFactory }
-
-function TCodeSystemProviderFactory.link: TCodeSystemProviderFactory;
-begin
-  result := TCodeSystemProviderFactory(inherited link);
-end;
 
 { TTerminologyServerStore }
 
@@ -460,6 +439,7 @@ begin
       end;
     end;
   end;
+  LoadImplicitConceptMaps;
 end;
 
 procedure TTerminologyServerStore.declareCodeSystems(list : TFslList<TFhirResourceV>);
@@ -1118,6 +1098,47 @@ begin
   end
   else
     result := false;
+end;
+
+procedure TTerminologyServerStore.LoadImplicitConceptMaps;
+var
+  pvf : TCodeSystemProviderFactory;
+  pv : TCodeSystemProvider;
+  cml, l: TFslList<TFhirConceptMapW>;
+  cm : TFhirConceptMapW;
+begin
+  cml := TFslList<TFhirConceptMapW>.create;
+  try
+    for pvf in ProviderClasses.Values do
+    begin
+      pv := pvf.getProvider;
+      try
+        l := TFslList<TFhirConceptMapW>.create;
+        try
+          pv.registerConceptMaps(l, Factory);
+          for cm in l do
+          begin
+            cm.tag := pvf.link;
+            cml.add(cm.link);
+          end;
+        finally
+          l.free;
+        end;
+      finally
+        pv.free;
+      end;
+    end;
+
+    for cm in cml do
+    begin
+      FConceptMapsById.AddOrSetValue(cm.id, cm.Link);
+      FConceptMapsByURL.AddOrSetValue(cm.url, cm.Link);
+      FConceptMapsByURL.AddOrSetValue(cm.vurl, cm.Link);
+      FBaseConceptMaps.AddOrSetValue(cm.url, cm.Link);
+    end;
+  finally
+    cml.free;
+  end;
 end;
 
 function TTerminologyServerStore.getProvider(system: String; version: String;
@@ -1938,6 +1959,7 @@ begin
         raise EFslException.Create('Unknown type '+tx['type'].value);
     end;
   end;
+
 end;
 
 procedure TCommonTerminologies.SetLoinc(const Value: TLOINCServices);

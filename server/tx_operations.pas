@@ -813,14 +813,14 @@ begin
     if (mr is TFHIRConceptMapW) then
       if mapOk(mr as TFHIRConceptMapW, srcCS, srcVS, tgtCS, tgtVS) then
         list.add(mr.link as TFHIRConceptMapW);
-  //all := FServer.GetConceptMapList;
-  //try
-  //  for cm in all do
-  //    if mapOk(cm, srcCS, srcVS, tgtCS, tgtVS) then
-  //      list.add(cm.link);
-  //finally
-  //  all.free;
-  //end;
+  all := FServer.GetConceptMapList;
+  try
+    for cm in all do
+      if mapOk(cm, srcCS, srcVS, tgtCS, tgtVS) then
+        list.add(cm.link);
+  finally
+    all.free;
+  end;
 end;
 
 function TFhirConceptMapTranslationOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TFslTimeTracker) : String;
@@ -875,7 +875,7 @@ begin
               try
                 coding := coded.codings;
                 try
-                  pOut := FServer.translate(request.langList, request.id, cml, coding[0], params, txResources, profile);
+                  pOut := FServer.translate(request.langList, request.id, cml, coding[0], tgtSystem, params, txResources, profile);
                   try
                     response.resource := pOut.Resource.link;
                     response.HTTPCode := 200;

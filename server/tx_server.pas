@@ -137,7 +137,7 @@ Type
     function validate(reqId : String; vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRTxOperationParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string; tt : TFslTimeTracker) : TFhirParametersW; overload;
     function validate(reqId, issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRTxOperationParams; abstractOk, inferSystem: boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string; tt : TFslTimeTracker) : TFhirParametersW; overload;
     function codeInValueSet(c : TFHIRCodingW; valueSet : String) : boolean;
-    function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding : TFHIRCodingW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW; overload;
+    function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding : TFHIRCodingW; target : string; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW; overload;
     function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
     function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
     Function MakeChecker(reqId, uri, version : string; profile : TFHIRTxOperationParams; tt : TFslTimeTracker) : TValueSetChecker;
@@ -1509,7 +1509,7 @@ begin
   inherited Unload;
 end;
 
-function TTerminologyServer.translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW;
+function TTerminologyServer.translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; target : string; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW;
 var
   worker : TFHIRConceptMapTranslator;
   tt : TFslTimeTracker;
@@ -1517,7 +1517,7 @@ begin
   tt := TFslTimeTracker.create;
   worker := TFHIRConceptMapTranslator.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount, tt.link, Factory.version), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
   try
-    result := worker.translate(langList, reqId, cml, coding, params, profile);
+    result := worker.translate(langList, reqId, cml, coding, target, params, profile);
   finally
     worker.free;
     tt.free;

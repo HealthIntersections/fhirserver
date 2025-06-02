@@ -242,6 +242,28 @@ Type
     function passes(prop : TFhirCodeSystemConceptPropertyW) : boolean;
   end;
 
+  { TCodeTranslation }
+
+  TCodeTranslation = class (TFslObject)
+  private
+    FCode : String;
+    FMap: String;
+    FUri : String;
+    FVersion : String;
+    FDisplay : String;
+    FMessage : String;
+    FEquivalence : TFHIRConceptEquivalence;
+  public
+    function link : TCodeTranslation; overload;
+    property code : String read FCode write FCode;
+    property uri : String read FUri write FUri;
+    property version : String read FVersion write FVersion;
+    property display : String read FDisplay write FDisplay;
+    property message : String read FMessage write FMessage;
+    property equivalence : TFHIRConceptEquivalence read FEquivalence write FEquivalence;
+    property map : String read FMap write FMap;
+  end;
+
   { TCodeSystemProvider }
 
   TCodeSystemProvider = class abstract (TFslObject)
@@ -323,10 +345,26 @@ Type
     procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); virtual;
     procedure getCDSInfo(opContext : TTxOperationContext; card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); virtual;
 
+    procedure registerConceptMaps(list : TFslList<TFHIRConceptMapW>; factory : TFHIRFactory); virtual;
+    procedure getTranslations(coding: TFHIRCodingW; target : String; codes : TFslList<TCodeTranslation>); virtual;
     procedure RecordUse(count : integer = 1);
     procedure checkReady; virtual;
     function defToThisVersion(specifiedVersion : String) : boolean; virtual;
     property UseCount : cardinal read FUseCount;
+  end;
+
+  { TCodeSystemProviderFactory }
+
+  TCodeSystemProviderFactory = class (TFslObject)
+  public
+    function link : TCodeSystemProviderFactory; overload;
+    function getProvider : TCodeSystemProvider; virtual; abstract;
+    function systemUri : String; virtual; abstract;
+    function version : String; virtual; abstract;
+    function name : String; virtual; abstract;
+    function TotalCount : integer; virtual; abstract;
+    function versionDesc : String; virtual; abstract;
+    function description : String; virtual; abstract;
   end;
 
 const
@@ -383,6 +421,13 @@ begin
       end;
     end;
   end;
+end;
+
+{ TCodeTranslation }
+
+function TCodeTranslation.link: TCodeTranslation;
+begin
+  result := TCodeTranslation(inherited link);
 end;
 
 
@@ -999,6 +1044,16 @@ begin
   card.summary := 'No CDSHook Implementation for code system '+systemUri+' for code '+code+' ('+display+')';
 end;
 
+procedure TCodeSystemProvider.registerConceptMaps(list: TFslList<TFHIRConceptMapW>; factory : TFHIRFactory);
+begin
+  // nothing
+end;
+
+procedure TCodeSystemProvider.getTranslations(coding: TFHIRCodingW; target: String; codes: TFslList<TCodeTranslation>);
+begin
+  // no translations
+end;
+
 function TCodeSystemProvider.getPrepContext(opContext : TTxOperationContext): TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
@@ -1447,5 +1502,13 @@ begin
   inherited Create;
   FVersion := version;
 end;
+
+{ TCodeSystemProviderFactory }
+
+function TCodeSystemProviderFactory.link: TCodeSystemProviderFactory;
+begin
+  result := TCodeSystemProviderFactory(inherited link);
+end;
+
 
 end.

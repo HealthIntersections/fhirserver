@@ -74,6 +74,7 @@ type
     db : TFDBManager;
     FVersion : String;
     procedure loadVersion;
+    function makeCM(id, src, tgt : String; factory : TFHIRFactory): TFHIRConceptMapW;
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
@@ -114,7 +115,9 @@ type
     procedure extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
     function buildValueSet(factory : TFHIRFactory; id : String) : TFhirValueSetW;
+    procedure getTranslations(coding: TFHIRCodingW; target : String; codes : TFslList<TCodeTranslation>); override;
 
+    procedure registerConceptMaps(list : TFslList<TFHIRConceptMapW>; factory : TFHIRFactory); override;
     procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -469,9 +472,102 @@ begin
   raise ETerminologyError.Create('not done yet: getCDSInfo', itBusinessRule);
 end;
 
+function getVocabId(url : String) : Integer;
+begin
+  if (url = 'http://hl7.org/fhir/sid/icd-9-cm') then result := 5046
+  else if (url = 'http://snomed.info/sct') then result := 44819097
+  else if (url = 'http://hl7.org/fhir/sid/icd-10-cm') then result := 44819098
+  else if (url = 'http://hl7.org/fhir/sid/icd-9-cm') then result := 44819099
+  else if (url = 'http://www.ama-assn.org/go/cpt') then result := 44819100
+  else if (url = 'http://terminology.hl7.org/CodeSystem/HCPCS-all-codes') then result := 44819101
+  else if (url = 'http://loinc.org') then result := 44819102
+  else if (url = 'http://www.nlm.nih.gov/research/umls/rxnorm') then result := 44819104
+  else if (url = 'http://hl7.org/fhir/sid/ndc') then result := 44819105
+  else if (url = 'http://unitsofmeasure.org') then result := 44819107
+  else if (url = 'http://nucc.org/provider-taxonomy') then result := 44819137
+  else
+    result := -1;
+
+end;
+
+function getUri(key : integer) : String;
+begin
+  case key of
+//    252	RxNorm Extension
+//5029	Cost Type
+   5046: exit('http://hl7.org/fhir/sid/icd-9-cm'); //	ICD9CM
+//32044	UB04 Typ bill
+//32045	UB04 Point of Origin
+//32046	UB04 Pri Typ of Adm
+//32047	UB04 Pt dis status
+//32471	Plan
+//32472	Sponsor
+//32473	SOPT
+//32474	Plan Stop Reason
+//32485	CDM
+//32523	Episode
+//32541	OSM
+//32570	US Census
+//32675	Metadata
+//32724	Korean Revenue Code
+//32758	OMOP Extension
+//32808	Type Concept
+//32887	Condition Status
+//33069	Language
+//581457	Cost
+//44819096	None
+  44819097: exit('http://snomed.info/sct'); //	SNOMED
+  44819098: exit('http://hl7.org/fhir/sid/icd-10-cm'); //	ICD10CM
+  44819099: exit('http://hl7.org/fhir/sid/icd-9-cm'); // 	ICD9Proc
+  44819100: exit('http://www.ama-assn.org/go/cpt'); //	CPT4
+  44819101: exit('http://terminology.hl7.org/CodeSystem/HCPCS-all-codes'); //	HCPCS
+  44819102: exit('http://loinc.org'); //	LOINC
+  44819104: exit('http://www.nlm.nih.gov/research/umls/rxnorm'); //	RxNorm
+  44819105: exit('http://hl7.org/fhir/sid/ndc'); //	NDC
+  44819107: exit('http://unitsofmeasure.org'); //	UCUM
+//44819108	Gender
+//44819109	Race
+//44819110	CMS Place of Service
+//44819117	ATC
+//44819119	Visit
+//44819126	Drug Type
+//44819127	Condition Type
+//44819128	Procedure Type
+//44819129	Observation Type
+//44819133	Revenue Code
+//44819134	Ethnicity
+//44819135	Death Type
+  44819137: exit('http://nucc.org/provider-taxonomy'); //	NUCC
+//44819138	Medicare Specialty
+//44819140	SPL
+//44819146	Note Type
+//44819147	Domain
+//44819149	Obs Period Type
+//44819150	Visit Type
+//44819151	Device Type
+//44819152	Meas Type
+//44819153	Currency
+//44819232	Vocabulary
+//44819233	Concept Class
+//44819234	Cohort Type
+//44819235	Relationship
+//45756746	ABMS
+else
+  exit('');
+end;
+end;
+
+function getUriOrError(key : integer) : String;
+begin
+  result := getUri(key);
+  if result = '' then
+    raise ETerminologyError.create('Unmapped OMOP Vocabulary id: '+inttostr(key));
+end;
+
 procedure TOMOPServices.extendLookup(opContext : TTxOperationContext; factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   conn : TFDBConnection;
+  st : TStringList;
 begin
   if hasProp(props, 'domain', true) then
     resp.addProp('domain').value := factory.makeCode((ctxt as TOMOPConcept).domain);
@@ -494,8 +590,45 @@ begin
         resp.addProp('start_date').value := factory.makeCode(conn.ColStringByName['valid_start_date']);
       if hasProp(props, 'end_date', true) and not conn.ColNullByName['valid_end_date'] then
         resp.addProp('end_date').value := factory.makeCode(conn.ColStringByName['valid_end_date']);
+      if hasProp(props, 'source', true) and not conn.ColNullByName['concept_code'] then
+        resp.addProp('source').value := factory.makeCoding(getUriOrError(conn.ColIntegerByName['vocabulary_id']), conn.ColStringByName['concept_code']);
     end;
     conn.terminate;
+    st := TStringList.create;
+    try
+      conn.sql := 'Select Concepts.concept_id, Concepts.concept_name, Relationships.relationship_id '+
+         'from Concepts, ConceptRelationships, Relationships where '+
+          'ConceptRelationships.relationship_id = Relationships.relationship_concept_id '+
+          'and ConceptRelationships.concept_id_2 = Concepts.concept_id '+
+          'and ConceptRelationships.concept_id_1 = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
+      conn.prepare;
+      conn.execute;
+      while conn.fetchNext do
+      begin
+        st.add(conn.ColStringByName['concept_id']);
+        if hasProp(props, conn.ColStringByName['relationship_id'], true) then
+          resp.addProp(conn.ColStringByName['relationship_id']).value := factory.makeCoding(systemUri, conn.ColStringByName['concept_id'], conn.ColStringByName['concept_name']);
+      end;
+      conn.terminate;
+
+      conn.sql := 'Select Concepts.concept_id, Concepts.concept_name, Relationships.reverse_relationship_id '+
+         'from Concepts, ConceptRelationships, Relationships where '+
+          'ConceptRelationships.relationship_id = Relationships.relationship_concept_id '+
+          'and ConceptRelationships.concept_id_1 = Concepts.concept_id '+
+          'and ConceptRelationships.concept_id_2 = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
+      conn.prepare;
+      conn.execute;
+      while conn.fetchNext do
+      begin
+        if st.IndexOf(conn.ColStringByName['concept_id']) = -1 then
+          if hasProp(props, conn.ColStringByName['reverse_relationship_id'], true) then
+            resp.addProp(conn.ColStringByName['reverse_relationship_id']).value := factory.makeCoding(systemUri, conn.ColStringByName['concept_id'], conn.ColStringByName['concept_name']);
+      end;
+      conn.terminate;
+    finally
+      st.free;
+    end;
+
     conn.Release;
   except
     on e : Exception do
@@ -553,6 +686,89 @@ begin
     end
     else    
       raise ETerminologyError.create('Unknown Value Domain '+id);
+    conn.terminate;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise
+    end;
+  end;
+end;
+
+procedure TOMOPServices.getTranslations(coding: TFHIRCodingW; target: String; codes: TFslList<TCodeTranslation>);
+var
+  vid : integer; 
+  conn : TFDBConnection;
+  t : TCodeTranslation;
+begin
+  vid := getVocabId(target);
+  if (vid > -1) then
+  begin
+    conn := db.GetConnection('getTranslations');
+    try
+      conn.sql := 'Select concept_code, concept_name from Concepts where concept_id = '''+coding.code+''' and vocabulary_id = '+inttostr(vid);
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+      begin
+        t := TCodeTranslation.create;
+        try
+          t.uri := target;
+          t.code := conn.ColStringByName['concept_code'];
+          t.display := conn.ColStringByName['concept_name'];
+          t.equivalence := cmeEquivalent;
+          t.map := systemUri+'/ConceptMap/to-'+inttostr(vid)+'|'+version;
+          codes.add(t.link);
+        finally
+          t.free;
+        end;
+      end;
+      conn.terminate;
+      conn.Release;
+    except
+      on e : Exception do
+      begin
+        conn.Error(e);
+        raise
+      end;
+    end;
+
+  end;
+end;
+
+function TOMOPServices.makeCM(id, src, tgt : String; factory : TFHIRFactory) : TFHIRConceptMapW;
+var
+  g : TFhirConceptMapGroupW;
+begin
+  result := factory.wrapConceptMap(factory.makeResource('ConceptMap'));
+  result.id := id;
+  result.url := systemUri+'/ConceptMap/'+id;
+  result.addGroup(src,tgt).free;
+end;
+
+procedure TOMOPServices.registerConceptMaps(list: TFslList<TFHIRConceptMapW>; factory : TFHIRFactory);
+var
+  conn : TFDBConnection;
+  key : integer;
+  uri : String;
+begin                         
+  conn := db.GetConnection('registerConceptMaps');
+  try
+    conn.sql := 'Select DISTINCT vocabulary_id from Concepts';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+    begin
+      key := conn.ColIntegerByName['vocabulary_id'];
+      uri := getUri(key);
+      if (uri <> '') then
+      begin
+        list.add(makeCM('to-'+inttostr(key), systemUri, uri, factory));
+        list.add(makeCM('from-'+inttostr(key), uri, systemUri, factory));
+      end;
+    end;
     conn.terminate;
     conn.Release;
   except

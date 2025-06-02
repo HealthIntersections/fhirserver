@@ -244,13 +244,15 @@ Type
     function checkCode(op : TFhirOperationOutcomeW; langList : THTTPLanguageList; path : string; code : string; system, version : string; display : string) : boolean;
     function isOkTarget(cm: TFhirConceptMapW; vs: TFhirValueSetW): boolean;
     function isOkSource(cm: TFhirConceptMapW; vs: TFhirValueSetW; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
-    function isOkSource(cm: TFhirConceptMapW; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
+    function isOkSource(cm: TFhirConceptMapW; coding: TFHIRCodingW; target : String; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
     function findConceptMap(var cm: TFhirConceptMapW; var msg : String): boolean;
+    function translateUsingGroups(cm: TFHIRConceptMapW; coding: TFHIRCodingW; target : String; params: TFhirParametersW): boolean;
+    function translateUsingCodeSystem(cm: TFHIRConceptMapW; coding: TFHIRCodingW; target : String; params: TFhirParametersW): boolean;
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
 
-    function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; params : TFhirParametersW; profile : TFhirTxOperationParams) : TFhirParametersW;
+    function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; target : String; params : TFhirParametersW; profile : TFhirTxOperationParams) : TFhirParametersW;
     //function translate(langList : THTTPLanguageList; reqId : String; cm : TLoadedConceptMap; coding : TFHIRCodingW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW; overload;
     //function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
     //function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
@@ -4367,60 +4369,116 @@ begin
   inherited Destroy;
 end;
 
-function TFHIRConceptMapTranslator.translate(langList: THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; params: TFhirParametersW; profile: TFhirTxOperationParams): TFhirParametersW;
+function TFHIRConceptMapTranslator.translateUsingGroups(cm: TFHIRConceptMapW; coding: TFHIRCodingW; target : String; params: TFhirParametersW): boolean;
 var
-  cm : TFHIRConceptMapW;
   g : TFhirConceptMapGroupW;
   em : TFhirConceptMapGroupElementW;
   map : TFhirConceptMapGroupElementTargetW;
   outcome : TFHIRCodingW;
   p, pp :  TFhirParametersParameterW;
   prod : TFhirConceptMapGroupElementDependsOnW;
+begin
+  result := false;
+  if isOkSource(cm, coding, target, g, em) then
+  begin
+    try
+      for map in em.targets.forEnum do
+      begin
+        if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
+        begin
+          params.AddParamBool('result', true);
+          result := true;
+          outcome := FFactory.wrapCoding(FFactory.makeByName('Coding'));
+          try
+            p := params.AddParam('match');
+            outcome.systemUri := g.target;
+            outcome.code := map.code;
+            p.AddParam('concept', outcome.Element.Link);
+            p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
+            if (map.comments <> '') then
+              p.addParamStr('message', map.comments);
+            for prod in map.products.forEnum do
+            begin
+              pp := p.addParam('product');
+              pp.addParamStr('element', prod.property_);
+              pp.addParam('concept').value := FFactory.makeCoding(prod.system_, prod.value);
+            end;
+          finally
+            outcome.free;
+          end;
+        end;
+      end;
+    finally
+      em.free;
+      g.free;
+    end;
+  end;
+end;
+
+function TFHIRConceptMapTranslator.translateUsingCodeSystem(cm: TFHIRConceptMapW; coding: TFHIRCodingW; target : String; params: TFhirParametersW): boolean;
+var
+  prov : TCodeSystemProvider;
+  codes : TFslList<TCodeTranslation>;
+  t : TCodeTranslation;          
+  outcome : TFHIRCodingW;      
+  p :  TFhirParametersParameterW;
+begin
+  result := false;
+  prov := (cm.tag as TCodeSystemProviderFactory).getProvider;
+  try
+    params.addParamUri('used-system', prov.systemUri()+'|'+prov.version());
+    codes := TFslList<TCodeTranslation>.create;
+    try
+      prov.getTranslations(coding, target, codes);
+      if not codes.Empty then
+      begin
+        params.AddParamBool('result', true);
+        result := true;
+        for t in codes do
+        begin
+          if (t.map <> '') then
+            params.addParamUri('used-conceptmap', t.map);
+          outcome := FFactory.wrapCoding(FFactory.makeByName('Coding'));
+          try
+            p := params.AddParam('match');
+            outcome.systemUri := t.uri;
+            outcome.code := t.code;
+            outcome.version := t.version;
+            outcome.display := t.display;
+            p.AddParam('concept', outcome.Element.Link);
+            p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[t.equivalence]);
+            if (t.message <> '') then
+              p.addParamStr('message', t.message);
+          finally
+            outcome.free;
+          end;
+        end;
+      end;
+    finally
+      codes.free;
+    end;
+  finally
+    prov.free;
+  end;
+end;
+
+function TFHIRConceptMapTranslator.translate(langList: THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; target : String; params: TFhirParametersW; profile: TFhirTxOperationParams): TFhirParametersW;
+var
+  cm : TFHIRConceptMapW;
   added : boolean;
-  msg : String;
 begin
   result := FFactory.wrapParams(FFactory.makeResource('Parameters'));
   try
-    try     
+    try
       added := false;
       for cm in cml do
       begin
         //else if not checkCode(op, langList, '', coding.code, coding.systemUri, coding.version, coding.display) then
         //  raise ETerminologyError.Create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
-        if isOkSource(cm, coding, g, em) then
-        begin
-          try
-            for map in em.targets.forEnum do
-            begin
-              if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
-              begin
-                result.AddParamBool('result', true);
-                added := true;
-                outcome := FFactory.wrapCoding(FFactory.makeByName('Coding'));
-                try
-                  p := result.AddParam('match');
-                  outcome.systemUri := g.target;
-                  outcome.code := map.code;
-                  p.AddParam('concept', outcome.Element.Link);
-                  p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
-                  if (map.comments <> '') then
-                    p.addParamStr('message', map.comments);
-                  for prod in map.products.forEnum do
-                  begin
-                    pp := p.addParam('product');
-                    pp.addParamStr('element', prod.property_);
-                    pp.addParam('concept').value := FFactory.makeCoding(prod.system_, prod.value);
-                  end;
-                finally
-                  outcome.free;
-                end;
-              end;
-            end;
-          finally
-            em.free;
-            g.free;
-          end;
-        end;
+        if (cm.Tag <> nil) and (cm.tag is TCodeSystemProviderFactory) then
+          added := translateUsingCodeSystem(cm, coding, target, result)
+        else
+          added := translateUsingGroups(cm, coding, target,result);
       end;
       if not added then
       begin
@@ -4473,7 +4531,7 @@ end;
 
   
 function TFHIRConceptMapTranslator.isOkSource(cm: TFhirConceptMapW;
-  coding: TFHIRCodingW; out group: TFhirConceptMapGroupW; out
+  coding: TFHIRCodingW; target : String; out group: TFhirConceptMapGroupW; out
   match: TFhirConceptMapGroupElementW): boolean;
 var
   g : TFhirConceptMapGroupW;
@@ -4481,7 +4539,7 @@ var
 begin
   result := false;
   for g in cm.groups.forEnum do
-    if (g.source = coding.systemUri) then
+    if (g.source = coding.systemUri) and (g.target = target) then
     begin
       for em in g.elements.forEnum do
         if (em.code = coding.code) then
