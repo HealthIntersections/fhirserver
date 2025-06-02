@@ -74,6 +74,7 @@ type
     db : TFDBManager;
     FVersion : String;
     procedure loadVersion;
+    function makeCM(id, src, tgt : String; factory : TFHIRFactory): TFHIRConceptMapW;
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
@@ -114,8 +115,9 @@ type
     procedure extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
     function buildValueSet(factory : TFHIRFactory; id : String) : TFhirValueSetW;
+    procedure getTranslations(coding: TFHIRCodingW; target : String; codes : TFslList<TCodeTranslation>); override;
 
-    procedure registerConceptMaps(list : TFslList<TFHIRConceptMapW>); override;
+    procedure registerConceptMaps(list : TFslList<TFHIRConceptMapW>; factory : TFHIRFactory); override;
     procedure defineFeatures(opContext : TTxOperationContext; features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -470,6 +472,24 @@ begin
   raise ETerminologyError.Create('not done yet: getCDSInfo', itBusinessRule);
 end;
 
+function getVocabId(url : String) : Integer;
+begin
+  if (url = 'http://hl7.org/fhir/sid/icd-9-cm') then result := 5046
+  else if (url = 'http://snomed.info/sct') then result := 44819097
+  else if (url = 'http://hl7.org/fhir/sid/icd-10-cm') then result := 44819098
+  else if (url = 'http://hl7.org/fhir/sid/icd-9-cm') then result := 44819099
+  else if (url = 'http://www.ama-assn.org/go/cpt') then result := 44819100
+  else if (url = 'http://terminology.hl7.org/CodeSystem/HCPCS-all-codes') then result := 44819101
+  else if (url = 'http://loinc.org') then result := 44819102
+  else if (url = 'http://www.nlm.nih.gov/research/umls/rxnorm') then result := 44819104
+  else if (url = 'http://hl7.org/fhir/sid/ndc') then result := 44819105
+  else if (url = 'http://unitsofmeasure.org') then result := 44819107
+  else if (url = 'http://nucc.org/provider-taxonomy') then result := 44819137
+  else
+    result := -1;
+
+end;
+
 function getUri(key : integer) : String;
 begin
   case key of
@@ -532,9 +552,16 @@ begin
 //44819234	Cohort Type
 //44819235	Relationship
 //45756746	ABMS
-  else
+else
+  exit('');
+end;
+end;
+
+function getUriOrError(key : integer) : String;
+begin
+  result := getUri(key);
+  if result = '' then
     raise ETerminologyError.create('Unmapped OMOP Vocabulary id: '+inttostr(key));
-  end;
 end;
 
 procedure TOMOPServices.extendLookup(opContext : TTxOperationContext; factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -564,7 +591,7 @@ begin
       if hasProp(props, 'end_date', true) and not conn.ColNullByName['valid_end_date'] then
         resp.addProp('end_date').value := factory.makeCode(conn.ColStringByName['valid_end_date']);
       if hasProp(props, 'source', true) and not conn.ColNullByName['concept_code'] then
-        resp.addProp('source').value := factory.makeCoding(getUri(conn.ColIntegerByName['vocabulary_id']), conn.ColStringByName['concept_code']);
+        resp.addProp('source').value := factory.makeCoding(getUriOrError(conn.ColIntegerByName['vocabulary_id']), conn.ColStringByName['concept_code']);
     end;
     conn.terminate;
     st := TStringList.create;
@@ -670,9 +697,87 @@ begin
   end;
 end;
 
-procedure TOMOPServices.registerConceptMaps(list: TFslList<TFHIRConceptMapW>);
+procedure TOMOPServices.getTranslations(coding: TFHIRCodingW; target: String; codes: TFslList<TCodeTranslation>);
+var
+  vid : integer; 
+  conn : TFDBConnection;
+  t : TCodeTranslation;
 begin
+  vid := getVocabId(target);
+  if (vid > -1) then
+  begin
+    conn := db.GetConnection('getTranslations');
+    try
+      conn.sql := 'Select concept_code, concept_name from Concepts where concept_id = '''+coding.code+''' and vocabulary_id = '+inttostr(vid);
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+      begin
+        t := TCodeTranslation.create;
+        try
+          t.uri := target;
+          t.code := conn.ColStringByName['concept_code'];
+          t.display := conn.ColStringByName['concept_name'];
+          t.equivalence := cmeEquivalent;
+          t.map := systemUri+'/ConceptMap/to-'+inttostr(vid)+'|'+version;
+          codes.add(t.link);
+        finally
+          t.free;
+        end;
+      end;
+      conn.terminate;
+      conn.Release;
+    except
+      on e : Exception do
+      begin
+        conn.Error(e);
+        raise
+      end;
+    end;
 
+  end;
+end;
+
+function TOMOPServices.makeCM(id, src, tgt : String; factory : TFHIRFactory) : TFHIRConceptMapW;
+var
+  g : TFhirConceptMapGroupW;
+begin
+  result := factory.wrapConceptMap(factory.makeResource('ConceptMap'));
+  result.id := id;
+  result.url := systemUri+'/ConceptMap/'+id;
+  result.addGroup(src,tgt).free;
+end;
+
+procedure TOMOPServices.registerConceptMaps(list: TFslList<TFHIRConceptMapW>; factory : TFHIRFactory);
+var
+  conn : TFDBConnection;
+  key : integer;
+  uri : String;
+begin                         
+  conn := db.GetConnection('registerConceptMaps');
+  try
+    conn.sql := 'Select DISTINCT vocabulary_id from Concepts';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+    begin
+      key := conn.ColIntegerByName['vocabulary_id'];
+      uri := getUri(key);
+      if (uri <> '') then
+      begin
+        list.add(makeCM('to-'+inttostr(key), systemUri, uri, factory));
+        list.add(makeCM('from-'+inttostr(key), uri, systemUri, factory));
+      end;
+    end;
+    conn.terminate;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise
+    end;
+  end;
 end;
 
 procedure TOMOPServices.defineFeatures(opContext : TTxOperationContext; features: TFslList<TFHIRFeature>);

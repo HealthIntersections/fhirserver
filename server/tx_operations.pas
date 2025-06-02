@@ -875,7 +875,7 @@ begin
               try
                 coding := coded.codings;
                 try
-                  pOut := FServer.translate(request.langList, request.id, cml, coding[0], params, txResources, profile);
+                  pOut := FServer.translate(request.langList, request.id, cml, coding[0], tgtSystem, params, txResources, profile);
                   try
                     response.resource := pOut.Resource.link;
                     response.HTTPCode := 200;

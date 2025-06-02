@@ -47,21 +47,6 @@ const
   URI_VERSION_BREAK = '#';
 
 Type
-
-  { TCodeSystemProviderFactory }
-
-  TCodeSystemProviderFactory = class (TFslObject)
-  public
-    function link : TCodeSystemProviderFactory; overload;
-    function getProvider : TCodeSystemProvider; virtual; abstract;
-    function systemUri : String; virtual; abstract;
-    function version : String; virtual; abstract;
-    function name : String; virtual; abstract;
-    function TotalCount : integer; virtual; abstract;
-    function versionDesc : String; virtual; abstract;
-    function description : String; virtual; abstract;
-  end;
-
   { TCodeSystemProviderGeneralFactory }
 
   TCodeSystemProviderGeneralFactory = class (TCodeSystemProviderFactory)
@@ -297,13 +282,6 @@ Type
   end;
 
 implementation
-
-{ TCodeSystemProviderFactory }
-
-function TCodeSystemProviderFactory.link: TCodeSystemProviderFactory;
-begin
-  result := TCodeSystemProviderFactory(inherited link);
-end;
 
 { TTerminologyServerStore }
 
@@ -1137,7 +1115,7 @@ begin
       try
         l := TFslList<TFhirConceptMapW>.create;
         try
-          pv.registerConceptMaps(l);
+          pv.registerConceptMaps(l, Factory);
           for cm in l do
           begin
             cm.tag := pvf.link;
