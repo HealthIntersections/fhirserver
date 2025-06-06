@@ -47,7 +47,8 @@ type
   { TSHLWebServer }
   TSHLWebServer = class (TFhirWebServerEndpoint)
   private
-    FPassword : String;
+    FPassword : String; 
+    FVhlKey : TJWK;
     FDB : TFDBManager;
     procedure SetDB(AValue: TFDBManager);
     function processCreate(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection) : String;
@@ -74,6 +75,7 @@ type
   private
     FSHLServer : TSHLWebServer;
     FPassword : String;
+    FVhlKey : TJsonObject;
     procedure checkDatabase;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport; db : TFDBManager);
@@ -101,10 +103,12 @@ var
   req, resp : TJsonObject;
   exp : TDateTime;
   days : integer;
+  vhl : boolean;
 begin
   result := 'Create SHL context';
   req := TJsonParser.parse(request.PostStream);
   try
+    vhl := req.bool['vhl'];
     if (req.str['password'] = FPassword) then
     begin
       days := req.int['days'];
@@ -116,12 +120,13 @@ begin
         resp.str['pword'] := NewGuidId;
         resp.str['link'] := 'https://'+common.host+PathWithSlash+resp.str['uuid'];
 
-        c.SQL := 'Insert into SHL (uuid, pword, expiry, mimetype) values (:u, :p, :e, :m)';
+        c.SQL := 'Insert into SHL (uuid, pword, expiry, mimetype, vhl) values (:u, :p, :e, :m, :v)';
         c.prepare;
         c.BindString('u', resp.str['uuid']);
         c.BindString('p', resp.str['pword']);
         c.BindTimeStamp('e', DateTimeToTS(exp));  
         c.BindString('m', req.str['mimetype']);
+        c.BindIntegerFromBoolean('v', vhl);
         c.execute;
         c.terminate;
         response.ResponseNo := 200;
@@ -146,33 +151,53 @@ end;
 function TSHLWebServer.processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection): String;
 var
   p : THTTPParameters;
-  bytes : TBytes;
+  bytes, hcert : TBytes;
+  req, resp : TJsonObject;
 begin
   result := 'upload SHL content';
   p := THTTPParameters.create(request.QueryParams, true);
   try
-    bytes := StreamToBytes(request.PostStream);
-    if (p.has('uuid') and p.has('pword')) then
-    begin
-      c.sql := 'select pword from SHL where uuid = '''+SQLWrapString(p['uuid'])+'''';
-      c.Prepare;
-      c.Execute;
-      if not c.FetchNext then
-        raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid  "'+p['uuid']+'" not found', nil);
-      if p['pword'] <> c.ColStringByName['pword'] then
-        raise ERestfulException.create('processCreate', 404, itSecurity, 'password failure', nil);
-      c.terminate;
-      c.SQL := 'update SHL set blob = :b where uuid = '''+SQLWrapString(p['uuid'])+'''';
-      c.prepare;
-      c.BindBlob('b', bytes);
-      c.Execute;
-      c.terminate;
-      response.ResponseNo := 200;
-      response.ResponseText := 'OK';
-      response.ContentText := '{ "msg": "OK" }';
-    end
-    else
-      raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid and/or pword not found', nil);
+    req := TJSONParser.Parse(request.PostStream);
+    try
+      bytes := DecodeBase64(req.str['cnt']);
+      hcert := DecodeBase64(req.str['hcert']);
+      if (p.has('uuid') and p.has('pword')) then
+      begin
+        c.sql := 'select pword from SHL where uuid = '''+SQLWrapString(p['uuid'])+'''';
+        c.Prepare;
+        c.Execute;
+        if not c.FetchNext then
+          raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid  "'+p['uuid']+'" not found', nil);
+        if p['pword'] <> c.ColStringByName['pword'] then
+          raise ERestfulException.create('processCreate', 404, itSecurity, 'password failure', nil);
+        c.terminate;
+        c.SQL := 'update SHL set blob = :b where uuid = '''+SQLWrapString(p['uuid'])+'''';
+        c.prepare;
+        c.BindBlob('b', bytes);
+        c.Execute;
+        c.terminate;
+        response.ResponseNo := 200;
+        response.ResponseText := 'OK';
+        if hcert <> nil then
+        begin
+          resp := TJsonObject.create;
+          try
+            bytes := TJWTUtils.Sign_ES256(hcert, FVhlKey);
+            resp['signature'] := EncodeBase64(bytes);
+            resp['kid'] := FVhlKey.id;
+            response.ContentText := TJSONWriter.writeObjectStr(resp, true);
+          finally
+            resp.free;
+          end;
+        end
+        else
+          response.ContentText := '{ "msg": "OK" }';
+      end
+      else
+        raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid and/or pword not found', nil);
+    finally
+      req.free;
+    end;
   finally
     p.free;
   end;
@@ -180,7 +205,7 @@ end;
 
 function TSHLWebServer.processManifest(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c: TFDBConnection): String;
 var
-  req, resp, f : TJsonObject;
+  req, resp, f, l, r, m, cnt : TJsonObject;
   uuid, b64 : String;
 begin
   uuid := request.Document.subString(PathWithSlash.length);
@@ -192,28 +217,49 @@ begin
       c.prepare;
       c.BindString('u', uuid);
       c.execute;
-      if c.FetchNext then
+      if not c.FetchNext then 
+      begin
+        response.ResponseNo := 404;
+        response.ResponseText:= 'Not Found';
+        response.ContentText := 'SHL Not Found';
+      end
+      else if c.ColIntegerByName['vhl'] = 1 then
       begin
         f := resp.forceArr['files'].addObject;
         f.str['contentType'] := c.GetColStringByName('mimetype');
         f.str['location'] := 'https://'+common.host+PathWithSlash+'data/'+uuid;
-        b64 := c.GetColStringByName('blob'); // it's already base64 encoded
-            // EncodeBase64(c.GetColBlobByName('blob'));
+        b64 := c.GetColStringByName('blob');
         if (not req.has('embeddedLengthMax')) or (b64.Length < req.int['embeddedLengthMax']) then
           f.str['embedded'] := b64;
         response.ResponseNo := 200;
         response.ResponseText:= 'OK';                                 
         response.ContentText := TJSONWriter.writeObjectStr(resp, true);
         response.ContentType := 'application/json';
-        c.Terminate;
       end
       else
       begin
-        c.Terminate;
-        response.ResponseNo := 404;
-        response.ResponseText:= 'Not Found';
-        response.ContentText := 'SHL Not Found';
+        resp['resourceType'] := 'Bundle';
+        resp['type'] := 'searchSet';
+        l := resp.forceArr['link'].addObject;
+        l['relation'] := 'self';
+        l['url'] := 'https://'+common.host+request.URI;
+        f := resp.forceArr['entry'].addObject;
+        f['fullUrl'] := 'https://'+common.host+PathWithSlash+'DocumentReference/'+uuid;
+        r := f.forceObj['resource'];
+        r['resourceType'] := 'DocumentReference';
+        r['id'] := uuid;                          
+        m := r.forceObj['masterIdentifier'];
+        m['system'] := 'urn:ietf:rfc:3986';
+        m['value'] := f['fullUrl'];
+        cnt := r.forceArr['content'].addObject;
+        cnt['url'] := 'https://'+common.host+PathWithSlash+'data/'+uuid;
+        cnt['contentType'] := c.GetColStringByName('mimetype');
+        response.ResponseNo := 200;
+        response.ResponseText:= 'OK';
+        response.ContentText := TJSONWriter.writeObjectStr(resp, true);
+        response.ContentType := 'application/json';
       end;
+      c.Terminate;
     finally
       resp.free;
     end;
@@ -272,6 +318,7 @@ end;
 destructor TSHLWebServer.Destroy;
 begin
   FDB.Free;
+  FVhlKey.free;
   inherited Destroy;
 end;
 
@@ -353,6 +400,7 @@ begin
                ' pword nchar(40) '+ColCanBeNull(c.owner.platform, False)+', '+
                ' mimetype nchar(60) '+ColCanBeNull(c.owner.platform, False)+', '+
                ' expiry '+DBDateTimeType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, False)+', '+
+               ' vhl int '+ColCanBeNull(c.owner.platform, true)+', '+
                ' blob '+DBBlobType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, true)+') '+
                CreateTableInfo(c.owner.platform));
           c.ExecSQL('Create INDEX SK_SHL_UUID ON SHL (uuid)');
@@ -369,10 +417,28 @@ begin
       end
       else
       begin
+        t := m.GetTable('SHL');
+        if not t.hasColumn('vhl') then
+        begin
+          c.StartTransact;
+          try
+            c.ExecSQL('ALTER TABLE SHL ADD vhl int '+ColCanBeNull(c.owner.platform, true));
+            c.Commit;
+          except
+            on e:exception do
+            begin
+              Logging.log(e.message);
+              c.Rollback;
+              recordStack(e);
+              raise;
+            end;
+          end;
+        end;
       end;
     finally
       m.free;
     end;
+    FVhlKey := TJSONParser.Parse(c.Lookup('Config', 'ConfigKey', 'jwk', 'Value', '{}'));
     c.Release;
   except
     on e: Exception do
@@ -389,6 +455,7 @@ end;
 
 destructor TSHLWebEndPoint.Destroy;
 begin
+  FVhlKey.free;
   inherited Destroy;
 end;
 
@@ -403,6 +470,7 @@ begin
   FSHLServer := TSHLWebServer.Create(config.name, config['path'].value, common);
   FSHLServer.DB := Database.Link;
   FSHLServer.FPassword := FPassword;
+  FSHLServer.FVhlKey := TJWK.create(FVhlKey.link);
   WebEndPoint := FSHLServer;
   result := FSHLServer.link;
 end;

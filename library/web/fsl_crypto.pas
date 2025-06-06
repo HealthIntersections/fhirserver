@@ -284,13 +284,14 @@ Type
     class function loadRSAPublicKey(contents : TBytes) : PRSA; overload;
     class function loadDSAPublicKey(pemfile, pempassword : AnsiString) : PDSA;
 
-    class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
-    class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
-    class function Sign_ES256(input : TBytes; key: TJWK) : TBytes; overload;
     class function checks(method: TJWTAlgorithm; key : TJWK): String;
 
   public
     class function Sign_Hmac_RSA256(input : TBytes; pemfile, pempassword : String) : TBytes; overload;
+    class function Sign_Hmac_SHA256(input : TBytes; key: TJWK) : TBytes;
+    class function Sign_Hmac_RSA256(input : TBytes; key: TJWK) : TBytes; overload;
+    class function Sign_ES256(input : TBytes; key: TJWK) : TBytes; overload;
+    class function Sign_ES512(input : TBytes; key: TJWK) : TBytes; overload;
 
     // general use: pack a JWT using the key speciifed. No key needed if method = none
     class function encodeJWT(jwt : TJWT; method : TJWTAlgorithm; key : TJWK; zip : String = '') : String; overload;
@@ -1555,6 +1556,63 @@ begin
       ctx := EVP_MD_CTX_new;
       try
         check(EVP_DigestSignInit(ctx, @PkeyCtx, EVP_sha256, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
+  {$IFNDEF ALT}
+        check(EVP_DigestUpdate(ctx, p, l) = 1, 'openSSL EVP_DigestUpdate failed');
+        check(EVP_DigestSignFinal(ctx, @result[0], @len) = 1, 'openSSL EVP_DigestSignFinal failed');
+  {$ELSE}
+        check(EVP_DigestSign(ctx, @result[0], @len, p, l) = 1, 'openSSL EVP_DigestSign failed');
+  {$ENDIF}
+        SetLength(result, len);
+      finally
+        EVP_MD_CTX_free(ctx);
+      end;
+      result := DERTobase(result);
+    finally
+      EVP_PKEY_free(pKey);
+    end;
+  finally
+    EC_KEY_free(rkey);
+  end;
+end;
+
+class function TJWTUtils.Sign_ES512(input: TBytes; key: TJWK): TBytes;
+var
+  ctx : PEVP_MD_CTX;
+  keysize : integer;
+  len, l : QWord;
+  p : System.PByte;
+  pkey: PEVP_PKEY;
+  PkeyCtx: PEVP_PKEY_CTX;
+  rkey: PEC_KEY;
+  keys : TJWKList;
+  keytype : integer;
+  {$IFDEF ALT}
+  Signature: array [0..8000] of byte;
+  {$ENDIF}
+begin
+  check(key <> nil, 'A key must be provided for ES256');
+  len := 0;
+  p := @input[0];
+  l := length(input);
+  {$IFDEF ALT}
+  for keysize := 0 to 8000 do
+    Signature[keysize] := 0;
+  {$ENDIF}
+
+  // 1. Load the RSA private Key from FKey
+  rkey := key.LoadEC(true);
+  try
+    pkey := EVP_PKEY_new;
+    try
+      check(EVP_PKEY_set1_EC_KEY(pkey, rkey) = 1, 'openSSL EVP_PKEY_set1_RSA failed');
+
+      // 2. do the signing
+      keysize := EVP_PKEY_size(pkey);
+      len := keysize;
+      SetLength(result, keysize);
+      ctx := EVP_MD_CTX_new;
+      try
+        check(EVP_DigestSignInit(ctx, @PkeyCtx, EVP_sha512, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
   {$IFNDEF ALT}
         check(EVP_DigestUpdate(ctx, p, l) = 1, 'openSSL EVP_DigestUpdate failed');
         check(EVP_DigestSignFinal(ctx, @result[0], @len) = 1, 'openSSL EVP_DigestSignFinal failed');
