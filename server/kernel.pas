@@ -876,7 +876,10 @@ begin
   if (params.get('cfg', fn)) then
     localConfig := TIniFile.Create(fn)
   else
+  begin
     localConfig := TIniFile.Create(localDir + 'fhirserver.ini');
+    fn := '';
+  end;
   try
     try
       initLogging(params, localConfig);
@@ -887,6 +890,8 @@ begin
           cfgName := loadRemoteConfig(params, localConfig.readString('config', 'zero', ''), localConfig)
         else if localConfig.valueExists('config', 'cfgFile') then
           cfgName := localConfig.ReadString('config', 'cfgFile', '')
+        else if fn.EndsWith('.cfg') then
+          cfgName := fn
         else
           cfgName := localDir + 'fhirserver.cfg';
         Logging.Log('Actual config: '+cfgName);
