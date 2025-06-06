@@ -1336,7 +1336,7 @@ var
   cs : TFHIRCodeSystemW;
   cm : TFHIRConceptMapW;
 begin
-  cacheId := '';
+  cacheId := context.groupId;
   list := TFslMetadataResourceList.Create;
   try
     if (mr <> nil) then

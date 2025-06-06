@@ -485,6 +485,7 @@ begin
   else if (url = 'http://hl7.org/fhir/sid/ndc') then result := 44819105
   else if (url = 'http://unitsofmeasure.org') then result := 44819107
   else if (url = 'http://nucc.org/provider-taxonomy') then result := 44819137
+  else if (url = 'http://www.whocc.no/atc') then result := 44819117
   else
     result := -1;
 
@@ -528,7 +529,7 @@ begin
 //44819108	Gender
 //44819109	Race
 //44819110	CMS Place of Service
-//44819117	ATC
+  44819117: exit('http://www.whocc.no/atc'); //	ATC
 //44819119	Visit
 //44819126	Drug Type
 //44819127	Condition Type

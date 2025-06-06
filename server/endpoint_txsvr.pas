@@ -972,6 +972,7 @@ begin
     try
       if check(response, request.Resource.fhirType = 'Bundle', 400, langList, 'A bundle is required for a Transaction operation', itInvalid) then
       begin
+        context.groupId := NewGuidId;
         req := factory.wrapBundle(request.resource.Link);
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
         tt := TFslTimeTracker.create;
