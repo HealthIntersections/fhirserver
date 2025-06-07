@@ -120,12 +120,12 @@ begin
         resp.str['pword'] := NewGuidId;
         resp.str['link'] := 'https://'+common.host+PathWithSlash+resp.str['uuid'];
 
-        c.SQL := 'Insert into SHL (uuid, pword, expiry, mimetype, vhl) values (:u, :p, :e, :m, :v)';
+        c.SQL := 'Insert into SHL (uuid, pword, pin, expiry, vhl) values (:u, :p, :pin, :e, :v)';
         c.prepare;
         c.BindString('u', resp.str['uuid']);
         c.BindString('p', resp.str['pword']);
+        c.BindStringOrNull('pin', resp.str['pin']);
         c.BindTimeStamp('e', DateTimeToTS(exp));  
-        c.BindString('m', req.str['mimetype']);
         c.BindIntegerFromBoolean('v', vhl);
         c.execute;
         c.terminate;
@@ -150,56 +150,59 @@ end;
 
 function TSHLWebServer.processUpload(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; c : TFDBConnection): String;
 var
-  p : THTTPParameters;
   bytes, hcert : TBytes;
-  req, resp : TJsonObject;
+  req, resp, ff : TJsonObject;
+  f : TJsonNode;
 begin
   result := 'upload SHL content';
-  p := THTTPParameters.create(request.QueryParams, true);
+  req := TJSONParser.Parse(request.PostStream);
   try
-    req := TJSONParser.Parse(request.PostStream);
-    try
-      bytes := DecodeBase64(req.str['cnt']);
-      hcert := DecodeBase64(req.str['hcert']);
-      if (p.has('uuid') and p.has('pword')) then
+    // in the request: a list of base64 encoded files, and maybe an hcert to sign
+    hcert := DecodeBase64(req.str['hcert']);
+    if (req.has('uuid') and req.has('pword')) then
+    begin
+      c.sql := 'select pword from SHL where uuid = '''+SQLWrapString(req['uuid'])+'''';
+      c.Prepare;
+      c.Execute;
+      if not c.FetchNext then
+        raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid  "'+req['uuid']+'" not found', nil);
+      if req['pword'] <> c.ColStringByName['pword'] then
+        raise ERestfulException.create('processCreate', 404, itSecurity, 'password failure', nil);
+      c.terminate;
+      c.SQL := 'Insert into SHLFiles (uuid, mimetype, content) values (:u, :m, :c)';
+      c.prepare;
+      for f in req.forceArr['files'] do
       begin
-        c.sql := 'select pword from SHL where uuid = '''+SQLWrapString(p['uuid'])+'''';
-        c.Prepare;
+        ff := f as TJsonObject;
+        bytes := DecodeBase64(ff.str['cnt']);
+        c.BindString('u',req['uuid']);
+        c.BindString('m', ff.str['mimetype']);
+        c.BindBlob('c', bytes);
         c.Execute;
-        if not c.FetchNext then
-          raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid  "'+p['uuid']+'" not found', nil);
-        if p['pword'] <> c.ColStringByName['pword'] then
-          raise ERestfulException.create('processCreate', 404, itSecurity, 'password failure', nil);
-        c.terminate;
-        c.SQL := 'update SHL set blob = :b where uuid = '''+SQLWrapString(p['uuid'])+'''';
-        c.prepare;
-        c.BindBlob('b', bytes);
-        c.Execute;
-        c.terminate;
-        response.ResponseNo := 200;
-        response.ResponseText := 'OK';
-        if hcert <> nil then
-        begin
-          resp := TJsonObject.create;
-          try
-            bytes := TJWTUtils.Sign_ES256(hcert, FVhlKey);
-            resp['signature'] := EncodeBase64(bytes);
-            resp['kid'] := FVhlKey.id;
-            response.ContentText := TJSONWriter.writeObjectStr(resp, true);
-          finally
-            resp.free;
-          end;
-        end
-        else
-          response.ContentText := '{ "msg": "OK" }';
+      end;
+      c.terminate;
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      if hcert <> nil then
+      begin
+        resp := TJsonObject.create;
+        try
+          bytes := TJWTUtils.Sign_ES256(hcert, FVhlKey);
+          resp['signature'] := EncodeBase64(bytes);
+          resp['kid'] := FVhlKey.id;
+          resp['msg'] := 'OK';
+          response.ContentText := TJSONWriter.writeObjectStr(resp, true);
+        finally
+          resp.free;
+        end;
       end
       else
-        raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid and/or pword not found', nil);
-    finally
-      req.free;
-    end;
+        response.ContentText := '{ "msg": "OK" }';
+    end
+    else
+      raise ERestfulException.create('processCreate', 404, itSecurity, 'uuid and/or pword not found', nil);
   finally
-    p.free;
+    req.free;
   end;
 end;
 
@@ -386,24 +389,33 @@ begin
   try
     m := c.FetchMetaData;
     try
-      if not (m.HasTable('SHL')) then
+      if not m.HasTable('SHLFiles') then
       begin
         c.StartTransact;
         try
-          c.ExecSQL('CREATE TABLE Config( '+#13#10+
-               ' ConfigKey '+DBKeyType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, False)+',  '+#13#10+
-               ' Value nchar(200) '+ColCanBeNull(c.owner.platform, False)+') '+CreateTableInfo(c.owner.platform));
-          c.ExecSQL('Create INDEX SK_Config_ConfigKey ON Config (ConfigKey)');
-          c.ExecSQL('Insert into Config (ConfigKey, Value) values (1, ''1'')'); // version
+          c.DropTable('SHL');
+          if not (m.HasTable('Config')) then
+          begin
+            c.ExecSQL('CREATE TABLE Config( '+#13#10+
+                 ' ConfigKey '+DBKeyType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, False)+',  '+#13#10+
+                 ' Value nchar(200) '+ColCanBeNull(c.owner.platform, False)+') '+CreateTableInfo(c.owner.platform));
+            c.ExecSQL('Create INDEX SK_Config_ConfigKey ON Config (ConfigKey)');
+            c.ExecSQL('Insert into Config (ConfigKey, Value) values (2, ''2'')'); // version
+          end;
           c.ExecSQL('CREATE TABLE SHL ( '+#13#10+
                ' uuid nchar(40) '+ColCanBeNull(c.owner.platform, False)+', '+
                ' pword nchar(40) '+ColCanBeNull(c.owner.platform, False)+', '+
-               ' mimetype nchar(60) '+ColCanBeNull(c.owner.platform, False)+', '+
+               ' pin nchar(40) '+ColCanBeNull(c.owner.platform, True)+', '+
                ' expiry '+DBDateTimeType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, False)+', '+
-               ' vhl int '+ColCanBeNull(c.owner.platform, true)+', '+
-               ' blob '+DBBlobType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, true)+') '+
+               ' vhl int '+ColCanBeNull(c.owner.platform, true)+') '+
                CreateTableInfo(c.owner.platform));
           c.ExecSQL('Create INDEX SK_SHL_UUID ON SHL (uuid)');
+          c.ExecSQL('CREATE TABLE SHLFiles ( '+#13#10+
+               ' uuid nchar(40) '+ColCanBeNull(c.owner.platform, False)+', '+
+               ' mimetype nchar '+ColCanBeNull(c.owner.platform, False)+', '+
+               ' content '+DBBlobType(c.owner.platform)+' '+ColCanBeNull(c.owner.platform, False)+') '+
+               CreateTableInfo(c.owner.platform));
+          c.ExecSQL('Create INDEX SK_SHLFILES_UUID ON SHLFiles (uuid)');
           c.Commit;
         except
           on e:exception do
@@ -415,26 +427,6 @@ begin
           end;
         end;
       end
-      else
-      begin
-        t := m.GetTable('SHL');
-        if not t.hasColumn('vhl') then
-        begin
-          c.StartTransact;
-          try
-            c.ExecSQL('ALTER TABLE SHL ADD vhl int '+ColCanBeNull(c.owner.platform, true));
-            c.Commit;
-          except
-            on e:exception do
-            begin
-              Logging.log(e.message);
-              c.Rollback;
-              recordStack(e);
-              raise;
-            end;
-          end;
-        end;
-      end;
     finally
       m.free;
     end;
