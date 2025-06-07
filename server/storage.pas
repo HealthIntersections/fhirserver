@@ -53,8 +53,11 @@ Type
   TOperationMode = (opmRestful, opmUpload, opmInternal, opmCmdLine, opmSweep);
   TOperationLoggingLevel = (ollNone, ollHuman, ollInstaller);
 
+  { TOperationContext }
+
   TOperationContext = class (TFslObject)
   private
+    FGroupId: String;
     FMode : TOperationMode;
     FLogging : TOperationLoggingLevel;
     FCacheResponse : boolean;
@@ -68,6 +71,7 @@ Type
     property Logging : TOperationLoggingLevel read FLogging write FLogging;
     property CacheResponse : boolean read FCacheResponse write FCacheResponse;
     property inTransaction : boolean read FInTransaction write FInTransaction;
+    property groupId : String read FGroupId write FGroupId;
   end;
 
 const
