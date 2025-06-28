@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -425,7 +426,7 @@
         <PackageName Value="LCL"/>
       </Item17>
     </RequiredPackages>
-    <Units Count="94">
+    <Units Count="95">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -805,6 +806,10 @@
         <Filename Value="web_cache.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit93>
+      <Unit94>
+        <Filename Value="endpoint_shl.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit94>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -1017,7 +1022,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>

@@ -95,6 +95,7 @@ type
     function makeInteger(s : string) : TFHIRObject; override;
     function makeDecimal(s : string) : TFHIRObject; override;
     function makeBase64Binary(s : string) : TFHIRObject; override;
+    function makeDate(value : TFslDateTime) : TFHIRObject; override;
     function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
     function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; override;
@@ -353,6 +354,11 @@ end;
 function TFHIRFactoryR4B.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle): TFHIRComposer;
 begin
   result := TFHIRParsers4B.Composer(worker.link as TFHIRWorkerContext, format, langList.link, style);
+end;
+
+function TFHIRFactoryR4B.makeDate(value: TFslDateTime): TFHIRObject;
+begin
+  result := TFhirDate.Create(value);
 end;
 
 function TFHIRFactoryR4B.makeDateTime(value: TFslDateTime): TFHIRObject;

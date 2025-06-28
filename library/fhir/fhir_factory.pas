@@ -185,6 +185,7 @@ type
     function makeBase64Binary(s : string) : TFHIRObject; virtual;  abstract;// must DecodeBase64
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; virtual; abstract;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; virtual; abstract;
+    function makeDate(dt : TFslDateTime) : TFHIRObject; virtual; abstract;
     function makeDateTime(dt : TFslDateTime) : TFHIRObject; virtual; abstract;
     function makeDtFromForm(part : TMimePart; langList : THTTPLanguageList; name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
     function makeDuration(dt : TDateTime) : TFHIRObject; virtual; abstract;
