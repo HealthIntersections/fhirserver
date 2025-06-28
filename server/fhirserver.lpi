@@ -426,7 +426,7 @@
         <PackageName Value="LCL"/>
       </Item17>
     </RequiredPackages>
-    <Units Count="95">
+    <Units Count="94">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -806,10 +806,6 @@
         <Filename Value="web_cache.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit93>
-      <Unit94>
-        <Filename Value="endpoint_shl.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit94>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -819,7 +815,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);../library"/>
-      <Libraries Value="/usr/local/lib64/;/tmp/openssl/lib/;/tmp/openssl/"/>
+      <Libraries Value="../openssl"/>
       <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -849,7 +845,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dODBC"/>
+      <CustomOptions Value="-dODBC  -WM10.15"/>
     </Other>
   </CompilerOptions>
   <Debugging>
