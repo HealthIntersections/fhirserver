@@ -655,6 +655,7 @@ begin
   FOperations.add(TFhirExpandValueSetOperation.Create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   FOperations.add(TFhirLookupCodeSystemOperation.Create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirValueSetValidationOperation.Create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirValueSetBatchValidationOperation.Create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirConceptMapTranslationOperation.Create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirConceptMapClosureOperation.Create(Factory.link, ServerContext.TerminologyServer.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirValidationOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));

@@ -166,6 +166,8 @@ type
     constructor Create(definitions: TIETFLanguageDefinitions; source : String; wildcard : boolean);
     destructor Destroy; override;
     function link : THTTPLanguageList; overload;
+    function clone : THTTPLanguageList; overload;
+    procedure assign(other : TFslObject); override;
 
     class function defaultLocal : THTTPLanguageList;
     class function defaultWeb : THTTPLanguageList;
@@ -689,6 +691,23 @@ end;
 function THTTPLanguageList.link: THTTPLanguageList;
 begin
   result := THTTPLanguageList(inherited Link);
+end;
+
+function THTTPLanguageList.clone: THTTPLanguageList;
+begin
+  result := THTTPLanguageList(inherited clone);
+end;
+
+procedure THTTPLanguageList.assign(other: TFslObject);
+var
+  o : THTTPLanguageList;
+begin
+  inherited assign(other);
+  o := other as THTTPLanguageList;
+  FDefinitions := o.FDefinitions;
+  FWildCard := o.FWildCard;
+  FSource := o.FSource;
+  FLangs.AddAll(o.FLangs);
 end;
 
 class function THTTPLanguageList.defaultLocal: THTTPLanguageList;
