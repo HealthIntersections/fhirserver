@@ -1241,8 +1241,8 @@ begin
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
 
-      for s in ServerContext.TerminologyServer.listSystems do
-        oConf.systemUri(s);
+      for s in ServerContext.TerminologyServer.listSystemVersions do
+        oConf.systemVersion(s);
 
       oConf.addExpansionParameter('cache-id', 'This server supports caching terminology resources between calls. Clients only need to send value sets and codesystems once; there after they are automatically in scope for calls with the same cache-id. The cache is retained for 30 min from last call');
       oConf.addExpansionParameter('tx-resource', 'Additional valuesets needed for evaluation e.g. value sets referred to from the import statement of the value set being expanded');

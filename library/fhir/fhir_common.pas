@@ -1520,6 +1520,7 @@ type
 
     procedure contact(kind : TContactType; value : String); virtual; abstract;
     procedure systemUri(url : String); virtual; abstract;
+    procedure systemVersion(url : String); virtual; abstract;
     procedure addExpansionParameter(code, doco : String); virtual; abstract;
   end;
 
