@@ -257,6 +257,7 @@ Type
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
     function listSystems : TArray<String>;
+    function listSystemVersions : TArray<String>;
 
     procedure declareCodeSystems(list : TFslList<TFhirResourceV>);
     function supportsSystem(s : String; version : String) : boolean;
@@ -1446,6 +1447,34 @@ begin
         ts.Add(p.systemUri);
       for cs in FCodeSystems.list do
         ts.Add(cs.url);
+    finally
+      FLock.Unlock;
+    end;
+    SetLength(result, ts.Count);
+    for i := 0 to ts.Count - 1 do
+      result[i] := ts[i];
+  finally
+    ts.free;
+  end;
+end;
+
+function TTerminologyServerStore.listSystemVersions: TArray<String>;
+var
+   ts : TStringList;
+   p : TCodeSystemProviderFactory;
+   i : integer;
+   cs : TFHIRCodeSystemEntry;
+begin
+  ts := TStringList.Create;
+  try
+    ts.Sorted := true;
+    ts.Duplicates := TDuplicates.dupIgnore;
+    FLock.Lock('listSystems');
+    try
+      for p in ProviderClasses.Values do
+        ts.Add(p.systemUri+'|'+p.version);
+      for cs in FCodeSystems.list do
+        ts.Add(cs.url+'|'+cs.version);
     finally
       FLock.Unlock;
     end;

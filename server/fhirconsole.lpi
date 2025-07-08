@@ -18,7 +18,7 @@
     <VersionInfo>
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="7"/>
-      <RevisionNr Value="21"/>
+      <RevisionNr Value="23"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="8">
@@ -219,7 +219,7 @@
             </Debugging>
           </Linking>
           <Other>
-            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
+            <CustomOptions Value="-WM10.15&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
           </Other>
         </CompilerOptions>
       </Item6>

@@ -49,10 +49,16 @@ type
     FCode : String;
     FDisplay : String;
     FDomain: String;
+    FConceptClass: String;
+    FStandard: String;
+    FVocabulary: String;
   public
     property Code : String read FCode write FCode;
     property Display : String read FDisplay write FDisplay;
+    property standard : String read FStandard write FStandard;
     property domain : String read FDomain write FDomain;
+    property conceptClass : String read FConceptClass write FConceptClass;
+    property vocabulary : String read FVocabulary write FVocabulary;
   end;
 
   { TOMOPFilter }
@@ -247,7 +253,7 @@ var
 begin
   conn := db.GetConnection('locate');
   try
-    conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and concept_id = '''+SQLWrapString(code)+'''';
+    conn.sql := 'Select concept_id, concept_name, standard_concept, Domains.domain_id, ConceptClasses.concept_class_id, Vocabularies.vocabulary_id from Concepts, Domains, ConceptClasses, Vocabularies where Concepts.domain_id = Domains.domain_concept_id and ConceptClasses.concept_class_concept_id = Concepts.concept_class_id and Concepts.vocabulary_id = Vocabularies.vocabulary_concept_id and concept_id = '''+SQLWrapString(code)+'''';
     conn.Prepare;
     conn.Execute;
     if conn.FetchNext and (conn.ColStringByName['concept_id'] = code) then
@@ -256,7 +262,12 @@ begin
       try
         c.code := code;
         c.display := conn.ColStringByName['concept_name'];
+        c.standard := conn.ColStringByName['standard_concept'];
+        if (c.standard = '') then
+          c.standard := 'NS';
         c.domain := conn.ColStringByName['domain_id'];
+        c.conceptClass := conn.ColStringByName['concept_class_id'];
+        c.vocabulary := conn.ColStringByName['concept_class_id'];
         result := c.link;
       finally
         c.free;
@@ -329,6 +340,16 @@ begin
     result := '';
 end;
 
+function getLang(s :String) : String;
+begin
+  if      (s = 'English language') then result := 'en'
+  else if (s = 'Spanish language') then result := 'es'
+  else
+  begin
+    result := 'en'; // default
+  end;
+end;
+
 procedure TOMOPServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 var
   conn : TFDBConnection;
@@ -338,11 +359,11 @@ begin
     list.addDesignation(true, true, 'en', (context as TOMOPConcept).Display);
     conn := db.GetConnection('display');
     try
-      conn.sql := 'Select concept_synonym_name from ConceptSynonyms where concept_id = '''+SQLWrapString((context as TOMOPConcept).code)+'''';
+      conn.sql := 'Select concept_synonym_name, concept_name from ConceptSynonyms, Concepts where ConceptSynonyms.language_concept_id = Concepts.concept_id and ConceptSynonyms.concept_id = '''+SQLWrapString((context as TOMOPConcept).code)+'''';
       conn.Prepare;
       conn.Execute;
       while conn.FetchNext do
-        list.addDesignation(false, false, 'en', conn.ColStringByName['concept_synonym_name']);
+        list.addDesignation(false, false, getLang(conn.ColStringByName['concept_name']), conn.ColStringByName['concept_synonym_name']);
       conn.terminate;
       conn.Release;
     except
@@ -387,13 +408,13 @@ begin
       f.conn := db.GetConnection('filter');
       if (forExpansion or forIteration) then
       begin
-        f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and domain_id = '''+SQLWrapString(value)+'''';
+        f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and domain_id in (Select domain_concept_id from Domains where domain_id = '''+SQLWrapString(value)+''')';
         f.conn.Prepare;
         f.conn.Execute;
       end
       else
       begin
-        f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and domain_id = '''+SQLWrapString(value)+''' and concept_id = :cid';
+        f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where standard_concept = ''S'' and domain_id in (Select domain_concept_id from Domains where domain_id = '''+SQLWrapString(value)+''') and concept_id = :cid';
         f.conn.Prepare;
       end;
       result := f.link;
@@ -570,29 +591,41 @@ var
   conn : TFDBConnection;
   st : TStringList;
 begin
-  if hasProp(props, 'domain', true) then
-    resp.addProp('domain').value := factory.makeCode((ctxt as TOMOPConcept).domain);
+  if hasProp(props, 'domain-id', true) then
+    resp.addProp('domain-id').value := factory.makeCode((ctxt as TOMOPConcept).domain);
+  if hasProp(props, 'concept-class-id', true) then
+    resp.addProp('concept-class-id').value := factory.makeCode((ctxt as TOMOPConcept).domain);
+  if hasProp(props, 'standard-concept', true) then
+    resp.addProp('standard-concept').value := factory.makeCode((ctxt as TOMOPConcept).standard);
+  if hasProp(props, 'vocabulary-id', true) then
+    resp.addProp('vocabulary-id').value := factory.makeCode((ctxt as TOMOPConcept).vocabulary);
   conn := db.GetConnection('lookup');
   try
-    conn.sql := 'Select concept_synonym_name from ConceptSynonyms where concept_id = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
-    conn.Prepare;
+    conn.sql := 'Select concept_synonym_name, concept_name from ConceptSynonyms, Concepts where ConceptSynonyms.language_concept_id = Concepts.concept_id and ConceptSynonyms.concept_id = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
+   conn.Prepare;
     conn.Execute;
     while conn.FetchNext do    
-      resp.addDesignation('en', '', '', '', conn.ColStringByName['concept_synonym_name']);
+      resp.addDesignation(getLang(conn.ColStringByName['concept_name']), '', '', '', conn.ColStringByName['concept_synonym_name']);
     conn.terminate;
     conn.sql := 'Select * from Concepts where concept_id = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
     conn.Prepare;
     conn.Execute;
     if conn.FetchNext then
-    begin           
-      if hasProp(props, 'class_id', true) then
-        resp.addProp('class_id').value := factory.makeCode(conn.ColStringByName['concept_class_id']);
-      if hasProp(props, 'start_date', true) and not conn.ColNullByName['valid_start_date'] then
-        resp.addProp('start_date').value := factory.makeCode(conn.ColStringByName['valid_start_date']);
-      if hasProp(props, 'end_date', true) and not conn.ColNullByName['valid_end_date'] then
-        resp.addProp('end_date').value := factory.makeCode(conn.ColStringByName['valid_end_date']);
-      if hasProp(props, 'source', true) and not conn.ColNullByName['concept_code'] then
-        resp.addProp('source').value := factory.makeCoding(getUriOrError(conn.ColIntegerByName['vocabulary_id']), conn.ColStringByName['concept_code']);
+    begin
+      if hasProp(props, 'concept-class-concept-id', true) then
+        resp.addProp('concept-class-concept-id').value := factory.makeCode(conn.ColStringByName['concept_class_id']);
+      if hasProp(props, 'domain-concept-id', true) then
+        resp.addProp('domain-concept-id').value := factory.makeCode(conn.ColStringByName['domain_id']);
+      if hasProp(props, 'valid-start-date', true) and not conn.ColNullByName['valid_start_date'] then
+        resp.addProp('valid-start-date').value := factory.makeDate(TFslDateTime.fromHL7(conn.ColStringByName['valid_start_date']));
+      if hasProp(props, 'valid-end-date', true) and not conn.ColNullByName['valid_end_date'] then
+        resp.addProp('valid-end-date').value := factory.makeDate(TFslDateTime.fromHL7(conn.ColStringByName['valid_end_date']));
+      if hasProp(props, 'source-concept-code', true) and not conn.ColNullByName['concept_code'] and (getUri(conn.ColIntegerByName['vocabulary_id']) <> '') then
+        resp.addProp('source-concept-code').value := factory.makeCoding(getUriOrError(conn.ColIntegerByName['vocabulary_id']), conn.ColStringByName['concept_code']);
+      if hasProp(props, 'vocabulary-concept-id', true) then
+        resp.addProp('vocabulary-concept-id').value := factory.makeCode(conn.ColStringByName['vocabulary_id']);
+      if hasProp(props, 'invalid-reason', true) and not conn.ColNullByName['invalid_reason'] then
+        resp.addProp('invalid-reason').value := factory.makeCode(conn.ColStringByName['invalid_reason']);
     end;
     conn.terminate;
     st := TStringList.create;
@@ -652,10 +685,10 @@ begin
   domain := id.subString(44);
   conn := db.GetConnection('locate');
   try
-    conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where concept_id = '''+SQLWrapString(domain)+'''';
+    conn.sql := 'Select concept_id, concept_name, Domains.domain_id from Concepts, Domains where Domains.domain_id = '''+SQLWrapString(domain)+''' and Domains.domain_concept_id = Concepts.concept_id';
     conn.Prepare;
     conn.Execute;
-    if conn.FetchNext and (conn.ColStringByName['concept_id'] = domain) then
+    if conn.FetchNext and (conn.ColStringByName['domain_id'] = domain) then
     begin
       result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
       try

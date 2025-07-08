@@ -53,7 +53,7 @@ Uses
   tx_manager, telnet_server, web_source, web_server, web_cache, zero_config,
   server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
-  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao, endpoint_shl,
+  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao,
   endpoint_txregistry, endpoint_xig;
 
 
@@ -606,8 +606,6 @@ begin
     result := TFolderWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
   else if config['type'].value = 'icao' then
     result := TICAOWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
-  else if config['type'].value = 'shl' then
-    result := TSHLWebEndPoint.Create(config.link, FSettings.Link, FI18n.link, connectToDatabase(config, false))
   else if config['type'].value = 'loinc' then
     result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link, FI18n.link)
   else if config['type'].value = 'snomed' then

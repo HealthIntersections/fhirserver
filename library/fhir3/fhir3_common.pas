@@ -1301,6 +1301,7 @@ type
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure contact(kind : TContactType; value : String); override;
     procedure systemUri(url : String); override;
+    procedure systemVersion(url : String); override;
     procedure addExpansionParameter(code, doco : String); override;
   end;
 
@@ -7028,6 +7029,15 @@ end;
 procedure TFhirTerminologyCapabilities3.systemUri(url: String);
 begin
   (FRes as TFhirParameters).AddParameter('system', TFhirUri.Create(url));
+end;
+
+procedure TFhirTerminologyCapabilities3.systemVersion(url: String);
+var
+  u, v : String;
+begin
+  StringSplit(url, '|', u, v);
+  (FRes as TFhirParameters).AddParameter('system', TFhirUri.Create(u));
+  (FRes as TFhirParameters).AddParameter('version', TFhirCode.Create(v))
 end;
 
 procedure TFhirTerminologyCapabilities3.addExpansionParameter(code, doco : String);

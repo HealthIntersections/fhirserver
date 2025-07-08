@@ -96,6 +96,7 @@ type
     function makeDecimal(s : string) : TFHIRObject; override;
     function makeBase64Binary(s : string) : TFHIRObject; override;
     function makeParameters : TFHIRParametersW; override;
+    function makeDate(value : TFslDateTime) : TFHIRObject; override;
     function makeDateTime(value : TFslDateTime) : TFHIRObject; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; override;
@@ -350,6 +351,11 @@ end;
 function TFHIRFactoryR3.makeDateTime(value: TFslDateTime): TFHIRObject;
 begin
   result := TFhirDateTime.Create(value);
+end;
+
+function TFHIRFactoryR3.makeDate(value: TFslDateTime): TFHIRObject;
+begin
+  result := TFhirDate.Create(value);
 end;
 
 function TFHIRFactoryR3.makeDecimal(s: string): TFHIRObject;

@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="7"/>
-      <RevisionNr Value="21"/>
+      <RevisionNr Value="23"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="8">
@@ -814,7 +814,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);../library"/>
-      <Libraries Value="/usr/local/lib64/;/tmp/openssl/lib/;/tmp/openssl/"/>
+      <Libraries Value="../openssl"/>
       <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -844,7 +844,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dODBC"/>
+      <CustomOptions Value="-dODBC  -WM10.15"/>
     </Other>
   </CompilerOptions>
   <Debugging>

@@ -1297,6 +1297,7 @@ type
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure contact(kind : TContactType; value : String); override;
     procedure systemUri(url : String); override;
+    procedure systemVersion(url : String); override;
     procedure addExpansionParameter(code, doco : String); override;
   end;
 
@@ -6844,6 +6845,18 @@ end;
 procedure TFhirTerminologyCapabilities5.systemUri(url: String);
 begin
   tc.codeSystemList.Append.uri := url;
+end;
+
+procedure TFhirTerminologyCapabilities5.systemVersion(url: String);
+var
+  cs : TFhirTerminologyCapabilitiesCodeSystem;
+  u, v : String;
+begin
+  StringSplit(url, '|', u, v);
+  cs := tc.codeSystemList.Append;
+  cs.uri := u;
+  if (v <> '') then
+    cs.versionList.Append.code := v;
 end;
 
 function TFhirTerminologyCapabilities5.tc: TFhirTerminologyCapabilities;

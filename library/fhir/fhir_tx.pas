@@ -144,8 +144,10 @@ uses
   public
     constructor Create(Languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
-    function link : TFHIRTxOperationParams;
+    function link : TFHIRTxOperationParams; overload;
 
+    function clone : TFHIRTxOperationParams; overload;
+    procedure assign(other : TFslObject); override;
     class function defaultProfile(langDefs : TIETFLanguageDefinitions) : TFHIRTxOperationParams;
 
     procedure seeParameter(name : String; value : TFHIRObject; isValidation, overwrite : boolean);
@@ -990,6 +992,78 @@ end;
 function TFHIRTxOperationParams.link: TFHIRTxOperationParams;
 begin
   result := TFHIRTxOperationParams(inherited Link);
+end;
+
+function TFHIRTxOperationParams.clone: TFHIRTxOperationParams;
+begin                                             
+  result := TFHIRTxOperationParams(inherited clone);
+
+end;
+
+procedure TFHIRTxOperationParams.assign(other: TFslObject);
+var
+  o : TFHIRTxOperationParams;
+begin
+  inherited assign(other);
+  o := other as TFHIRTxOperationParams;
+  FLanguages := o.FLanguages.link;
+  FVersionRules.addAll(o.FVersionRules);
+  if (o.FValueSetVersionRules <> nil) then
+  begin
+    FValueSetVersionRules := TStringList.create;
+    FValueSetVersionRules.AddStrings(o.FValueSetVersionRules);
+  end;
+  FactiveOnly := o.FactiveOnly;
+  FexcludeNested := o.FexcludeNested;
+  FGenerateNarrative := o.FGenerateNarrative;
+  FlimitedExpansion := o.FlimitedExpansion;
+  FexcludeNotForUI := o.FexcludeNotForUI;
+  FexcludePostCoordinated := o.FexcludePostCoordinated;
+  FincludeDesignations := o.FincludeDesignations;
+  FincludeDefinition := o.FincludeDefinition;
+  FUid := o.FUid;
+  FMembershipOnly := o.FMembershipOnly;
+  FDefaultToLatestVersion := o.FDefaultToLatestVersion;
+  FIncompleteOK := o.FIncompleteOK;
+  FDisplayWarning := o.FDisplayWarning;
+  FDiagnostics := o.FDiagnostics;
+  FHasactiveOnly := o.FHasactiveOnly;
+  FHasExcludeNested := o.FHasExcludeNested;
+  FHasGenerateNarrative := o.FHasGenerateNarrative;
+  FHasLimitedExpansion := o.FHasLimitedExpansion;
+
+  FHesExcludeNotForUI := o.FHesExcludeNotForUI;
+  FHasExcludePostCoordinated := o.FHasExcludePostCoordinated;
+  FHasIncludeDesignations := o.FHasIncludeDesignations;
+  FHasIncludeDefinition := o.FHasIncludeDefinition;
+  FHasDefaultToLatestVersion := o.FHasDefaultToLatestVersion;
+  FHasIncompleteOK := o.FHasIncompleteOK;
+  FHasexcludeNotForUI := o.FHasIncompleteOK;
+  FHasMembershipOnly := o.FHasMembershipOnly;
+  FHasDisplayWarning := o.FHasDisplayWarning;
+  if (o.FAltCodeRules <> nil) then
+  begin
+    FAltCodeRules := TAlternateCodeOptions.create;
+    FAltCodeRules.all := o.FAltCodeRules.all;
+    FAltCodeRules.useTypes.AddStrings(o.FAltCodeRules.useTypes);
+  end;
+
+  if (o.FProperties <> nil) then
+  begin
+    FProperties := TStringList.create;
+    FProperties.AddStrings(o.FProperties);                
+  end;
+
+  if (o.FDesignations <> nil) then
+  begin
+    FDesignations := TStringList.create;
+    FDesignations.AddStrings(o.FDesignations);
+  end;
+
+  if o.FHTTPLanguages <> nil then
+    FHTTPLanguages := o.FHTTPLanguages.clone;
+  if o.FDisplayLanguages <> nil then
+    FDisplayLanguages := o.FHTTPLanguages.clone;
 end;
 
 

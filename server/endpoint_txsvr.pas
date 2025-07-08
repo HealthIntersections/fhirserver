@@ -1373,6 +1373,7 @@ begin
   result.Operations.add(TFhirExpandValueSetOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirLookupCodeSystemOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirValueSetValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirValueSetBatchValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirConceptMapTranslationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirConceptMapClosureOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirVersionsOperation.create(Factory.link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
@@ -2136,16 +2137,24 @@ var
 begin
   inherited PopulateConformance(sender, conf, secure, baseUrl, caps);
   rr := conf.addResource('CodeSystem');
-  rr.addInteraction('read', 'Read a code system');
-  rr.addInteraction('search-type', 'Search the code systems. Not that there a few major code systems that are not available through this API (SCT, LOINC etc)');
-  rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/CodeSystem-validate-code', '');
-  rr.addOperation('lookup', 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup', '');
+  try
+    rr.addInteraction('read', 'Read a code system');
+    rr.addInteraction('search-type', 'Search the code systems. Not that there a few major code systems that are not available through this API (SCT, LOINC etc)');
+    rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/CodeSystem-validate-code', '');
+    rr.addOperation('lookup', 'http://hl7.org/fhir/OperationDefinition/CodeSystem-lookup', '');
+  finally
+    rr.free;
+  end;
 
   rr := conf.addResource('ValueSet');
-  rr.addInteraction('read', 'Read a ValueSet');
-  rr.addInteraction('search-type', 'Search the value sets');
-  rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/ValueSet-validate-code', '');
-  rr.addOperation('expand', 'http://hl7.org/fhir/OperationDefinition/ValueSet-expand', '');
+  try
+    rr.addInteraction('read', 'Read a ValueSet');
+    rr.addInteraction('search-type', 'Search the value sets');
+    rr.addOperation('validate-code', 'http://hl7.org/fhir/OperationDefinition/ValueSet-validate-code', '');
+    rr.addOperation('expand', 'http://hl7.org/fhir/OperationDefinition/ValueSet-expand', '');
+  finally
+    rr.free;
+  end;
 
   conf.addInstantiates('http://hl7.org/fhir/CapabilityStatement/terminology-server');
   conf.addTxFeature(TX_TESTS_VERSION);
