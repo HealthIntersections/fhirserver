@@ -332,7 +332,7 @@ begin
     readVersion(s, callback);
     v := s;
   end;
-  checkMissingCodes;
+  // checkMissingCodes;
 
   // 2. do the install
   FOrgs.Clear;
@@ -1342,7 +1342,7 @@ begin
         k := conn.CountSQL('Select NDCKey from NDCPackages where code = '''+SQLWrapString(code)+'''')
       else
         k := conn.CountSQL('Select NDCKey from NDCPackages where code11 = '''+SQLWrapString(code)+'''');
-      if (k <> 0) or not code.contains('-') then
+      if (k <> 0) then
         c := TNDCProviderContext.Create(true, k)
       else
       begin
