@@ -34,7 +34,7 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  {$IFDEF FPC}LazUTF8, {$ENDIF}
+  {$IFDEF FPC}LazUTF8, Translations, {$ENDIF}
   Classes, Generics.Collections, Generics.Defaults,
   fsl_base, fsl_utilities, fsl_lang, fsl_logging;
 
@@ -715,7 +715,7 @@ class function THTTPLanguageList.defaultLocal: THTTPLanguageList;
 var
   Lang: String;
 begin
-  LazGetShortLanguageID(Lang);
+  Lang := GetLanguageID().LanguageCode;
 {$ELSE}
 var
   szLang: Array [0..254] of Char;
