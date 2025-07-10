@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -17,8 +18,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="7"/>
-      <RevisionNr Value="23"/>
-      <Attributes pvaDebug="False"/>
+      <RevisionNr Value="22"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
