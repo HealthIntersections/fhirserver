@@ -715,7 +715,11 @@ class function THTTPLanguageList.defaultLocal: THTTPLanguageList;
 var
   Lang: String;
 begin
+  {$IF DECLARED(GetLanguageID)}
   Lang := GetLanguageID().LanguageCode;
+  {$ELSE}
+  LazGetShortLanguageID(Lang);
+  {$ENDIF}
 {$ELSE}
 var
   szLang: Array [0..254] of Char;
