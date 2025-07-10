@@ -75,6 +75,9 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
           </Linking>
+          <Other>
+            <CustomOptions Value="-WM10.15"/>
+          </Other>
         </CompilerOptions>
       </Item>
     </BuildModes>
