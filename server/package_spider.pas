@@ -366,7 +366,7 @@ begin
     begin
       // log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
       clog(clItem, 'warning', 'No canonical found in npm (from '+url+')');
-      canonical := 'http://simplifier.net/packages/fictitious/'+id;
+      canonical := 'http://simplifier.net/packages/'+id;
     end;
     if not isAbsoluteUrl(canonical) then
       raise EPackageCrawlerException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);

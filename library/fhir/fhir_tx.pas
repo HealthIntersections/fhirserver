@@ -618,13 +618,16 @@ var
 begin
   result := TFslList<TFhirCodeSystemW>.create;
   try
-    for r in FAdditionalResources do
+    if (FAdditionalResources <> nil) then
     begin
-      if r is TFHIRCodeSystemW then
+      for r in FAdditionalResources do
       begin
-        cs := r as TFHIRCodeSystemW;
-        if (cs.supplements = url) or (cs.supplements.startsWith(url+'|')) then
-          result.add(cs.link);
+        if r is TFHIRCodeSystemW then
+        begin
+          cs := r as TFHIRCodeSystemW;
+          if (cs.supplements = url) or (cs.supplements.startsWith(url+'|')) then
+            result.add(cs.link);
+        end;
       end;
     end;
     result.link;
@@ -1007,7 +1010,12 @@ begin
   inherited assign(other);
   o := other as TFHIRTxOperationParams;
   FLanguages := o.FLanguages.link;
-  FVersionRules.addAll(o.FVersionRules);
+  if (o.FVersionRules <> nil) then
+  begin
+    if (FVersionRules = nil) then
+      FVersionRules := TFslList<TFhirExpansionParamsVersionRule>.create;
+    FVersionRules.addAll(o.FVersionRules);
+  end;
   if (o.FValueSetVersionRules <> nil) then
   begin
     FValueSetVersionRules := TStringList.create;

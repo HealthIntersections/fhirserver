@@ -838,6 +838,8 @@ begin
                   result := result+' in vs '+vs.url+' (res)';
                   txResources := processAdditionalResources(context, manager, vs, params);
                 end
+                else
+                  txResources := processAdditionalResources(context, manager, vs, params);
                 // else
                 // raise ETerminologyError.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
               end;
