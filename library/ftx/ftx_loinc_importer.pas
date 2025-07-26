@@ -467,7 +467,8 @@ begin
 
   sql := 'CREATE Unique Index CodesCode on Codes (Code)';
   conn.ExecSQL(sql);
-
+  conn.ExecSQL('CREATE INDEX idx_codes_statuskey ON Codes (StatusKey)');
+  conn.ExecSQL('CREATE INDEX idx_codes_codekey_statuskey ON Codes (CodeKey, StatusKey)');
 
   sql := 'CREATE TABLE Relationships ('+
     '`RelationshipKey` int NOT NULL, '+

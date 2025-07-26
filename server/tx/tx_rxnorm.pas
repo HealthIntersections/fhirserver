@@ -226,6 +226,7 @@ begin
   FConn.ExecSQL('CREATE INDEX X_RXNCONSO_3 ON RXNCONSO(CODE, SAB, TTY)');
   FConn.ExecSQL('CREATE INDEX X_RXNCONSO_4 ON RXNCONSO(TTY, SAB)');
   FConn.ExecSQL('CREATE INDEX X_RXNCONSO_6 ON RXNCONSO(RXAUI)');
+  FConn.ExecSQL('CREATE INDEX idx_rxnconso_sab_tty_rxcui ON RXNCONSO(SAB, TTY, RXCUI)');
 
   callback(self, 10, false, 'Create table RXNREL (Step 1 of 5)');
   FConn.ExecSQL('CREATE TABLE RXNREL ( '+
@@ -241,6 +242,9 @@ begin
   FConn.ExecSQL('CREATE INDEX X_RXNREL_3 ON RXNREL(REL, RXCUI1)');
   FConn.ExecSQL('CREATE INDEX X_RXNREL_4 ON RXNREL(RELA, RXAUI2)');
   FConn.ExecSQL('CREATE INDEX X_RXNREL_5 ON RXNREL(RELA, RXCUI2)');
+  FConn.ExecSQL('CREATE INDEX idx_rxnrel_rel ON RXNREL(REL)');
+  FConn.ExecSQL('CREATE INDEX idx_rxnrel_rela ON RXNREL(RELA)');
+
 
   callback(self, 20, false, 'Create table RXNSTY (Step 1 of 5)');
   FConn.ExecSQL('CREATE TABLE RXNSTY ( '+

@@ -181,6 +181,7 @@ type
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     FStatusKeys : TDictionary<String, String>;
+    FStatusCodes : TDictionary<String, String>;
     FSupplements : TFslList<TFhirCodeSystemW>;
     function commaListOfCodes(source: String): String;
     procedure addSupplementDisplays(displays : TFslList<TLoincDisplay>; code : String);
@@ -326,6 +327,7 @@ begin
   FRelationships := TDictionary<String, String>.create;
   FProperties := TDictionary<String, String>.create;
   FStatusKeys := TDictionary<String, String>.create;
+  FStatusCodes := TDictionary<String, String>.create;
   FLock := TFslLock.create('LOINC');
 end;
 
@@ -341,6 +343,7 @@ begin
     FRelationships.free;
     FProperties.free;
     FStatusKeys.free;
+    FStatusCodes.free;
     FCodeList.free;
     FCodes.free;
     FLangs.free;
@@ -368,6 +371,7 @@ begin
     r.FRelationships := FRelationships;
     r.FProperties := FProperties;
     r.FStatusKeys := FStatusKeys;
+    r.FStatusCodes := FStatusCodes;
     r.FLock := FLock;
 
     r.FSupplements := TFslList<TFhirCodeSystemW>.create;
@@ -442,7 +446,10 @@ begin
     c.prepare;
     c.Execute;
     while c.fetchnext do
+    begin
       FStatusKeys.Add(c.ColStringByName['Description'], c.ColStringByName['StatusKey']);
+      FStatusCodes.Add(c.ColStringByName['StatusKey'], c.ColStringByName['Description']);
+    end;
     c.terminate;
 
     c.sql := 'Select RelationshipTypeKey, Description from RelationshipTypes';
@@ -979,11 +986,11 @@ begin
       resp.AddProp(c.colStringByName['Description']).value := Factory.makeString(c.colStringByName['Value']);
     c.terminate;
 
-    c.sql := 'Select StatusCodes.Description from Codes, StatusCodes where CodeKey = '+inttostr((ctxt as TLoincProviderContext).key)+' and Codes.StatusKey != 0 and Codes.StatusKey = StatusCodes.StatusKey';
+    c.sql := 'Select StatusKey from Codes where CodeKey = '+inttostr((ctxt as TLoincProviderContext).key)+' and Codes.StatusKey != 0';
     c.prepare;
     c.execute;
     while c.fetchNext do
-      resp.AddProp('STATUS').value := Factory.makeString(c.colStringByName['Description']);
+      resp.AddProp('STATUS').value := Factory.makeString(FStatusCodes[c.colStringByName['StatusKey']]);
     c.terminate;
 
     case (ctxt as TLoincProviderContext).Kind of
