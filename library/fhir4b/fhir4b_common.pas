@@ -54,7 +54,7 @@ const
   MAP_SEARCH_MODE2 : array [TFHIRBundleEntrySearchMode] of TFhirSearchEntryModeEnum = (SearchEntryModeNull, SearchEntryModeMatch, searchEntryModeInclude, searchEntryModeOutcome);
   MAP_ELEMENT_DEFINITION_BINDING : array [TFhirBindingStrengthEnum] of TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);
   MAP_TFilterOperator : array [TFhirFilterOperatorEnum] of TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists);
-  MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorDescendentOf, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorGeneralizes, filterOperatorExists, filterOperatorNull, filterOperatorNull);
+  MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorDescendentOf, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorGeneralizes, filterOperatorExists, filterOperatorNull, filterOperatorNull, filterOperatorNull);
   MAP_TFhirConceptPropertyTypeEnum : array [TFhirConceptPropertyTypeEnum] of TFhirCodeSystemPropertyType = (cptNull, cptCode, cptCoding, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal);
   MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri, sptSpecial);
   MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri, SearchParamTypeNull);
@@ -575,7 +575,8 @@ type
     function filterCount : integer; override;
     function conceptCount : integer; override;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; override;
-    function addFilter : TFhirValueSetComposeIncludeFilterW; override;
+    function addFilter : TFhirValueSetComposeIncludeFilterW; override;    
+    procedure addValueSet(value : String); override;
   end;
 
   { TFHIRValueSet4B }
@@ -3238,6 +3239,11 @@ end;
 function TFhirValueSetComposeInclude4B.addFilter: TFhirValueSetComposeIncludeFilterW;
 begin
   result := TFhirValueSetComposeIncludeFilter4B.Create((Element as TFhirValueSetComposeInclude).FilterList.Append.Link);
+end;
+
+procedure TFhirValueSetComposeInclude4B.addValueSet(value: String);
+begin
+  TFhirValueSetComposeInclude(element).valueSetList.AddItem(value);
 end;
 
 function TFhirValueSetComposeInclude4B.concepts: TFslList<TFhirValueSetComposeIncludeConceptW>;
