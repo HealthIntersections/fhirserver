@@ -313,7 +313,7 @@ begin
   FOpContext.seeContext(vs.vurl);
   for ext in vs.getComposeExtensions.forEnum do
   begin
-    if (ext.url = 'http://hl7.org/fhir/tools/StructureDefinition/valueset-expansion-parameter') then
+    if (ext.url = 'http://hl7.org/fhir/StructureDefinition/valueset-expansion-parameter') or (ext.url = 'http://hl7.org/fhir/tools/StructureDefinition/valueset-expansion-parameter') then
     begin
       n := ext.getExtensionString('name');
       v := ext.getExtensionValue('value');
