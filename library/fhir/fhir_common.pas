@@ -51,7 +51,7 @@ uses
   fhir_objects, fhir_utilities, fhir_features, fhir_uris, fhir_parser;
 
 Type
-  TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists, foChildOf, foDescendentLeaf);
+  TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists, foChildOf, foDescendentLeaf, foOf);
   TPublicationStatus = (psNull, psDraft, psActive, psRetired);
   TBundleType = (btNull, btDocument, btMessage, btTransaction, btTransactionResponse, btBatch, btBatchResponse, btHistory, btSearchset, btCollection);
   TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
@@ -64,7 +64,7 @@ Type
   TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicDisplay, oicDisplayComment, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck, oicInvalidData, oicProcessingNote);
 
 const
-  CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf');
+  CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf', 'of');
   CODES_TPublicationStatus: Array[TPublicationStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
   CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'display-comment', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data', 'process-note');
@@ -1006,6 +1006,7 @@ type
     property version : String read GetVersion write SetVersion;
     function hasValueSets : boolean; virtual; abstract;
     function valueSets : TArray<String>; virtual; abstract;
+    procedure addValueSet(value : String); virtual; abstract;
     function hasConcepts : boolean; virtual; abstract;
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; virtual; abstract;
     function addConcept : TFhirValueSetComposeIncludeConceptW; virtual; abstract;
@@ -1038,6 +1039,7 @@ type
     function excludeInactives : boolean; virtual; abstract;
     function includes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
     function addInclude : TFhirValueSetComposeIncludeW; virtual; abstract; {      result.compose := TFhirValueSetCompose.Create;     inc := result.addInclude; compose.includeList.Append; }
+    function addExclude : TFhirValueSetComposeIncludeW; virtual; abstract;
     function excludes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
 
     procedure clearDefinition; virtual; abstract;
