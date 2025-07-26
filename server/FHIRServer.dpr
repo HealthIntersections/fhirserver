@@ -123,7 +123,6 @@ uses
   endpoint_full in 'endpoint_full.pas',
   endpoint_icao in 'endpoint_icao.pas',
   endpoint_loinc in 'endpoint_loinc.pas',
-  endpoint_packages in 'endpoint_packages.pas',
   endpoint_snomed in 'endpoint_snomed.pas',
   endpoint_storage in 'endpoint_storage.pas',
   endpoint_twilio in 'endpoint_twilio.pas',

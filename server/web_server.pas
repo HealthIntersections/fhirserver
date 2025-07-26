@@ -87,7 +87,7 @@ Uses
   {$ENDIF}
   fhir_objects, fhir_parser,  fhir_xhtml, fhir_utilities, fhir_common, fhir_factory, fhir_client, fhir_pathengine,
   fhir_client_http,
-  package_spider, fsl_npm_client, fsl_npm, fsl_npm_cache,
+  fsl_npm_client, fsl_npm, fsl_npm_cache,
   fhir_oauth, fhir_cdshooks,
   fhir_graphql, fhir_ndjson,
   {$IFNDEF NO_CONVERSION} fxver_convertors,{$ENDIF}

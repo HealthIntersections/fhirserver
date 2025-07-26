@@ -474,7 +474,8 @@ begin
   FQuestionnaireCache.clearCache;
   FValidatorContext.UnLoad;
   FValidator.Unload;
-  FTerminologyServer.UnLoad;
+  if FTerminologyServer <> nil then
+    FTerminologyServer.UnLoad;
   if FSubscriptionManager <> nil then
     FSubscriptionManager.UnLoad;
   FSessionManager.Clear;

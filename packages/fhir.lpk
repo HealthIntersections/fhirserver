@@ -367,6 +367,10 @@
         <Filename Value="..\library\fhir\fhir_tx.pas"/>
         <UnitName Value="fhir_tx"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_vcl.pas"/>
+        <UnitName Value="fhir_vcl"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

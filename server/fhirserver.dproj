@@ -311,7 +311,6 @@
     <DCCReference Include="endpoint_full.pas"/>
     <DCCReference Include="endpoint_icao.pas"/>
     <DCCReference Include="endpoint_loinc.pas"/>
-    <DCCReference Include="endpoint_packages.pas"/>
     <DCCReference Include="endpoint_snomed.pas"/>
     <DCCReference Include="endpoint_storage.pas"/>
     <DCCReference Include="endpoint_twilio.pas"/>

@@ -53,7 +53,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, 
-  telnet_server, kernel_thread, server_stats, xig_provider, server_constants,
+  telnet_server, kernel_thread, server_stats, server_constants,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -225,7 +225,6 @@ type
 
     procedure loadPackage(pid : String; ignoreEmptyCodeSystems : boolean);
     procedure loadFile(factory : TFHIRFactory; name : String);
-    procedure loadFromXig(xig : TXIGProvider; ignoreEmptyCodeSystems : boolean);
 
     function cacheSize(magic : integer) : UInt64; override;
     function issueHealthCardKey : integer; override;
@@ -1608,35 +1607,6 @@ begin
   Logging.finish(' - done');
 end;
 
-procedure TTerminologyFhirServerStorage.loadFromXig(xig: TXIGProvider; ignoreEmptyCodeSystems : boolean);
-var
-  xl : TXigLoader;
-  res : TFHIRResourceProxyV;
-  i : integer;
-begin
-  i := 0;
-  Logging.start('Load from XIG');
-  xl := xig.startLoad(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']);
-  try
-    xl.factory := Factory.link;
-    while xl.next do
-    begin
-      inc(i);
-      if (i mod 400 = 0) then
-        Logging.continue('.');
-      res := xl.makeResource;
-      try
-        loadResource(res, ignoreEmptyCodeSystems);
-      finally
-        res.free;
-      end;
-    end;
-  finally
-    Logging.finish(' '+inttostr(i)+' resources');
-    xl.free;
-  end;
-end;
-
 procedure TTerminologyFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
 begin
   raise EFslException.Create('Not Implemented');
@@ -1821,7 +1791,8 @@ end;
 procedure TTerminologyServerEndPoint.Stopping;
 begin
   inherited Stopping;
-  FLoadThread.StopAndWait(500);
+  if FLoadThread <> nil then
+    FLoadThread.StopAndWait(500);
 end;
 
 function TTerminologyServerEndPoint.summary: String;
@@ -1881,9 +1852,6 @@ begin
     if not pid.StartsWith('hl7.terminology') or (UTGFolder = '') then
       FStore.loadPackage(pid, true);
 
-  if (FServerContext.Factory.version = fhirVersionRelease5) and (Terminologies.XIG <> nil) then
-    FStore.loadFromXig(Terminologies.XIG, true);
-
   FServerContext.TerminologyServer.Loading := false;
 
   FStore.Initialise;
@@ -1894,7 +1862,8 @@ end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
-  FLoadThread.StopAndWait(500);
+  if FLoadThread <> nil then
+    FLoadThread.StopAndWait(500);
   if FServerContext <> nil then
   begin
     FServerContext.Unload;

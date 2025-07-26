@@ -687,32 +687,17 @@ end;
 function TConceptDesignations.displayCount(langList : THTTPLanguageList; defLang : TIETFLang; displayOnly : boolean): integer;
 var
   cd : TConceptDesignation;
-  s : String;
 begin
-  if (langList = nil) then
-    s := 'Check for display count. Langs = --'
-  else
-    s := 'Check for display count. Langs = '+langList.source;
-  if (defLang = nil) then
-    s := s + ', def = nil'
-  else
-    s := s + ', def = '+defLang.code;
-  Logging.log(s);
-  for cd in designations do
-    Logging.log(' *'+cd.present);
-
   result := 0;
   for cd in FDesignations do
     if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtFull, defLang) and (cd.value <> nil) then
     begin
-      Logging.log('count #1 '+cd.present);
       inc(result);
     end;
   if result = 0 then
     for cd in FDesignations do
       if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLangRegion, defLang) and (cd.value <> nil) then
       begin
-        Logging.log('count #2 '+cd.present);
         inc(result);
       end;
 end;
