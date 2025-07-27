@@ -242,6 +242,7 @@ type
     property Relationships : TDictionary<String, String> read FRelationships;
     property Properties : TDictionary<String, String> read FProperties;
     property StatusKeys : TDictionary<String, String> read FStatusKeys;
+    property StatusCodes : TDictionary<String, String> read FStatusCodes;
   End;
 
   TLOINCServiceList = class (TFslObjectList)

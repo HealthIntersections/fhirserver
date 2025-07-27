@@ -275,11 +275,10 @@ begin
 
       c.select('Select StatusKey from Codes where CodeKey = '+inttostr(ci.key));
       while c.fetchNext do
-      while c.fetchNext do
       begin
         html.StartRow();
         html.AddTableCell('STATUS');
-        html.AddTableCell(FLoinc.StatusKeys[c.colStringByName['Description']]);
+        html.AddTableCell(FLoinc.StatusCodes[c.colStringByName['StatusKey']]);
         html.AddTableCell('');
         html.EndTableRow;
       end;
