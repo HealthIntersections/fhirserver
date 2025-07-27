@@ -241,6 +241,7 @@ type
     property Root : String read FRoot;
     property Relationships : TDictionary<String, String> read FRelationships;
     property Properties : TDictionary<String, String> read FProperties;
+    property StatusKeys : TDictionary<String, String> read FStatusKeys;
   End;
 
   TLOINCServiceList = class (TFslObjectList)
