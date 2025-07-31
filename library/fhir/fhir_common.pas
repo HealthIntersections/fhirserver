@@ -723,6 +723,7 @@ type
     function language : String; virtual; abstract;
     function useGen : String; virtual; abstract;
     function use : TFHIRCodingW; virtual; abstract;
+    function hasUse : boolean; virtual; abstract;
     function value : String; virtual; abstract;
     function valueElement : TFHIRPrimitiveW; virtual; abstract;
   end;
@@ -1507,6 +1508,8 @@ type
     procedure setPublisher(Value: String); virtual; abstract;
     function getVersion: String; virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
+    function getKind: TCapabilityStatementKind; virtual; abstract;
+    procedure setKind(Value: TCapabilityStatementKind); virtual; abstract;
   public
     function link : TFhirTerminologyCapabilitiesW; overload;
 
@@ -1519,6 +1522,7 @@ type
     property date : TFslDateTime read GetDate write SetDate;
     property context : String read getContext write SetContext;
     property publisher : String read GetPublisher write SetPublisher;
+    property kind : TCapabilityStatementKind read getKind write setKind;
 
     procedure contact(kind : TContactType; value : String); virtual; abstract;
     procedure systemUri(url : String); virtual; abstract;

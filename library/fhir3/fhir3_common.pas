@@ -696,6 +696,7 @@ type
     function language : String; override;
     function useGen : String; override;
     function use : TFHIRCodingW; override;
+    function hasUse : boolean; override;
     function value : String; override;
     function valueElement : TFHIRPrimitiveW; override;
   end;
@@ -1298,6 +1299,8 @@ type
     procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getKind: TCapabilityStatementKind; override;
+    procedure setKind(Value: TCapabilityStatementKind); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure contact(kind : TContactType; value : String); override;
@@ -4163,6 +4166,11 @@ begin
     result := TFHIRCoding3.Create((Element as TFhirCodeSystemConceptDesignation).use.link);
 end;
 
+function TFhirCodeSystemConceptDesignation3.hasUse: boolean;
+begin
+  result := (Element as TFhirCodeSystemConceptDesignation).use <> nil;
+end;
+
 function TFhirCodeSystemConceptDesignation3.useGen: String;
 begin
   result := gen((Element as TFhirCodeSystemConceptDesignation).use)
@@ -7025,6 +7033,16 @@ end;
 procedure TFhirTerminologyCapabilities3.setVersion(Value: String);
 begin
   (FRes as TFhirParameters).AddParameter('version', TFhirCode.Create(Value));
+end;
+
+function TFhirTerminologyCapabilities3.getKind: TCapabilityStatementKind;
+begin
+  result := cskNull;
+end;
+
+procedure TFhirTerminologyCapabilities3.setKind(Value: TCapabilityStatementKind);
+begin
+  // nothing
 end;
 
 function TFhirTerminologyCapabilities3.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;

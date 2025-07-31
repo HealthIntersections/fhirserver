@@ -66,15 +66,20 @@ type
   private
     FConcept: TFhirCodeSystemConceptW;
     FParents: TFslList<TFHIRCodeSystemCodeEntry>;
+    FChildren: TFslList<TFHIRCodeSystemCodeEntry>;
     procedure addParent(p : TFHIRCodeSystemCodeEntry);
+    procedure addChild(p : TFHIRCodeSystemCodeEntry);
+    procedure clearRelations;
   public
     constructor Create(Concept : TFhirCodeSystemConceptW);
     destructor Destroy; override;
     function link: TFHIRCodeSystemCodeEntry; overload;
 
-    property Concept : TFhirCodeSystemConceptW read FConcept;
-    function hasParents : boolean;
+    property Concept : TFhirCodeSystemConceptW read FConcept; 
     property parents : TFslList<TFHIRCodeSystemCodeEntry> read FParents;
+    function hasParents : boolean;
+    property children : TFslList<TFHIRCodeSystemCodeEntry> read FChildren;
+    function hasChildren : boolean;
   end;
 
   { TFHIRCodeSystemEntry }
@@ -95,6 +100,7 @@ type
 
     FCodeMap : TFslMap<TFHIRCodeSystemCodeEntry>;
     procedure loadCodeSystem;
+    procedure clearCodeMap;
     function uc(code : String) : String;
 
     function GetHasSupplements: boolean;
@@ -121,6 +127,7 @@ type
     property url : String read GetUrl;
     property version : String read GetVersion;
 
+    function getCode(code : String) : TFhirCodeSystemConceptW;
     property CodeSystemProxy : TFHIRResourceProxyV read FCodeSystemProxy;
     property SupplementProxies : TFslList<TFHIRResourceProxyV> read GetSupplementProxies;
 
@@ -349,6 +356,7 @@ end;
 
 destructor TFHIRCodeSystemEntry.Destroy;
 begin
+  clearCodeMap;
   FCodeMap.Free;
   FCodeSystemProxy.Free;
   FSupplementProxies.Free;
@@ -372,7 +380,10 @@ procedure TFHIRCodeSystemEntry.loadCodeSystem;
           FCodeMap.AddOrSetValue(uc(item.code), entry.link);
           item.TagNoLink := entry;
           if (parent <> nil) then
+          begin
             entry.addParent(parent.link);
+            parent.addChild(entry.link);
+          end;
           if (item.HasConcepts) then
             registerCodes(item.conceptList, entry);
         finally
@@ -381,6 +392,7 @@ procedure TFHIRCodeSystemEntry.loadCodeSystem;
       end;
     end;
   end;
+
   procedure indexCodes(list : TFhirCodeSystemConceptListW; stemmer : TFslWordStemmer);
   var
     item : TFhirCodeSystemConceptW;
@@ -433,12 +445,23 @@ begin
           begin
             c := FCodeMap[p.value.primitiveValue];
             if (c <> nil) then
+            begin
               entry.addParent(c.link);
+              c.addChild(entry.link);
+            end;
           end;
         end;
       end;
     end;
   end;
+end;
+
+procedure TFHIRCodeSystemEntry.clearCodeMap;
+var
+  t : TFHIRCodeSystemCodeEntry;
+begin
+  for t in FCodeMap.Values do
+    t.clearRelations;
 end;
 
 function TFHIRCodeSystemEntry.uc(code: String): String;
@@ -513,6 +536,17 @@ begin
   result := TFHIRCodeSystemEntry(inherited Link);
 end;
 
+function TFHIRCodeSystemEntry.getCode(code: String): TFhirCodeSystemConceptW;
+var
+  entry : TFHIRCodeSystemCodeEntry;
+begin
+  result := nil;
+  entry := FCodeMap[code];
+  if (entry <> nil) then
+    result := entry.FConcept;
+
+end;
+
 function TFHIRCodeSystemEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
@@ -575,17 +609,34 @@ begin
   FParents.add(p);
 end;
 
+procedure TFHIRCodeSystemCodeEntry.addChild(p: TFHIRCodeSystemCodeEntry);
+begin
+  if FChildren = nil then
+    FChildren := TFslList<TFHIRCodeSystemCodeEntry>.create;
+  FChildren.add(p);
+end;
+
+procedure TFHIRCodeSystemCodeEntry.clearRelations;
+begin
+  if FParents <> nil then
+    FParents.clear;
+  if FChildren <> nil then
+    FChildren.clear;
+end;
+
 constructor TFHIRCodeSystemCodeEntry.Create(Concept: TFhirCodeSystemConceptW);
 begin
   inherited Create;
   FConcept := Concept;
   FParents := nil;
+  FChildren := nil;
 end;
 
 destructor TFHIRCodeSystemCodeEntry.Destroy;
 begin
   FConcept.free;
   FParents.Free;
+  FChildren.free;
   inherited Destroy;
 end;
 
@@ -597,6 +648,11 @@ end;
 function TFHIRCodeSystemCodeEntry.hasParents: boolean;
 begin
   result := FParents <> nil;
+end;
+
+function TFHIRCodeSystemCodeEntry.hasChildren: boolean;
+begin
+  result := FChildren <> nil;
 end;
 
 { TFhirCodeSystemProvider }
@@ -956,7 +1012,7 @@ begin
   for ccd in TFhirCodeSystemProviderContext(context).concept.designations.forEnum do
   begin
     lm := (langList <> nil) and not (langList.matches(FCs.CodeSystem.language, false)) and langList.matches(ccd.language, false);
-    um := (ccd.use = nil); // or isDisplayUsage(ccd.use);
+    um := not ccd.hasUse; // or isDisplayUsage(ccd.use);
     if (lm and um) then
       result := ccd.value.Trim;
   end;
@@ -1291,6 +1347,7 @@ var
   d : TFHIRLookupOpRespDesignationW;
   p : TFHIRLookupOpRespPropertyW;
   css : TFHIRCodeSystemW;
+  c : TFHIRCodingW;
 begin
   context := TFHIRCodeSystemProviderContext(ctxt).concept;
   concepts := TFhirCodeSystemConceptListW.Create;
@@ -1339,7 +1396,12 @@ begin
         for ccd in cc.designations.forEnum do
         Begin
           d := resp.addDesignation(ccd.language, ccd.value);
-          d.use := ccd.use.Element;
+          c := ccd.use;
+          try
+            d.use := c.Element.link;
+          finally
+            c.free;
+          end;
         End;
       end;
 
@@ -1476,6 +1538,7 @@ var
   ctxt : TCodeSystemProviderContext;
   s : TArray<String>;
   cl : TFhirCodeSystemConceptListW;
+  entry, child : TFHIRCodeSystemCodeEntry;
 begin
   SetLength(s, 1);
   s[0] := 'http://hl7.org/fhir/StructureDefinition/codesystem-subsumes';
@@ -1487,45 +1550,50 @@ begin
       list.Add(base.Link, 0);
 
   // 1. Add children in the heirarchy
-  for i := 0 to base.conceptList.count - 1 do
+  // for performance reasons, this is pregenerated
+  entry := base.TagNoLink as TFHIRCodeSystemCodeEntry;
+  if (entry.hasChildren) then
   begin
-    deadCheck(opContext, 'iterate-codes-1', op);
-    iterateCodes(opContext, op, base.conceptList[i], list, filter, context, true);
+    for child in entry.children do
+    begin
+      deadCheck(opContext, 'iterate-codes-1', op);
+      iterateCodes(opContext, op, child.Concept, list, filter, context, true);
+    end;
   end;
 
-  // 2. find any codes that identify this as a parent in their properties
-  cl := TFhirCodeSystemConceptListW.Create;
-  try
-    listChildrenByProperty(opContext, op, base.code, FCs.CodeSystem.conceptList, cl);
-    for i := 0 to cl.count - 1 do
-    begin
-      deadCheck(opContext, 'iterate-codes-2', op);
-      iterateCodes(opContext, op, cl[i], list, filter, context, true);
-    end;
-  finally
-    cl.free;
-  end;
+  //// 2. find any codes that identify this as a parent in their properties
+  //cl := TFhirCodeSystemConceptListW.Create;
+  //try
+  //  listChildrenByProperty(opContext, op, base.code, FCs.CodeSystem.conceptList, cl);
+  //  for i := 0 to cl.count - 1 do
+  //  begin
+  //    deadCheck(opContext, 'iterate-codes-2', op);
+  //    iterateCodes(opContext, op, cl[i], list, filter, context, true);
+  //  end;
+  //finally
+  //  cl.free;
+  //end;
   // 3. Look in http://hl7.org/fhir/StructureDefinition/codesystem-subsumes extension (deprecated now)
-  el := base.getExtensionsV('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
-  try
-    for e in el do
-    begin
-      ex := FFactory.wrapExtension(e.Link);
-      try           
-        deadCheck(opContext, 'iterate-codes-3', op);
-        ctxt := doLocate(ex.value.primitiveValue, nil);
-        try
-          iterateCodes(opContext, op, TFhirCodeSystemProviderContext(ctxt).concept, list, filter, context, true);
-        finally
-          ctxt.free;
-        end;
-      finally
-        ex.free;
-      end;
-    end;
-  finally
-    el.free;
-  end;
+  //el := base.getExtensionsV('http://hl7.org/fhir/StructureDefinition/codesystem-subsumes');
+  //try
+  //  for e in el do
+  //  begin
+  //    ex := FFactory.wrapExtension(e.Link);
+  //    try           
+  //      deadCheck(opContext, 'iterate-codes-3', op);
+  //      ctxt := doLocate(ex.value.primitiveValue, nil);
+  //      try
+  //        iterateCodes(opContext, op, TFhirCodeSystemProviderContext(ctxt).concept, list, filter, context, true);
+  //      finally
+  //        ctxt.free;
+  //      end;
+  //    finally
+  //      ex.free;
+  //    end;
+  //  end;
+  //finally
+  //  el.free;
+  //end;
 end;
 
 

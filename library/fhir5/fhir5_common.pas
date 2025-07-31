@@ -706,6 +706,7 @@ type
     function language : String; override;
     function useGen : String; override;
     function use : TFHIRCodingW; override;
+    function hasUse : boolean; override;
     function value : String; override;
     function valueElement : TFHIRPrimitiveW; override;
   end;
@@ -1294,6 +1295,8 @@ type
     procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getKind: TCapabilityStatementKind; override;
+    procedure setKind(Value: TCapabilityStatementKind); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure contact(kind : TContactType; value : String); override;
@@ -3847,6 +3850,11 @@ begin
     result := nil
   else
     result := TFHIRCoding5.create((Element as TFhirCodeSystemConceptDesignation).use.link);
+end;
+
+function TFhirCodeSystemConceptDesignation5.hasUse: boolean;
+begin
+  result := (Element as TFhirCodeSystemConceptDesignation).use <> nil;
 end;
 
 function TFhirCodeSystemConceptDesignation5.useGen: String;
@@ -6840,6 +6848,28 @@ end;
 procedure TFhirTerminologyCapabilities5.setVersion(Value: String);
 begin
   tc.version := value;
+end;
+
+function TFhirTerminologyCapabilities5.getKind: TCapabilityStatementKind;
+begin
+  case tc.kind of
+    CapabilityStatementKindInstance : result := cskInstance;
+    CapabilityStatementKindCapability : result := cskCapability;
+    CapabilityStatementKindRequirements : result := cskRequirements;
+  else
+    result := cskNull;
+  end;
+end;
+
+procedure TFhirTerminologyCapabilities5.setKind(Value: TCapabilityStatementKind);
+begin
+  case value of
+    cskInstance : tc.kind := CapabilityStatementKindInstance;
+    cskCapability : tc.kind := CapabilityStatementKindCapability;
+    cskRequirements : tc.kind := CapabilityStatementKindRequirements;
+  else
+    tc.kind := CapabilityStatementKindNull;
+  end;
 end;
 
 function TFhirTerminologyCapabilities5.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
