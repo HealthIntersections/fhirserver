@@ -35,7 +35,7 @@ interface
 uses
   SysUtils,
   fsl_base, fsl_threads, fsl_logging,
-  fhir_common,
+  fhir_common, fhir_tx,
   server_constants, server_stats;
 
 type
@@ -43,13 +43,13 @@ type
   private
     FCacheId : String;
     FLastTouched : TDateTime;
-    FList : TFslMetadataResourceList;
+    FList : TFslList<TFHIRCachedMetadataResource>;
     FSize : UInt64;
   public
     constructor Create; override;
     destructor Destroy; override;
     function link : TClientCacheManagerEntry; overload;
-    procedure update(list : TFslMetadataResourceList);
+    procedure update(list : TFslList<TFHIRCachedMetadataResource>);
   end;
 
   { TClientCacheManager }
@@ -68,7 +68,7 @@ type
     function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
     procedure sweep;
-    function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
+    function processResources(cacheId : String; list : TFslList<TFHIRCachedMetadataResource>) : TFslList<TFHIRCachedMetadataResource>;
     procedure recordStats(rec : TStatusRecord);
     property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
   end;
@@ -81,7 +81,7 @@ constructor TClientCacheManagerEntry.Create;
 begin
   inherited;
   FLastTouched := now;
-  FList := TFslMetadataResourceList.Create;
+  FList := TFslList<TFHIRCachedMetadataResource>.Create;
 end;
 
 destructor TClientCacheManagerEntry.Destroy;
@@ -95,22 +95,22 @@ begin
   result := TClientCacheManagerEntry(inherited link);
 end;
 
-procedure TClientCacheManagerEntry.update(list: TFslMetadataResourceList);
+procedure TClientCacheManagerEntry.update(list: TFslList<TFHIRCachedMetadataResource>);
 var
-  i, j : TFHIRMetadataResourceW;
-  remove : TFslMetadataResourceList;
+  i, j : TFHIRCachedMetadataResource;
+  remove : TFslList<TFHIRCachedMetadataResource>;
   c : cardinal;
   magic : integer;
 begin
   magic := nextMagic;
-  remove := TFslMetadataResourceList.Create;
+  remove := TFslList<TFHIRCachedMetadataResource>.Create;
   try
     for i in list do
     begin
       for j in FList do
-        if (i.url = j.url) and (i.version = j.version) then
+        if (i.resource.url = j.resource.url) and (i.resource.version = j.resource.version) then
         begin
-          c := j.sizeInBytes(magic);
+          c := j.resource.sizeInBytes(magic);
           if (c > FSize) then
             FSize := 0
           else
@@ -122,10 +122,10 @@ begin
     FList.RemoveAll(remove);
     for i in list do
     begin
-      if (i.url <> '') then
+      if (i.resource.url <> '') then
       begin
         //Logging.log('Cache '+FCacheId+': add '+i.vurl);
-        FSize := FSize + i.sizeInBytes(magic);
+        FSize := FSize + i.resource.sizeInBytes(magic);
         FList.Add(i.link);
       end;
     end;
@@ -206,12 +206,12 @@ begin
   end;
 end;
 
-function TClientCacheManager.processResources(cacheId: String; list: TFslMetadataResourceList): TFslMetadataResourceList;
+function TClientCacheManager.processResources(cacheId: String; list: TFslList<TFHIRCachedMetadataResource>): TFslList<TFHIRCachedMetadataResource>;
 var
   i, f : TClientCacheManagerEntry;
-  o : TFHIRMetadataResourceW;
+  o : TFHIRCachedMetadataResource;
 begin
-  result := TFslMetadataResourceList.Create;
+  result := TFslList<TFHIRCachedMetadataResource>.Create;
   try
     FLock.Lock('cache='+cacheId);
     try

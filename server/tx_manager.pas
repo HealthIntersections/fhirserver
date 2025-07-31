@@ -233,12 +233,12 @@ Type
     // access procedures. All return values are owned, and must be freed
     Function getProvider(system : String; version : String; profile : TFHIRTxOperationParams; noException : boolean = false) : TCodeSystemProvider; overload;
     Function getProvider(codesystem : TFHIRCodeSystemW; profile : TFHIRTxOperationParams) : TCodeSystemProvider; overload;
-    function getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
+    function getValueSetByUrl(url, version : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : TFHIRValueSetW;
     function getValueSetById(id : String) : TFHIRValueSetW;
     function getCodeSystemById(id : String) : TFHIRCodeSystemW;
     function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystemW;
-    function getCodeSystem(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRCodeSystemW;
-    function hasCodesystemUri(url : String; txResources : TFslMetadataResourceList = nil) : Boolean;
+    function getCodeSystem(url : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : TFHIRCodeSystemEntry;
+    function hasCodesystemUri(url : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : Boolean;
     function getConceptMapById(id : String) : TFHIRConceptMapW;
     function getConceptMapByUrl(url : String) : TFHIRConceptMapW;
     function getConceptMapBySrcTgt(src, tgt : String) : TFHIRConceptMapW;
@@ -886,26 +886,27 @@ begin
   FCommonTerminologies.getCacheInfo(ci);
 end;
 
-function TTerminologyServerStore.getCodeSystem(url: String;
-  txResources: TFslMetadataResourceList): TFHIRCodeSystemW;
+function TTerminologyServerStore.getCodeSystem(url: String; txResources: TFslList<TFHIRCachedMetadataResource>): TFHIRCodeSystemEntry;
 var
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      if (url <> '') and ((r.resource.url = url) or (r.resource.vurl = url)) then
       begin
-        if not (r is TFhirCodeSystemW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
-        exit(r.link as TFhirCodeSystemW);
+        if not (r.resource is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.resource.fhirType);
+        if r.LoadedCS = nil then
+          r.LoadedCS := TFHIRCodeSystemEntry.create(r.resource.link as TFHIRCodeSystemW);
+        exit(r.LoadedCS.link);
       end;
   end;
 
   FLock.Lock('getValueSetByUrl');
   try
     if FCodeSystems.has(url) then
-      result := FCodeSystems.get(url).CodeSystem.Link
+      result := TFHIRCodeSystemEntry.create(FCodeSystems.get(url).CodeSystem.Link)
     else
       result := nil;
   finally
@@ -913,8 +914,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getCodeSystemById(id: String
-  ): TFHIRCodeSystemW;
+function TTerminologyServerStore.getCodeSystemById(id: String): TFHIRCodeSystemW;
 begin
   FLock.Lock('getValueSetByUrl');
   try
@@ -927,8 +927,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getCodeSystemByValueSet(vs: String
-  ): TFHIRCodeSystemW;
+function TTerminologyServerStore.getCodeSystemByValueSet(vs: String): TFHIRCodeSystemW;
 var
   cse : TFHIRCodeSystemEntry;
 begin
@@ -1332,19 +1331,19 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
+function TTerminologyServerStore.getValueSetByUrl(url, version : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : TFHIRValueSetW;
 var
   p :  TArray<String>;
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (r.version = version)) then
+      if (url <> '') and ((r.resource.url = url) or (r.resource.vurl = url)) and ((version = '') or (r.resource.version = version)) then
       begin
-        if not (r is TFHIRValueSetW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.fhirType);
-        exit(r.link as TFHIRValueSetW);
+        if not (r.resource is TFHIRValueSetW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.resource.fhirType);
+        exit(r.resource.link as TFHIRValueSetW);
       end;
   end;
 
@@ -1391,17 +1390,17 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.hasCodesystemUri(url: String; txResources : TFslMetadataResourceList = nil): Boolean;
+function TTerminologyServerStore.hasCodesystemUri(url: String; txResources : TFslList<TFHIRCachedMetadataResource> = nil): Boolean;
 var
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      if (url <> '') and ((r.resource.url = url) or (r.resource.vurl = url)) then
       begin
-        if not (r is TFhirCodeSystemW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
+        if not (r.resource is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.resource.fhirType);
         exit(true);
       end;
   end;

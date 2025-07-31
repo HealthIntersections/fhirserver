@@ -85,7 +85,7 @@ Type
 
 
   TGetValueSetEvent = function (sender : TObject; url, version : String) : TFHIRValueSetW of object;
-  TGetExpansionEvent = function (sender : TObject; opContext: TTerminologyOperationContext; url, version, filter : String; params : TFHIRTxOperationParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW of object;
+  TGetExpansionEvent = function (sender : TObject; opContext: TTerminologyOperationContext; url, version, filter : String; params : TFHIRTxOperationParams; dependencies : TStringList; additionalResources : TFslList<TFHIRCachedMetadataResource>; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW of object;
 
   { TValueSetWorker }
 
@@ -112,7 +112,7 @@ Type
     function isValidating : boolean; virtual; abstract;
     procedure deadCheck(place : String); override;
   public
-    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
+    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
   end;
 
@@ -149,7 +149,7 @@ Type
     function isValidating : boolean; override;
     function opName : String; override;
   public
-    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String; i18n : TI18nSupport); overload;
+    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; id : String; i18n : TI18nSupport); overload;
     destructor Destroy; override;
 
     property id : String read FId;
@@ -230,7 +230,7 @@ Type
     function isValidating : boolean; override;
     function opName : String; override;
   public
-    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
+    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
 
     function expand(source : TFHIRValueSetW; params : TFHIRTxOperationParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; noCacheThisOne : boolean) : TFHIRValueSetW;
@@ -249,7 +249,7 @@ Type
     function translateUsingGroups(cm: TFHIRConceptMapW; coding: TFHIRCodingW; target : String; params: TFhirParametersW): boolean;
     function translateUsingCodeSystem(cm: TFHIRConceptMapW; coding: TFHIRCodingW; target : String; params: TFhirParametersW): boolean;
   public
-    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
+    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
 
     function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; target : String; params : TFhirParametersW; profile : TFhirTxOperationParams) : TFhirParametersW;
@@ -288,7 +288,7 @@ end;
 
 { TValueSetWorker }
 
-constructor TValueSetWorker.Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
+constructor TValueSetWorker.Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited Create(factory, opContext, getCS, getVersions, txResources, languages, i18n);
   FOnGetValueSet := getVS;
@@ -331,14 +331,14 @@ end;
 
 function TValueSetWorker.findValueSet(url, version: String): TFHIRValueSetW;
 var
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
   if (url = '') then
     exit(nil);
 
   r := findInAdditionalResources(url, '', 'ValueSet', false);
   if (r <> nil) then
-    exit(r.link as TFHIRValueSetW);
+    exit(r.resource.link as TFHIRValueSetW);
 
   result := FOnGetValueSet(self, url, version);
 end;
@@ -364,7 +364,7 @@ end;
 constructor TValueSetChecker.Create(factory: TFHIRFactory; opContext : TTerminologyOperationContext;
   getVS: TGetValueSetEvent; getCS: TGetProviderEvent;
   getVersions: TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent;
-  txResources: TFslMetadataResourceList; languages: TIETFLanguageDefinitions;
+  txResources: TFslList<TFHIRCachedMetadataResource>; languages: TIETFLanguageDefinitions;
   id: String; i18n: TI18nSupport);
 begin
   inherited Create(factory, opContext, getVs, getCs, getVersions, getExpansion, txResources, languages, i18n);
@@ -507,7 +507,7 @@ begin
 
   for vsi in FValueSet.excludes.forEnum do
     needDoExpansion := true;
-  for vsi in FValueSet.includes do
+  for vsi in FValueSet.includes.forEnum do
   begin
     if (length(vsi.valueSets) > 0) or (vsi.systemUri = '') or vsi.hasFilters then
       needDoExpansion := true;
@@ -519,7 +519,7 @@ begin
   end
   else
   begin
-    for vsi in FValueSet.includes do
+    for vsi in FValueSet.includes.forEnum do
     begin
       deadCheck('determineSystem');
       cs := findCodeSystem(vsi.systemUri, '', nil, [cscmComplete, cscmFragment], true);
@@ -1454,7 +1454,7 @@ var
   ts : TStringList;
   s : String;
 begin
-  for inc in vs.includes do
+  for inc in vs.includes.forEnum do
   begin
     if inc.systemUri <> '' then
     begin
@@ -2938,7 +2938,7 @@ begin
   end;
 end;
 
-constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; opContext: TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
+constructor TFHIRValueSetExpander.Create(factory: TFHIRFactory; opContext: TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited create(factory, opContext, getVS, getCS, getVersions, getExpansion, txResources, languages, i18n);
   FCSCounter := TFslMap<TValueSetCounter>.create;
@@ -4359,7 +4359,7 @@ begin
   end;
 end;
 
-constructor TFHIRConceptMapTranslator.Create(factory: TFHIRFactory; opContext: TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions: TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources: TFslMetadataResourceList; languages: TIETFLanguageDefinitions; i18n: TI18nSupport);
+constructor TFHIRConceptMapTranslator.Create(factory: TFHIRFactory; opContext: TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions: TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources: TFslList<TFHIRCachedMetadataResource>; languages: TIETFLanguageDefinitions; i18n: TI18nSupport);
 begin
   inherited create(factory, opContext, getVS, getCS, getVersions, getExpansion, txResources, languages, i18n);
 end;

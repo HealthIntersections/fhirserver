@@ -425,7 +425,8 @@ end;
 
 procedure TFHIRServerEndPoint.getCacheInfo(ci: TCacheInformation);
 begin
-  FTerminologies.getCacheInfo(ci);
+  if FTerminologies <> nil then
+    FTerminologies.getCacheInfo(ci);
   if WebEndPoint <> nil then
   begin
     ci.Add('WebEndPoint.FTokenRedirects', WebEndPoint.FTokenRedirects.sizeInBytes(ci.magic));

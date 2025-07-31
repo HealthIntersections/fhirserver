@@ -55,6 +55,36 @@ uses
     class function renderCoded(code : TFhirCodeableConceptW) : String; overload;
   end;
 
+  { TFHIRCachedMetadataResource }
+
+  TFHIRCachedMetadataResource = class (TFslObject)
+  private
+    FResource : TFHIRMetadataResourceW;
+    FLoadedCS: TFHIRCodeSystemEntry;
+    procedure SetLoadedCS(AValue: TFHIRCodeSystemEntry);
+  public
+    constructor create(resource : TFHIRMetadataResourceW);
+    destructor Destroy; override;
+    function link : TFHIRCachedMetadataResource; overload;
+
+    property Resource : TFHIRMetadataResourceW read FResource;
+    property LoadedCS : TFHIRCodeSystemEntry read FLoadedCS write SetLoadedCS;
+  end;
+
+
+  { TFslMetadataResourceByVersionSorter }
+
+  { TFHIRCachedMetadataResourceByVersionSorter }
+
+  TFHIRCachedMetadataResourceByVersionSorter = class (TFslComparer<TFHIRCachedMetadataResource>)
+  private
+    FReverse : boolean;
+  protected
+    function Compare(const l, r : TFHIRCachedMetadataResource) : integer; override;
+  public
+    constructor create(reverse : boolean);
+  end;
+
   TTrueFalseUnknown = (bTrue, bFalse, bUnknown);
 
   TFhirExpansionParamsVersionRuleMode = (fvmDefault, fvmCheck, fvmOverride);
@@ -215,7 +245,7 @@ uses
     FFactory : TFHIRFactory;
     FOnGetCSProvider : TGetProviderEvent;
     FOnListCodeSystemVersions : TGetSystemVersionsEvent;
-    FAdditionalResources : TFslMetadataResourceList;
+    FAdditionalResources : TFslList<TFHIRCachedMetadataResource>;
     FLanguages : TIETFLanguageDefinitions;
     FI18n : TI18nSupport;
     FLangList : THTTPLanguageList;
@@ -228,13 +258,13 @@ uses
     function sizeInBytesV(magic : integer) : cardinal; override;
     function vsHandle : TFHIRValueSetW; virtual; abstract;
     procedure deadCheck(place : String); virtual;
-    function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
+    function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRCachedMetadataResource;
     function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
     function  loadSupplements(url, version : String) : TFslList<TFhirCodeSystemW>;
     procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   public
-    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
+    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;     
     property opContext : TTerminologyOperationContext read FOpContext;
   end;
@@ -404,9 +434,60 @@ begin
   result := '['+result+']';
 end;
 
+{ TFHIRCachedMetadataResource }
+
+procedure TFHIRCachedMetadataResource.SetLoadedCS(AValue: TFHIRCodeSystemEntry);
+begin
+  FLoadedCS.free;
+  FLoadedCS:=AValue;
+end;
+
+constructor TFHIRCachedMetadataResource.create(resource: TFHIRMetadataResourceW);
+begin
+  inherited create;
+  FResource := resource;
+  if (resource = nil) then
+    raise ETerminologyError.create('nil!');
+end;
+
+destructor TFHIRCachedMetadataResource.Destroy;
+begin
+  FResource.free;
+  FLoadedCS.free;
+  inherited Destroy;
+end;
+
+function TFHIRCachedMetadataResource.link: TFHIRCachedMetadataResource;
+begin
+  result := TFHIRCachedMetadataResource(inherited link);
+end;
+
+{ TFHIRCachedMetadataResourceByVersionSorter }
+   
+constructor TFHIRCachedMetadataResourceByVersionSorter.create(reverse: boolean);
+begin
+  inherited create;
+  FReverse := reverse;
+end;
+
+function TFHIRCachedMetadataResourceByVersionSorter.Compare(const l, r: TFHIRCachedMetadataResource): integer;
+begin 
+  if l.resource.version = r.resource.version then
+    result := 0
+  else if not TSemanticVersion.isValid(l.resource.version) or not TSemanticVersion.isValid(r.resource.version) then
+    result := StringCompare(l.resource.version, r.resource.version)
+  else if TSemanticVersion.isMoreRecent(l.resource.version, r.resource.version) then
+    result := 1
+  else
+    result := -1;
+
+  if FReverse then
+    result := - result;
+end;
+
 { TTerminologyWorker }
 
-constructor TTerminologyWorker.Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
+constructor TTerminologyWorker.Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslList<TFHIRCachedMetadataResource>; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   Create;
   FFactory := factory;
@@ -441,28 +522,28 @@ begin
     result := StringCompare(test, base) > 0;
 end;
 
-function TTerminologyWorker.findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
+function TTerminologyWorker.findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRCachedMetadataResource;
 var
-  r : TFHIRMetadataResourceW;
-  matches : TFslMetadataResourceList;
+  rrrr : TFHIRCachedMetadataResource;
+  matches : TFslList<TFHIRCachedMetadataResource>;
   i, t : integer;
 begin
   if FAdditionalResources = nil then
      exit(nil);
 
-  matches := TFslMetadataResourceList.create;
+  matches := TFslList<TFHIRCachedMetadataResource>.create;
   try
-    for r in FAdditionalResources do
+    for rrrr in FAdditionalResources do
     begin
       deadCheck('findInAdditionalResources');
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (version = r.version)) then
+      if (url <> '') and ((rrrr.resource.url = url) or (rrrr.resource.vurl = url)) and ((version = '') or (version = rrrr.resource.version)) then
       begin
-        if r.fhirType <> resourceType then
+        if rrrr.resource.fhirType <> resourceType then
           if error then
-            raise EFHIRException.Create('Attempt to reference '+url+' as a '+resourceType+' when it''s a '+r.fhirType)
+            raise EFHIRException.Create('Attempt to reference '+url+' as a '+resourceType+' when it''s a '+rrrr.resource.fhirType)
           else
             exit(nil);
-        matches.add(r.link);
+        matches.add(rrrr.link);
         end;
       end;
     if matches.Count = 0 then
@@ -471,7 +552,7 @@ begin
     begin
       t := 0;
       for i := 1 to matches.count - 1 do
-        if isLaterVersion(matches[i].version, matches[t].version) then
+        if isLaterVersion(matches[i].resource.version, matches[t].resource.version) then
           t := i;
       exit(matches[t]);
     end;
@@ -483,9 +564,9 @@ end;
 function TTerminologyWorker.findCodeSystem(url, version: String; params: TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk: boolean): TCodeSystemProvider;
 var
   r, r2 : TFHIRMetadataResourceW;
-  cs, cs2 : TFhirCodeSystemW;
+  csh : TFHIRCachedMetadataResource;
+  cs : TFhirCodeSystemW;
   ts : TStringlist;
-  cse : TFHIRCodeSystemEntry;
   supplements : TFslList<TFhirCodeSystemW>;
   prov : TCodeSystemProvider;
 begin
@@ -493,16 +574,19 @@ begin
     exit(nil);
 
   result := nil;
+  csh := nil;
+  cs := nil;
   prov := nil;
   try
-    cs := findInAdditionalResources(url, version, 'CodeSystem', not nullOk) as TFhirCodeSystemW;
-    if (cs <> nil) and (cs.content = cscmComplete) then
+    csh := findInAdditionalResources(url, version, 'CodeSystem', not nullOk);
+    if (csh <> nil) then
     begin
-      cse := TFHIRCodeSystemEntry.Create(cs.link);
-      try
-        prov := TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link);
-      finally
-        cse.free;
+      if csh.LoadedCS = nil then
+        csh.loadedCS := TFHIRCodeSystemEntry.Create(csh.Resource.link as TFHIRCodeSystemW);
+      cs := csh.resource as TFhirCodeSystemW;
+      if (cs.content = cscmComplete) then
+      begin
+        prov := TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, csh.loadedCS .link);
       end;
     end;
 
@@ -510,14 +594,7 @@ begin
       prov := FOnGetCSProvider(self, url, version, FParams, true);
 
     if (prov = nil) and (cs <> nil) and (cs.content in kinds) then
-    begin
-      cse := TFHIRCodeSystemEntry.Create(cs.link);
-      try
-        prov := TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link);
-      finally
-        cse.free;
-      end;
-    end;
+      prov := TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, csh.loadedCS .link);
 
     if (prov <> nil) then
     begin
@@ -590,7 +667,7 @@ function TTerminologyWorker.listVersions(url: String): String;
 var
   ts : TStringList;
   matches : TFslMetadataResourceList;
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
   ts := TStringList.Create;
   try
@@ -600,8 +677,8 @@ begin
     begin
       for r in FAdditionalResources do
       begin
-        if (r.url = url) then
-          ts.Add(r.version);
+        if (r.resource.url = url) then
+          ts.Add(r.resource.version);
       end;
     end;
     FOnListCodeSystemVersions(self, url, ts);
@@ -613,7 +690,7 @@ end;
 
 function TTerminologyWorker.loadSupplements(url, version : String) : TFslList<TFhirCodeSystemW>;
 var
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
   cs : TFhirCodeSystemW;
 begin
   result := TFslList<TFhirCodeSystemW>.create;
@@ -622,9 +699,9 @@ begin
     begin
       for r in FAdditionalResources do
       begin
-        if r is TFHIRCodeSystemW then
+        if r.resource is TFHIRCodeSystemW then
         begin
-          cs := r as TFHIRCodeSystemW;
+          cs := r.resource as TFHIRCodeSystemW;
           if (cs.supplements = url) or (cs.supplements.startsWith(url+'|')) then
             result.add(cs.link);
         end;
