@@ -273,13 +273,12 @@ begin
       end;
       c.terminate;
 
-      c.select('Select StatusCodes.Description from Codes, StatusCodes where CodeKey = '+inttostr(ci.key)+' and Codes.StatusKey != 0 and Codes.StatusKey = StatusCodes.StatusKey');
-      while c.fetchNext do
+      c.select('Select StatusKey from Codes where CodeKey = '+inttostr(ci.key));
       while c.fetchNext do
       begin
         html.StartRow();
         html.AddTableCell('STATUS');
-        html.AddTableCell(c.colStringByName['Description']);
+        html.AddTableCell(FLoinc.StatusCodes[c.colStringByName['StatusKey']]);
         html.AddTableCell('');
         html.EndTableRow;
       end;

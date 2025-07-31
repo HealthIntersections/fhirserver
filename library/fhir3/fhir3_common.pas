@@ -54,7 +54,7 @@ const
   MAP_SEARCH_MODE2 : array [TFHIRBundleEntrySearchMode] of TFhirSearchEntryModeEnum = (SearchEntryModeNull, SearchEntryModeMatch, searchEntryModeInclude, searchEntryModeOutcome);
   MAP_ELEMENT_DEFINITION_BINDING : array [TFhirBindingStrengthEnum] of TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);
   MAP_TFilterOperator : array [TFhirFilterOperatorEnum] of TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists);
-  MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorNull, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorNull, filterOperatorNull, filterOperatorNull, filterOperatorNull);
+  MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorNull, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorNull, filterOperatorNull, filterOperatorNull, filterOperatorNull, filterOperatorNull);
   MAP_TFhirConceptPropertyTypeEnum : array [TFhirConceptPropertyTypeEnum] of TFhirCodeSystemPropertyType = (cptNull, cptCode, cptCoding, cptString, cptInteger, cptBoolean, cptDateTime);
   MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri);
   MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri, SearchParamTypeNull);
@@ -629,6 +629,7 @@ type
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; override;
     function addConcept : TFhirValueSetComposeIncludeConceptW; override;
     function addFilter : TFhirValueSetComposeIncludeFilterW; override;
+    procedure addValueSet(value : String); override;
   end;
 
   { TFHIRValueSet3 }
@@ -695,6 +696,7 @@ type
     function language : String; override;
     function useGen : String; override;
     function use : TFHIRCodingW; override;
+    function hasUse : boolean; override;
     function value : String; override;
     function valueElement : TFHIRPrimitiveW; override;
   end;
@@ -1297,6 +1299,8 @@ type
     procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getKind: TCapabilityStatementKind; override;
+    procedure setKind(Value: TCapabilityStatementKind); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure contact(kind : TContactType; value : String); override;
@@ -3569,6 +3573,11 @@ begin
   result := TFhirValueSetComposeIncludeFilter3.Create((Element as TFhirValueSetComposeInclude).filterList.Append.link);
 end;
 
+procedure TFhirValueSetComposeInclude3.addValueSet(value: String);
+begin
+  TFhirValueSetComposeInclude(element).valueSetList.AddItem(value);
+end;
+
 function TFhirValueSetComposeInclude3.concepts: TFslList<TFhirValueSetComposeIncludeConceptW>;
 var
   i : TFhirValueSetComposeIncludeConcept;
@@ -4155,6 +4164,11 @@ begin
     result := nil
   else
     result := TFHIRCoding3.Create((Element as TFhirCodeSystemConceptDesignation).use.link);
+end;
+
+function TFhirCodeSystemConceptDesignation3.hasUse: boolean;
+begin
+  result := (Element as TFhirCodeSystemConceptDesignation).use <> nil;
 end;
 
 function TFhirCodeSystemConceptDesignation3.useGen: String;
@@ -7019,6 +7033,16 @@ end;
 procedure TFhirTerminologyCapabilities3.setVersion(Value: String);
 begin
   (FRes as TFhirParameters).AddParameter('version', TFhirCode.Create(Value));
+end;
+
+function TFhirTerminologyCapabilities3.getKind: TCapabilityStatementKind;
+begin
+  result := cskNull;
+end;
+
+procedure TFhirTerminologyCapabilities3.setKind(Value: TCapabilityStatementKind);
+begin
+  // nothing
 end;
 
 function TFhirTerminologyCapabilities3.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;

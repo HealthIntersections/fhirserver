@@ -76,6 +76,7 @@ type
     Function Link : TCountryCodeServices; overload;
 
     function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TCodeSystemProvider; override;
+    function hasSupplement(opContext : TTxOperationContext; url : String) : boolean; override;
 
     function description : String; override;
     function TotalCount : integer;  override;
@@ -1020,6 +1021,16 @@ begin
   finally
     res.free;
   end;
+end;
+
+function TCountryCodeServices.hasSupplement(opContext: TTxOperationContext; url: String): boolean;
+var
+  cs : TFHIRCodeSystemW;
+begin
+  result := false;
+  for cs in FSupplements do
+    if (cs.vurl = url) or (cs.url = url) then
+      exit(true);
 end;
 
 function TCountryCodeServices.getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;

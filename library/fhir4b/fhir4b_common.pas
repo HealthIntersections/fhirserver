@@ -54,7 +54,7 @@ const
   MAP_SEARCH_MODE2 : array [TFHIRBundleEntrySearchMode] of TFhirSearchEntryModeEnum = (SearchEntryModeNull, SearchEntryModeMatch, searchEntryModeInclude, searchEntryModeOutcome);
   MAP_ELEMENT_DEFINITION_BINDING : array [TFhirBindingStrengthEnum] of TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);
   MAP_TFilterOperator : array [TFhirFilterOperatorEnum] of TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists);
-  MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorDescendentOf, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorGeneralizes, filterOperatorExists, filterOperatorNull, filterOperatorNull);
+  MAP_TFilterOperatorR : array [TFilterOperator] of TFhirFilterOperatorEnum = (filterOperatorNull, filterOperatorEqual, filterOperatorIsA, filterOperatorDescendentOf, filterOperatorIsNotA, filterOperatorRegex, filterOperatorIn, filterOperatorNotIn, filterOperatorGeneralizes, filterOperatorExists, filterOperatorNull, filterOperatorNull, filterOperatorNull);
   MAP_TFhirConceptPropertyTypeEnum : array [TFhirConceptPropertyTypeEnum] of TFhirCodeSystemPropertyType = (cptNull, cptCode, cptCoding, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal);
   MAP_TFHIRSearchParamType1 : array [TFhirSearchParamTypeEnum] of TFHIRSearchParamType = (sptNull, sptNumber, sptDate, sptString, sptToken, sptReference, sptComposite, sptQuantity, sptUri, sptSpecial);
   MAP_TFHIRSearchParamType2 : array [TFhirSearchParamType] of TFHIRSearchParamTypeEnum = (SearchParamTypeNull, SearchParamTypeNumber, SearchParamTypeDate, SearchParamTypeString, SearchParamTypeToken, SearchParamTypeReference, SearchParamTypeComposite, SearchParamTypeQuantity, SearchParamTypeUri, SearchParamTypeNull);
@@ -575,7 +575,8 @@ type
     function filterCount : integer; override;
     function conceptCount : integer; override;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; override;
-    function addFilter : TFhirValueSetComposeIncludeFilterW; override;
+    function addFilter : TFhirValueSetComposeIncludeFilterW; override;    
+    procedure addValueSet(value : String); override;
   end;
 
   { TFHIRValueSet4B }
@@ -706,6 +707,7 @@ type
     function language : String; override;
     function useGen : String; override;
     function use : TFHIRCodingW; override;
+    function hasUse : boolean; override;
     function value : String; override;
     function valueElement : TFHIRPrimitiveW; override;
   end;
@@ -1287,6 +1289,8 @@ type
     procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
+    function getKind: TCapabilityStatementKind; override;
+    procedure setKind(Value: TCapabilityStatementKind); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     procedure contact(kind : TContactType; value : String); override;
@@ -3240,6 +3244,11 @@ begin
   result := TFhirValueSetComposeIncludeFilter4B.Create((Element as TFhirValueSetComposeInclude).FilterList.Append.Link);
 end;
 
+procedure TFhirValueSetComposeInclude4B.addValueSet(value: String);
+begin
+  TFhirValueSetComposeInclude(element).valueSetList.AddItem(value);
+end;
+
 function TFhirValueSetComposeInclude4B.concepts: TFslList<TFhirValueSetComposeIncludeConceptW>;
 var
   i : TFhirValueSetComposeIncludeConcept;
@@ -3828,6 +3837,11 @@ begin
     result := nil
   else
     result := TFHIRCoding4B.Create((Element as TFhirCodeSystemConceptDesignation).use.link);
+end;
+
+function TFhirCodeSystemConceptDesignation4B.hasUse: boolean;
+begin
+  result := (Element as TFhirCodeSystemConceptDesignation).use <> nil;
 end;
 
 function TFhirCodeSystemConceptDesignation4B.useGen: String;
@@ -6814,6 +6828,28 @@ end;
 procedure TFhirTerminologyCapabilities4B.setVersion(Value: String);
 begin
   tc.version := value;
+end;
+
+function TFhirTerminologyCapabilities4B.getKind: TCapabilityStatementKind;
+begin
+  case tc.kind of
+    CapabilityStatementKindInstance : result := cskInstance;
+    CapabilityStatementKindCapability : result := cskCapability;
+    CapabilityStatementKindRequirements : result := cskRequirements;
+  else
+    result := cskNull;
+  end;
+end;
+
+procedure TFhirTerminologyCapabilities4B.setKind(Value: TCapabilityStatementKind);
+begin
+  case value of
+    cskInstance : tc.kind := CapabilityStatementKindInstance;
+    cskCapability : tc.kind := CapabilityStatementKindCapability;
+    cskRequirements : tc.kind := CapabilityStatementKindRequirements;
+  else
+    tc.kind := CapabilityStatementKindNull;
+  end;
 end;
 
 function TFhirTerminologyCapabilities4B.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;

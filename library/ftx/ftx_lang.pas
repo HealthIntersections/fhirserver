@@ -70,11 +70,18 @@ type
   { TIETFLanguageCodeServices }
 
   TIETFLanguageCodeServices = class (TCodeSystemProvider)
+  private
+    FSupplements : TFslList<TFhirCodeSystemW>;
   public
+    destructor Destroy; override;
+
     Function Link : TIETFLanguageCodeServices; overload;
 
     class function checkFile(sourceFile : String) : String;
     function description : String; override;
+
+    function cloneWithSupplements(supplements : TFslList<TFhirCodeSystemW>) : TCodeSystemProvider; override;
+    function hasSupplement(opContext : TTxOperationContext; url : String) : boolean; override;
 
     function TotalCount : integer;  override;
     function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
@@ -147,11 +154,41 @@ function TIETFLanguageCodeServices.getDisplay(opContext : TTxOperationContext; c
 var
   c : TIETFLang;
   msg : String;
+  supp : TFhirCodeSystemW;
+  defn : TFhirCodeSystemConceptW;
+  ccd : TFhirCodeSystemConceptDesignationW;
+  function useDisp(use : TFHIRCodingW; lang  : String) : boolean;
+  begin
+    result := true;
+    if (use <> nil) then
+    begin
+      result := true;
+      use.free;
+    end;
+    if (result) then
+      result := langList.matches(lang, false);
+  end;
 begin
   if (code = '') then
     result := '??'
   else
   begin
+    if (FSupplements <> nil) then
+    begin
+      for supp in FSupplements do
+      begin
+        defn := supp.getCode(code);
+        if (defn <> nil) then
+          if (useDisp(nil, supp.language)) then
+            exit(defn.display);
+          for ccd in defn.designations.forEnum do
+            if (useDisp(ccd.use, ccd.language)) then
+              exit(ccd.value);    
+          for ccd in defn.designations.forEnum do
+            if (useDisp(nil, ccd.language)) then
+              exit(ccd.value);
+      end;
+    end;
     c := FLanguages.parse(code, msg);
     try
       if c <> nil then
@@ -173,7 +210,10 @@ procedure TIETFLanguageCodeServices.Designations(opContext : TTxOperationContext
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
-  i : integer;
+  i : integer;        
+  supp : TFhirCodeSystemW;  
+  defn : TFhirCodeSystemConceptW;
+  ccd : TFhirCodeSystemConceptDesignationW;
 begin
   if (context <> nil) then
   begin
@@ -194,6 +234,16 @@ begin
           list.addDesignation(false, true, '', FLanguages.present(c.FInfo, i, '{{lang}} ({{region}})').Trim);
           list.addDesignation(false, true, '', FLanguages.present(c.FInfo, i, '{{lang}} (Region={{region}})').Trim);
         end;
+      end;
+    end;
+    if (FSupplements <> nil) then
+    begin
+      for supp in FSupplements do
+      begin
+        defn := supp.getCode(c.FInfo.code);
+        if (defn <> nil) then
+          for ccd in defn.designations.forEnum do
+            list.addDesignation(ccd);
       end;
     end;
   end;
@@ -227,6 +277,22 @@ begin
   result := 'IETF language codes';
 end;
 
+function TIETFLanguageCodeServices.cloneWithSupplements(supplements: TFslList<TFhirCodeSystemW>): TCodeSystemProvider;
+begin
+  Result := TIETFLanguageCodeServices.create(FLanguages.link, FI18n.link);
+  (result as TIETFLanguageCodeServices).FSupplements := supplements.link;
+end;
+
+function TIETFLanguageCodeServices.hasSupplement(opContext: TTxOperationContext; url: String): boolean;
+var
+  cs : TFHIRCodeSystemW;
+begin
+  result := false;
+  for cs in FSupplements do
+    if (cs.vurl = url) or (cs.url = url) then
+      exit(true);
+end;
+
 
 function TIETFLanguageCodeServices.Display(opContext : TTxOperationContext; context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 var
@@ -247,6 +313,12 @@ end;
 function TIETFLanguageCodeServices.isNotClosed(opContext : TTxOperationContext; textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := true;
+end;
+
+destructor TIETFLanguageCodeServices.Destroy;
+begin
+  FSupplements.free;
+  inherited Destroy;
 end;
 
 function TIETFLanguageCodeServices.Link: TIETFLanguageCodeServices;

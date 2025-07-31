@@ -56,7 +56,7 @@ type
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRTxOperationParams;
     function loadCoded(request : TFHIRRequest; loadType : TLoadCodedType; var issuePath : string; var mode : TValidationCheckMode) : TFhirCodeableConceptW; overload;
     function loadCoded(params : TFHIRParametersW; loadType : TLoadCodedType; var issuePath : string; var mode : TValidationCheckMode) : TFhirCodeableConceptW; overload;
-    function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
+    function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslList<TFHIRCachedMetadataResource>;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer; languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
@@ -99,7 +99,7 @@ type
     function isWrite : boolean; override;
     function owningResource : String; override;
     function isValidation : boolean; override;
-    function ExecuteItem(manager: TFHIROperationEngine; request: TFHIRRequest; reqId, issuePath : String; vs : TFhirValueSetW; profile : TFHIRTxOperationParams; abstractOk, inferSystem: boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string; tt : TFslTimeTracker; pItem : TFhirParametersParameterW; loadType : TLoadCodedType; batchParams : TFhirParametersW) : TFHIRResourceV; overload;
+    function ExecuteItem(manager: TFHIROperationEngine; request: TFHIRRequest; reqId, issuePath : String; vs : TFhirValueSetW; profile : TFHIRTxOperationParams; abstractOk, inferSystem: boolean; mode : TValidationCheckMode; txResources : TFslList<TFHIRCachedMetadataResource>; var summary : string; tt : TFslTimeTracker; pItem : TFhirParametersParameterW; loadType : TLoadCodedType; batchParams : TFhirParametersW) : TFHIRResourceV; overload;
   public
     function Name : String; override;
     function Types : TArray<String>; override;
@@ -142,7 +142,7 @@ type
     function owningResource : String; override;
 
     function findSystem(params : TFHIRParametersW; name, prefix : String) : String;
-    procedure findConceptMap(list : TFslList<TFHIRConceptMapW>; srcCS, srcVS, tgtCS, tgtVS : String; txResources : TFslMetadataResourceList);
+    procedure findConceptMap(list : TFslList<TFHIRConceptMapW>; srcCS, srcVS, tgtCS, tgtVS : String; txResources : TFslList<TFHIRCachedMetadataResource>);
     function mapOk(map : TFHIRConceptMapW; srcCS, srcVS, tgtCS, tgtVS: String): boolean;
   public
     function Name : String; override;
@@ -268,9 +268,9 @@ var
   limit, count, offset : integer;
   params : TFhirParametersW;
   needSecure : boolean;
-  txResources : TFslMetadataResourceList;
-  matches : TFslMetadataResourceList;
-  mr : TFHIRMetadataResourceW;
+  txResources : TFslList<TFHIRCachedMetadataResource>;
+  matches : TFslList<TFHIRCachedMetadataResource>;
+  mr : TFHIRCachedMetadataResource;
 begin
   result := 'Expand ValueSet';
   try
@@ -299,18 +299,18 @@ begin
             if (version <> '') and not url.contains('|') then
               url := url+'|'+version;
             txResources := processAdditionalResources(context, manager, nil, params);
-            matches := TFslMetadataResourceList.create;
+            matches := TFslList<TFHIRCachedMetadataResource>.create;
             try
               for mr in txResources do
               begin
-                if ((mr.url = url) or (mr.vurl = url)) and (mr is TFHIRValueSetW) then
+                if ((mr.resource.url = url) or (mr.resource.vurl = url)) and (mr.resource is TFHIRValueSetW) then
                   matches.add(mr.link);
               end;
               if matches.Count > 0 then
               begin
                 if matches.count > 1 then
-                  matches.Sort(TFslMetadataResourceByVersionSorter.create(false));
-                vs := (matches[matches.count - 1] as TFHIRValueSetW).link;
+                  matches.Sort(TFHIRCachedMetadataResourceByVersionSorter.create(false));
+                vs := (matches[matches.count - 1].resource as TFHIRValueSetW).link;
               end;
             finally
               matches.free;
@@ -497,8 +497,8 @@ var
   loadType : TLoadCodedType;
   mode : TValidationCheckMode;
   profile : TFhirTxOperationParams;
-  txResources : TFslMetadataResourceList;
-  mr : TFHIRMetadataResourceW;
+  txResources : TFslList<TFHIRCachedMetadataResource>;
+  mr : TFHIRCachedMetadataResource;
 begin
   if request.ResourceName = 'ValueSet' then
     loadType := lctVS
@@ -545,9 +545,9 @@ begin
                       result := result+' in vs '+url+' (ref)';
                     txResources := processAdditionalResources(context, manager, nil, params);
                     for mr in txResources do
-                      if (canonicalMatches(mr, url, version)) and (mr is TFHIRValueSetW) then
+                      if (canonicalMatches(mr.resource, url, version)) and (mr.resource is TFHIRValueSetW) then
                       begin
-                        vs := (mr as TFHIRValueSetW).link;
+                        vs := (mr.resource as TFHIRValueSetW).link;
                         break;
                       end;
                     if vs = nil then
@@ -681,7 +681,7 @@ begin
 end;
 
 
-function TFhirValueSetBatchValidationOperation.ExecuteItem(manager: TFHIROperationEngine; request: TFHIRRequest; reqId, issuePath: String; vs: TFhirValueSetW; profile: TFHIRTxOperationParams; abstractOk, inferSystem: boolean; mode: TValidationCheckMode; txResources: TFslMetadataResourceList; var summary: string; tt: TFslTimeTracker; pItem: TFhirParametersParameterW; loadType : TLoadCodedType; batchParams : TFhirParametersW): TFHIRResourceV;
+function TFhirValueSetBatchValidationOperation.ExecuteItem(manager: TFHIROperationEngine; request: TFHIRRequest; reqId, issuePath: String; vs: TFhirValueSetW; profile: TFHIRTxOperationParams; abstractOk, inferSystem: boolean; mode: TValidationCheckMode; txResources: TFslList<TFHIRCachedMetadataResource>; var summary: string; tt: TFslTimeTracker; pItem: TFhirParametersParameterW; loadType : TLoadCodedType; batchParams : TFhirParametersW): TFHIRResourceV;
 var
   coded : TFhirCodeableConceptW;
   pOut : TFhirParametersW;
@@ -757,8 +757,8 @@ var
   loadType : TLoadCodedType;
   mode : TValidationCheckMode;
   profile, lProfile : TFhirTxOperationParams;
-  txResources : TFslMetadataResourceList;
-  mr : TFHIRMetadataResourceW;
+  txResources : TFslList<TFHIRCachedMetadataResource>;
+  mr : TFHIRCachedMetadataResource;
   pItem : TFhirParametersParameterW;
   res : TFHIRResourceV;
 begin
@@ -805,9 +805,9 @@ begin
                     result := result+' in vs '+url+' (ref)';
                   txResources := processAdditionalResources(context, manager, nil, params);
                   for mr in txResources do
-                    if (canonicalMatches(mr, url, version)) and (mr is TFHIRValueSetW) then
+                    if (canonicalMatches(mr.resource, url, version)) and (mr.resource is TFHIRValueSetW) then
                     begin
-                      vs := (mr as TFHIRValueSetW).link;
+                      vs := (mr.resource as TFHIRValueSetW).link;
                       break;
                     end;
                   if vs = nil then
@@ -1083,19 +1083,19 @@ begin
         tgtOk := true;
 
   result := srcOk and tgtOk;
-  Logging.log('Map: '+map.url+' ('+map.source+'->'+map.target+'): '+boolToStr(result)+' for '+srcCS+':'+srcVS+' -> '+tgtCS+':'+tgtVS);
+  // Logging.log('Map: '+map.url+' ('+map.source+'->'+map.target+'): '+boolToStr(result)+' for '+srcCS+':'+srcVS+' -> '+tgtCS+':'+tgtVS);
 end;
 
-procedure TFhirConceptMapTranslationOperation.findConceptMap(list : TFslList<TFHIRConceptMapW>; srcCS, srcVS, tgtCS, tgtVS: String; txResources: TFslMetadataResourceList);
+procedure TFhirConceptMapTranslationOperation.findConceptMap(list : TFslList<TFHIRConceptMapW>; srcCS, srcVS, tgtCS, tgtVS: String; txResources: TFslList<TFHIRCachedMetadataResource>);
 var
-  mr : TFHIRMetadataResourceW;
+  mr : TFHIRCachedMetadataResource;
   all : TFslList<TFHIRConceptMapW>;
   cm : TFHIRConceptMapW;
 begin
   for mr in txResources do
-    if (mr is TFHIRConceptMapW) then
-      if mapOk(mr as TFHIRConceptMapW, srcCS, srcVS, tgtCS, tgtVS) then
-        list.add(mr.link as TFHIRConceptMapW);
+    if (mr.resource is TFHIRConceptMapW) then
+      if mapOk(mr.resource as TFHIRConceptMapW, srcCS, srcVS, tgtCS, tgtVS) then
+        list.add(mr.resource.link as TFHIRConceptMapW);
   all := FServer.GetConceptMapList;
   try
     for cm in all do
@@ -1116,7 +1116,7 @@ var
   dummy : TValidationCheckMode;
   params, pOut : TFhirParametersW;
   issuePath : String;
-  txResources : TFslMetadataResourceList;
+  txResources : TFslList<TFHIRCachedMetadataResource>;
   profile : TFhirTxOperationParams;
   srcSystem, tgtSystem : String;
 begin
@@ -1231,7 +1231,7 @@ var
   resp : TFHIRLookupOpResponseW;
   c : TFhirCodingW;
   langList : THTTPLanguageList;         
-  txResources : TFslMetadataResourceList;
+  txResources : TFslList<TFHIRCachedMetadataResource>;
   profile : TFhirTxOperationParams;
   params, pOut : TFhirParametersW;
   worker : TFHIRCodeSystemInformationProvider;
@@ -1288,6 +1288,7 @@ begin
           end;
         finally
           req.free;
+          params.free;
         end;
       end;
       manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message, []);
@@ -1610,20 +1611,20 @@ end;
 
 { TFhirTerminologyOperation }
 
-function TFhirTerminologyOperation.processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslMetadataResourceList;
+function TFhirTerminologyOperation.processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params: TFHIRParametersW): TFslList<TFHIRCachedMetadataResource>;
 var
   p : TFhirParametersParameterW;
-  list : TFslMetadataResourceList;
+  list : TFslList<TFHIRCachedMetadataResource>;
   cacheId : String;
   vs : TFHIRValueSetW;
   cs : TFHIRCodeSystemW;
   cm : TFHIRConceptMapW;
 begin
   cacheId := context.groupId;
-  list := TFslMetadataResourceList.Create;
+  list := TFslList<TFHIRCachedMetadataResource>.Create;
   try
     if (mr <> nil) then
-      list.Add(mr.link);
+      list.Add(TFHIRCachedMetadataResource.create(mr.link));
     for p in params.parameterList do
     begin
       if (p.name = 'cache-id') then
@@ -1635,19 +1636,19 @@ begin
         if (p.resource.fhirType = 'ValueSet') then
         begin
           vs := FFactory.wrapValueSet(p.resource.link);
-          list.Add(vs);
+          list.Add(TFHIRCachedMetadataResource.create(vs));
           vs.TagInt := 1; // marks it as not stored
         end
         else if p.resource.fhirType = 'CodeSystem' then
         begin
           cs := FFactory.wrapCodeSystem(p.resource.link);
-          list.Add(cs);
+          list.Add(TFHIRCachedMetadataResource.create(cs));
           cs.TagInt := 1; // marks it as not stored
         end
         else if p.resource.fhirType = 'ConceptMap' then
         begin
           cm := FFactory.wrapConceptMap(p.resource.link);
-          list.Add(cm);
+          list.Add(TFHIRCachedMetadataResource.create(cm));
           cm.TagInt := 1; // marks it as not stored
         end;
       end;
@@ -1664,7 +1665,7 @@ begin
   finally
     list.free;
   end;
-  result.Sort(TFslMetadataResourceByVersionSorter.create(true));
+  result.Sort(TFHIRCachedMetadataResourceByVersionSorter.create(true));
 end;
 
 function TFhirTerminologyOperation.isValidation: boolean;

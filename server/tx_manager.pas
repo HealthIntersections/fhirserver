@@ -38,7 +38,7 @@ uses
   fdb_manager,
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_codesystem_service, fhir_tx, fhir_valuesets,
-  ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir, xig_provider,
+  ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt, tx_omop,
   utilities, server_config, kernel_thread, server_stats, fhir_utilities;
@@ -103,7 +103,6 @@ Type
     FNDFRT: TNDFRTServices;
     FNDC : TNDCServices;
     FOMOP : TOMOPServices;
-    FXIG: TXIGProvider;
     FI18n : TI18nSupport;
 
     procedure SetCPT(AValue: TCPTServices);
@@ -121,7 +120,6 @@ Type
     procedure loadLang;
 
     procedure SetNDFRT(const Value: TNDFRTServices);
-    procedure SetXIG(AValue: TXIGProvider);
   public
     constructor Create(settings : TFHIRServerSettings);
     destructor Destroy; Override;
@@ -154,7 +152,6 @@ Type
     property CPT : TCPTServices read FCPT write SetCPT;
     property OMOP : TOMOPServices read FOMOP write SetOMOP;
     Property ACIR : TACIRServices read FACIR write SetACIR;
-    property XIG : TXIGProvider read FXIG write SetXIG;
   end;
 
   // the terminology server maintains a cache of terminology related resources
@@ -236,12 +233,12 @@ Type
     // access procedures. All return values are owned, and must be freed
     Function getProvider(system : String; version : String; profile : TFHIRTxOperationParams; noException : boolean = false) : TCodeSystemProvider; overload;
     Function getProvider(codesystem : TFHIRCodeSystemW; profile : TFHIRTxOperationParams) : TCodeSystemProvider; overload;
-    function getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
+    function getValueSetByUrl(url, version : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : TFHIRValueSetW;
     function getValueSetById(id : String) : TFHIRValueSetW;
     function getCodeSystemById(id : String) : TFHIRCodeSystemW;
     function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystemW;
-    function getCodeSystem(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRCodeSystemW;
-    function hasCodesystemUri(url : String; txResources : TFslMetadataResourceList = nil) : Boolean;
+    function getCodeSystem(url : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : TFHIRCodeSystemEntry;
+    function hasCodesystemUri(url : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : Boolean;
     function getConceptMapById(id : String) : TFHIRConceptMapW;
     function getConceptMapByUrl(url : String) : TFHIRConceptMapW;
     function getConceptMapBySrcTgt(src, tgt : String) : TFHIRConceptMapW;
@@ -889,26 +886,27 @@ begin
   FCommonTerminologies.getCacheInfo(ci);
 end;
 
-function TTerminologyServerStore.getCodeSystem(url: String;
-  txResources: TFslMetadataResourceList): TFHIRCodeSystemW;
+function TTerminologyServerStore.getCodeSystem(url: String; txResources: TFslList<TFHIRCachedMetadataResource>): TFHIRCodeSystemEntry;
 var
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      if (url <> '') and ((r.resource.url = url) or (r.resource.vurl = url)) then
       begin
-        if not (r is TFhirCodeSystemW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
-        exit(r.link as TFhirCodeSystemW);
+        if not (r.resource is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.resource.fhirType);
+        if r.LoadedCS = nil then
+          r.LoadedCS := TFHIRCodeSystemEntry.create(r.resource.link as TFHIRCodeSystemW);
+        exit(r.LoadedCS.link);
       end;
   end;
 
   FLock.Lock('getValueSetByUrl');
   try
     if FCodeSystems.has(url) then
-      result := FCodeSystems.get(url).CodeSystem.Link
+      result := TFHIRCodeSystemEntry.create(FCodeSystems.get(url).CodeSystem.Link)
     else
       result := nil;
   finally
@@ -916,8 +914,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getCodeSystemById(id: String
-  ): TFHIRCodeSystemW;
+function TTerminologyServerStore.getCodeSystemById(id: String): TFHIRCodeSystemW;
 begin
   FLock.Lock('getValueSetByUrl');
   try
@@ -930,8 +927,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getCodeSystemByValueSet(vs: String
-  ): TFHIRCodeSystemW;
+function TTerminologyServerStore.getCodeSystemByValueSet(vs: String): TFHIRCodeSystemW;
 var
   cse : TFHIRCodeSystemEntry;
 begin
@@ -973,12 +969,10 @@ begin
   try
     if FConceptMapsById.ContainsKey(id) then
     begin
-      Logging.log('Found map "'+id+'"');
       result := FConceptMapsById[id].Link
     end
     else
     begin
-      Logging.log('Did not find map "'+id+'"');
       result := nil;
     end;
   finally
@@ -992,12 +986,10 @@ begin
   try
     if FConceptMapsByUrl.ContainsKey(url) then
     begin
-      Logging.log('Found map "'+url+'"');
       result := FConceptMapsByUrl[url].Link
     end
     else
     begin
-      Logging.log('Did not find map "'+url+'"');
       result := nil;
     end;
   finally
@@ -1023,10 +1015,10 @@ begin
   finally
     FLock.Unlock;
   end;
-  if result = nil then   
-    Logging.log('did not find map for "'+src+'" -> "'+tgt+'"')
-  else
-    Logging.log('Find map "'+lcm.url+'" for "'+src+'" -> "'+tgt+'"');
+//  if result = nil then   
+//    Logging.log('did not find map for "'+src+'" -> "'+tgt+'"')
+//  else
+//    Logging.log('Find map "'+lcm.url+'" for "'+src+'" -> "'+tgt+'"');
 end;
 
 function TTerminologyServerStore.GetConceptMapList: TFslList<TFHIRConceptMapW>;
@@ -1339,19 +1331,19 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
+function TTerminologyServerStore.getValueSetByUrl(url, version : String; txResources : TFslList<TFHIRCachedMetadataResource> = nil) : TFHIRValueSetW;
 var
   p :  TArray<String>;
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (r.version = version)) then
+      if (url <> '') and ((r.resource.url = url) or (r.resource.vurl = url)) and ((version = '') or (r.resource.version = version)) then
       begin
-        if not (r is TFHIRValueSetW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.fhirType);
-        exit(r.link as TFHIRValueSetW);
+        if not (r.resource is TFHIRValueSetW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a ValueSet when it''s a '+r.resource.fhirType);
+        exit(r.resource.link as TFHIRValueSetW);
       end;
   end;
 
@@ -1398,17 +1390,17 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.hasCodesystemUri(url: String; txResources : TFslMetadataResourceList = nil): Boolean;
+function TTerminologyServerStore.hasCodesystemUri(url: String; txResources : TFslList<TFHIRCachedMetadataResource> = nil): Boolean;
 var
-  r : TFHIRMetadataResourceW;
+  r : TFHIRCachedMetadataResource;
 begin
  if txResources <> nil then
   begin
     for r in txResources do
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) then
+      if (url <> '') and ((r.resource.url = url) or (r.resource.vurl = url)) then
       begin
-        if not (r is TFhirCodeSystemW) then
-          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.fhirType);
+        if not (r.resource is TFhirCodeSystemW) then
+          raise EFHIRException.Create('Attempt to reference '+url+' as a CodeSystem when it''s a '+r.resource.fhirType);
         exit(true);
       end;
   end;
@@ -1745,7 +1737,6 @@ begin
   FACIR.free;
   FUcum.free;
   FRxNorm.free;
-  FXIG.free;
   FLanguages.free;
   inherited;
 end;
@@ -1979,11 +1970,6 @@ begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
         OMOP := TOMOPServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end           
-      else if tx['type'].value = 'xig' then
-      begin
-        Logging.log('load '+s+' from '+describeDatabase(tx));
-        XIG := TXIGProvider.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
-      end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);
     end;
@@ -2081,12 +2067,6 @@ begin
     FProviderClasses.add(FNDFRT.systemUri, TCodeSystemProviderGeneralFactory.Create(FNDFRT.Link));
     FProviderClasses.add(FNDFRT.systemUri+URI_VERSION_BREAK+FNDFRT.version, TCodeSystemProviderGeneralFactory.Create(FNDFRT.Link));
   end;
-end;
-
-procedure TCommonTerminologies.SetXIG(AValue: TXIGProvider);
-begin
-  FXIG.free;
-  FXIG:=AValue;
 end;
 
 procedure TCommonTerminologies.SetUnii(const Value: TUniiServices);

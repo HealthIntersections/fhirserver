@@ -60,19 +60,6 @@
           <Mode Name="linux-release"/>
         </BuildModes>
       </Target>
-      <Target FileName="ipsmanager/ipsmanager.lpi">
-        <BuildModes>
-          <Mode Name="default" Compile="True"/>
-          <Mode Name="win64"/>
-          <Mode Name="linux"/>
-          <Mode Name="osx"/>
-          <Mode Name="osx-m1"/>
-          <Mode Name="win64-release"/>
-          <Mode Name="osx-release"/>
-          <Mode Name="osx-m1-release"/>
-          <Mode Name="linux-release"/>
-        </BuildModes>
-      </Target>
     </Targets>
   </ProjectGroup>
 </CONFIG>

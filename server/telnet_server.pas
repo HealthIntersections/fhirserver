@@ -367,7 +367,7 @@ begin
   else if (s = '@classes+') then
   begin
     Logging.log('Console requested Object Class Delta');
-    send('$@classes: '+TFslObject.getReport('|', true))
+    send('$@classes: '+TFslObject.getDeltaReport('|'))
   end
   else if (s = '@stats') then
   begin

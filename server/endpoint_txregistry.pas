@@ -194,8 +194,11 @@ end;
 
 procedure TTxRegistryServerEndPoint.Unload;
 begin
-  FUpdater.StopAndWait(50);
-  FUpdater.free;
+  if FUpdater <> nil then
+  begin
+    FUpdater.StopAndWait(50);
+    FUpdater.free;
+  end;
   FUpdater := nil;
 end;
 

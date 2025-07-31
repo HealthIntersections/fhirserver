@@ -258,6 +258,7 @@ Type
     procedure updateDebugInfo;
 
     class function getReport(sep : String; full : boolean) : String;
+    class function getDeltaReport(sep : String) : String;
     class function classInstanceCount(namedClass : String) : integer;
   End;
   {$M-}
@@ -1296,6 +1297,38 @@ begin
       end
       else
         result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+sep;
+    end;
+  finally
+    LeaveCriticalSection(GLock);
+  end;
+  if result = '' then
+    result := 'Nothing to report';
+  {$ELSE}
+  result := 'Object Tracking is not enabled';
+  {$ENDIF}
+end;
+
+class function TFslObject.getDeltaReport(sep: String): String;
+var
+  cn : String;
+  t : TClassTrackingType;
+  ts : TStringList;
+  o : TFslObject;
+  i : integer;
+begin
+  {$IFDEF OBJECT_TRACKING}
+  result := '';
+  EnterCriticalSection(GLock);
+  try
+    for cn in GClassTracker.Keys do
+    begin
+      t := GClassTracker[cn];
+      if t.deltaCount <> 0 then
+      begin
+        result := result + cn + ': '+inttostr(t.deltaCount);
+        t.deltaCount := 0;
+        result := result + sep;
+      end;
     end;
   finally
     LeaveCriticalSection(GLock);
