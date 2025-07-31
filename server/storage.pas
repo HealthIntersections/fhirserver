@@ -1240,6 +1240,7 @@ begin
       oConf.description := 'Standard Terminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
+      oConf.kind := cskInstance;
 
       for s in ServerContext.TerminologyServer.listSystemVersions do
         oConf.systemVersion(s);
