@@ -1847,7 +1847,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.Create('Unable to find code to validate (looked for coding | codeableConcept | code+system in parameters ='+request.Parameters.Source+')', itNotFound);
+    raise ETerminologyError.Create('Unable to find code to validate (looked for coding | codeableConcept | code+system | code+inferSystem in parameters ='+request.Parameters.Source+')', itNotFound);
 end;
       
 function TFhirTerminologyOperation.loadCoded(params : TFHIRParametersW; loadType : TLoadCodedType; var issuePath : string; var mode : TValidationCheckMode): TFhirCodeableConceptW;

@@ -699,6 +699,12 @@ begin
       if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLangRegion, defLang) and (cd.value <> nil) then
       begin
         inc(result);
+      end;        
+  if result = 0 then
+    for cd in FDesignations do
+      if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLang, defLang) and (cd.value <> nil) then
+      begin
+        inc(result);
       end;
 end;
 

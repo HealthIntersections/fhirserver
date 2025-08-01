@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -1001,7 +1002,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>
