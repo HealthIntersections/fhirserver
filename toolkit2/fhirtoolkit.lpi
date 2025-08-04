@@ -17,7 +17,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="8"/>
-      <RevisionNr Value="4"/>
+      <RevisionNr Value="5"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes>
