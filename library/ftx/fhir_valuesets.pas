@@ -830,6 +830,7 @@ var
   ccc : TFhirValueSetExpansionContainsW;
   ts : TStringList;
   vss : TFHIRValueSetW;
+  vl, vn : String;
 begin
   defLang := FLanguages.parse('en');
   FOpContext.addNote(FValueSet, 'Check "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"');
@@ -887,12 +888,23 @@ begin
               end
               else if (version <> '') then
               begin
-                msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, version, '['+listVersions(system)+']']);
-                messages.add(msg);
-                if (unknownSystems.IndexOf(system+'|'+version) = -1) then
+                vl := listVersions(system);
+                if (vl = '') then
                 begin
-                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', msg, oicNotFound);
-                  unknownSystems.add(system+'|'+version);
+                  mid := 'UNKNOWN_CODESYSTEM_VERSION_NONE';
+                  vn := system;
+                end
+                else
+                begin
+                  mid := 'UNKNOWN_CODESYSTEM_VERSION';
+                  vn := system+'|'+version;
+                end;
+                msg := FI18n.translate(mid, FParams.HTTPLanguages, [system, version, vl]);
+                messages.add(msg);
+                if (unknownSystems.IndexOf(vn) = -1) then
+                begin
+                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, msg, oicNotFound);
+                  unknownSystems.add(vn);
                 end;
               end
               else
@@ -1007,12 +1019,23 @@ begin
           FLog := 'Unknown code system';
           if (version <> '') then
           begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, version, '['+listVersions(system)+']']);
-            messages.add(msg);
-            if (unknownSystems.IndexOf(system+'|'+version) = -1) then
+            vl := listVersions(system);
+            if vl = '' then
             begin
-              op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', msg, oicNotFound);
-              unknownSystems.add(system+'|'+version);
+              mid := 'UNKNOWN_CODESYSTEM_VERSION_NONE'; 
+              vn := system+'|'+version;
+            end
+            else
+            begin
+              mid := 'UNKNOWN_CODESYSTEM_VERSION';
+              vn := system+'|'+version;
+            end;
+            msg := FI18n.translate(mid, FParams.HTTPLanguages, [system, version, vl]);
+            messages.add(msg);
+            if (unknownSystems.IndexOf(vn) = -1) then
+            begin
+              op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, msg, oicNotFound);
+              unknownSystems.add(vn);
             end;
           end
           else
@@ -1158,14 +1181,25 @@ begin
                 end
                 else
                 begin
-                  message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, v, '['+listVersions(system)+']']);
-                  badd := unknownSystems.IndexOf(system+'|'+version) = -1;
+                  vl := listVersions(system);
+                  if (vl = '') then
+                  begin
+                    mid := 'UNKNOWN_CODESYSTEM_VERSION_NONE';
+                    vn := system;
+                  end
+                  else
+                  begin
+                    mid := 'UNKNOWN_CODESYSTEM_VERSION';
+                    vn := system+'|'+v;
+                  end;
+                  message := FI18n.translate(mid, FParams.HTTPLanguages, [system, v, vl]);
+                  badd := unknownSystems.IndexOf(vn) = -1;
                   if (bAdd) then
-                    unknownSystems.add(system+'|'+v);
+                    unknownSystems.add(vn);
                 end;
                 messages.add(message);
                 if (bAdd) then
-                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), 'UNKNOWN_CODESYSTEM_VERSION', message, oicNotFound);
+                  op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, message, oicNotFound);
                 exit(bUnknown);
               end
               else
@@ -1287,9 +1321,19 @@ begin
                   badd := unknownSystems.IndexOf(system+'|'+version) = -1;
                   if (bAdd) then
                   begin
-                    mid := 'UNKNOWN_CODESYSTEM_VERSION';
-                    message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, v, '['+listVersions(system)+']']);
-                    unknownSystems.add(system+'|'+v);
+                    vl := listVersions(system);
+                    if vl = '' then
+                    begin
+                      mid := 'UNKNOWN_CODESYSTEM_VERSION_NONE';
+                      vn := system;
+                    end
+                    else
+                    begin
+                      mid := 'UNKNOWN_CODESYSTEM_VERSION';
+                      vn := system+'|'+v;
+                    end;
+                    message := FI18n.translate(mid, FParams.HTTPLanguages, [system, v, vl]);
+                    unknownSystems.add(vn);
                   end;
                 end;
                 messages.add(message);
@@ -1517,7 +1561,7 @@ var
   op : TFhirOperationOutcomeW;
   log : String;
   tl : TIETFLang;
-  psys, pver, pdisp, pcode, us, baseMsg, p, normalForm, mid : String;
+  psys, pver, pdisp, pcode, us, baseMsg, p, normalForm, mid, vl, vn : String;
   dc, i : integer;
   a : TStringArray;
   unknownSystems : TStringList;
@@ -1761,11 +1805,21 @@ begin
                          end
                          else
                          begin
-                           mid := 'UNKNOWN_CODESYSTEM_VERSION';
-                           m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [ws, c.version, '['+listVersions(c.systemUri)+']']);
-                           badd := unknownSystems.IndexOf(ws+'|'+c.version) = -1;
+                           vl := listVersions(c.systemUri);
+                           if (vl = '') then
+                           begin
+                             mid := 'UNKNOWN_CODESYSTEM_VERSION_NONE';
+                             vn := ws;
+                           end
+                           else
+                           begin
+                             mid := 'UNKNOWN_CODESYSTEM_VERSION';
+                             vn := ws+'|'+c.version;
+                           end;
+                           m := FI18n.translate(mid, FParams.HTTPLanguages, [ws, c.version, vl]);
+                           badd := unknownSystems.IndexOf(vn) = -1;
                            if (bAdd) then
-                             unknownSystems.add(ws+'|'+c.version);
+                             unknownSystems.add(vn);
                          end;
                          if (bAdd) then
                            op.addIssue(isError, itNotFound, addToPath(path, 'system'), mid, m, oicNotFound);
