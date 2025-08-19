@@ -2113,6 +2113,7 @@ begin
   else if FEditionId = '11000172109' then result := 'Belgian Edition'
   else if FEditionId = '20621000087109' then result := 'Canadian English Edition'
   else if FEditionId = '20611000087101' then result := 'Canadian Canadian French Edition'
+  else if FEditionId = '11000279109' then result := 'Czech Edition'
   else if FEditionId = '554471000005108' then result := 'Danish Edition'
   else if FEditionId = '11000181102' then result := 'Estonian Edition'
   else if FEditionId = '11000229106' then result := 'Finnish Edition'
@@ -4703,6 +4704,8 @@ begin
     result := 7
   else if (s = 'it') then
     result := 8
+  else if (s = 'cs') then
+    result := 9
   else
     raise ETerminologyError.create('Unknown SCT Lang "'+s+'"', itInvalid);
 end;
@@ -4718,6 +4721,7 @@ begin
     6 : result := 'da';
     7 : result := 'de';
     8 : result := 'it';
+    9 : result := 'cs';
   else
     result := '??';
   end;
@@ -4741,6 +4745,8 @@ begin
     result := 7
   else if (s = 'it') or (s.startsWith('it-')) then
     result := 8
+  else if (s = 'cs') or (s.startsWith('cs-')) then
+    result := 9
   else
     result := 0;
 end;
@@ -4756,6 +4762,7 @@ begin
   if (langs and (1 shl 6) > 0) then CommaAdd(result, 'da');
   if (langs and (1 shl 7) > 0) then CommaAdd(result, 'de');
   if (langs and (1 shl 8) > 0) then CommaAdd(result, 'it');
+  if (langs and (1 shl 9) > 0) then CommaAdd(result, 'cs');
 end;
 
 function TSnomedExpressionContext.sizeInBytesV(magic : integer) : cardinal;
