@@ -2,6 +2,7 @@
 
 * fix R5 lookup
 * Fix code used for display designations
+* Add support for CZ edition of SNOMED 
 
 ## Conformance Notes:
 
