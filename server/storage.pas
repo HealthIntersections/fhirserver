@@ -847,7 +847,7 @@ begin
       oConf.acceptUnknown := csauBoth;
 
       oConf.date := TFslDateTime.makeUTC;
-      oConf.software('Reference Server', SERVER_FULL_VERSION, SERVER_RELEASE_DATE);
+      oConf.software('HealthIntersections Server', SERVER_FULL_VERSION, SERVER_RELEASE_DATE);
       if ServerContext.FormalURLPlain <> '' then
         oConf.impl(ServerContext.FormalURLPlain, 'FHIR Server running at '+ServerContext.FormalURLPlain);
       if assigned(OnPopulateConformance) then

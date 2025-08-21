@@ -463,7 +463,7 @@ begin
     result.value := FFactory.wrapPrimitive(FFactory.makeString(display));
     result.base := base;
     if isDisplay then
-      result.use := factory.wrapCoding(factory.makeCoding('http://terminology.hl7.org/CodeSystem/designation-usage', 'display'));
+      result.use := factory.wrapCoding(factory.makeCoding('http://terminology.hl7.org/CodeSystem/hl7TermMaintInfra', 'preferredForLanguage'));
     FDesignations.add(result.link);
   finally
     result.free;
@@ -493,7 +493,7 @@ begin
         result.extensions.add(ext.link);  
     result.base := base;
     if isDisplay then
-      result.use := factory.wrapCoding(factory.makeCoding('http://terminology.hl7.org/CodeSystem/designation-usage', 'display'));
+      result.use := factory.wrapCoding(factory.makeCoding('http://terminology.hl7.org/CodeSystem/hl7TermMaintInfra', 'preferredForLanguage'));
     FDesignations.add(result.link);
   finally
     result.free;
@@ -563,7 +563,9 @@ end;
 
 function isDisplay(cd : TConceptDesignation) : Boolean;
 begin
-  result := (cd.use = nil) or ((cd.use <> nil) and (cd.use.systemUri = 'http://terminology.hl7.org/CodeSystem/designation-usage') and (cd.use.code = 'display'));
+  result := (cd.use = nil) or ((cd.use <> nil) and
+   ((cd.use.systemUri = 'http://terminology.hl7.org/CodeSystem/hl7TermMaintInfra') and (cd.use.code = 'preferredForLanguage'))
+   or (cd.use.systemUri = 'http://terminology.hl7.org/CodeSystem/designation-usage') and (cd.use.code = 'display'))
 end;
 
 function TConceptDesignations.preferredDesignation(langList : THTTPLanguageList = nil; defLang : TIETFLang = nil) : TConceptDesignation;
