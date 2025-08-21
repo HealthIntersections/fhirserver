@@ -766,58 +766,93 @@ Type
   End;
   TIndexArray = array of TIndex;
 
+
 Procedure QuickSortIndex(var a : TIndexArray);
+
+  Function MedianOfThree(L, M, R: Integer): Integer;
+  Begin
+    If a[L].id <= a[M].id Then
+    Begin
+      If a[M].id <= a[R].id Then
+        Result := M  // L <= M <= R
+      Else If a[L].id <= a[R].id Then
+        Result := R  // L <= R < M
+      Else
+        Result := L  // R < L <= M
+    End
+    Else
+    Begin
+      If a[L].id <= a[R].id Then
+        Result := L  // M < L <= R
+      Else If a[M].id <= a[R].id Then
+        Result := R  // M <= R < L
+      Else
+        Result := M  // R < M < L
+    End;
+  End;
 
   Procedure QuickSort(L, R: Integer);
   Var
     I, J, K : Integer;
     t : TIndex;
   Begin
-    // QuickSort routine (Recursive)
-    // * Items is the default indexed property that returns a pointer, subclasses
-    //   specify these return values as their default type.
-    // * The Compare routine used must be aware of what this pointer actually means.
-
-    Repeat
+    While L < R Do
+    Begin
       I := L;
       J := R;
-      K := (L + R) Shr 1;
+
+      // BETTER PIVOT SELECTION - median of three
+      K := MedianOfThree(L, (L + R) Shr 1, R);
+
+      // Move pivot to middle position for consistency
+      If K <> ((L + R) Shr 1) Then
+      Begin
+        t := a[K];
+        a[K] := a[(L + R) Shr 1];
+        a[(L + R) Shr 1] := t;
+        K := (L + R) Shr 1;
+      End;
 
       Repeat
         While a[I].id < a[K].id Do
           Inc(I);
-
         While a[J].id > a[K].id Do
           Dec(J);
-
         If I <= J Then
         Begin
           t := a[i];
           a[i] := a[j];
           a[j] := t;
-
-          // Keep K as the index of the original middle element as it might get exchanged.
           If I = K Then
             K := J
           Else If J = K Then
             K := I;
-
           Inc(I);
           Dec(J);
         End;
       Until I > J;
 
-      If L < J Then
-        QuickSort(L, J);
-
-      L := I;
-    Until I >= R;
+      // Recurse on smaller partition
+      If (J - L) < (R - I) Then
+      Begin
+        If L < J Then
+          QuickSort(L, J);
+        L := I;
+      End
+      Else
+      Begin
+        If I < R Then
+          QuickSort(I, R);
+        R := J;
+      End;
+    End;
   End;
 
 Begin
   If length(a) > 1 Then
     QuickSort(0, length(a) - 1);
 End;
+
 
 procedure TSnomedImporter.ReadDescriptionsFile;
 var
