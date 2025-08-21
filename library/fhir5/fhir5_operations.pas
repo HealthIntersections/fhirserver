@@ -3133,10 +3133,17 @@ procedure TFHIRLookupOpRequest.load(params : THTTPParameters);
 var
   s : String;
 begin
+
+  FCode := params['code'];
+  FSystem := params['system'];
+  FVersion := params['version'];
+  FDate := TFslDateTime.fromXml(params['date']);
+  FDisplayLanguage := params['displayLanguage'];
   for s in params['property'].Split([';']) do
-    FProperty_List.add(s); 
+    if (s <> '') then
+      FProperty_List.add(s);
   for s in params['useSupplement'].Split([';']) do
-    FUseSupplementList.add(s); 
+    FUseSupplementList.add(s);
   loadExtensions(params);
 end;
 destructor TFHIRLookupOpRequest.Destroy;
