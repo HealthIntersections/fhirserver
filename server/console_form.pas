@@ -3226,7 +3226,7 @@ begin
    26: { US (with ICD-10-CM maps) } result := '5991000124107';
    27: { IPS Terminology } result := '827022005';
    28: { Combined } result := inttostr(COMBINED_MODULE_ID);
-  
+
   end;
 end;
 
