@@ -5183,15 +5183,18 @@ begin
 
     if hasProp(props, 'normalForm', true) then
     begin
-      exp := FSct.createNormalForm(TSnomedExpressionContext(ctxt).reference);
       try
-        p := resp.addProp('normalForm');
-        p.value := factory.makeString(FSct.renderExpression(exp, sroFillMissing));
-        p := resp.addProp('normalFormTerse');
-        p.value := factory.makeString(FSct.renderExpression(exp, sroMinimal));
+        exp := FSct.createNormalForm(TSnomedExpressionContext(ctxt).reference);
+        try
+          p := resp.addProp('normalForm');
+          p.value := factory.makeString(FSct.renderExpression(exp, sroFillMissing));
+          p := resp.addProp('normalFormTerse');
+          p.value := factory.makeString(FSct.renderExpression(exp, sroMinimal));
 
-      finally
-        exp.free;
+        finally
+          exp.free;
+        end;
+      except
       end;
     end;
 
