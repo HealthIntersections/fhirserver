@@ -1675,8 +1675,8 @@ procedure TCommonTerminologies.add(p: TCodeSystemProviderFactory; defVer: boolea
 begin
   if p.version <> '' then
     FProviderClasses.Add(p.systemUri+URI_VERSION_BREAK+p.version, p.link);
-  if defVer and not FProviderClasses.ContainsKey(p.systemUri) then
-    FProviderClasses.Add(p.systemUri, p.link);
+  if defVer or not FProviderClasses.ContainsKey(p.systemUri) then
+    FProviderClasses.AddOrSetValue(p.systemUri, p.link);
 end;
 
 constructor TCommonTerminologies.Create(settings: TFHIRServerSettings);
@@ -1974,7 +1974,6 @@ begin
         raise EFslException.Create('Unknown type '+tx['type'].value);
     end;
   end;
-
 end;
 
 procedure TCommonTerminologies.SetLoinc(const Value: TLOINCServices);

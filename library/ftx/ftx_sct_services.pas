@@ -1564,7 +1564,6 @@ begin
   Finally
     oFile.free;
   End;        
-  Logging.log('Loaded SCT from '+FSourceFile+' for '+VersionUri+'/'+VersionDate+', language = '+getDefaultLangRefSetName);
   if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
     FPreferredTerm := 0;
   if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
@@ -3546,7 +3545,10 @@ end;
 
 function TSnomedServices.systemUri: String;
 begin
-  result := URI_SNOMED;
+  if FEditionUri.Contains('/xsct/') then
+    result := URI_SNOMED_TEST
+  else
+    result := URI_SNOMED;
 end;
 
 function TSnomedServices.GetRefsetIndex: TSnomedReferenceSetIndex;
@@ -5340,7 +5342,10 @@ end;
 
 function TSnomedProvider.systemUri: String;
 begin
-  result := URI_SNOMED;
+  if FSct.FVersionUri.Contains('/xsct/') then
+    result := URI_SNOMED_TEST
+  else
+    result := URI_SNOMED;
 end;
 
 function TSnomedProvider.TotalCount: integer;
