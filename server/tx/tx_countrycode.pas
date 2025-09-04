@@ -982,7 +982,7 @@ var
   defn : TFhirCodeSystemConceptW;
   ccd : TFhirCodeSystemConceptDesignationW;
 begin
-  list.addDesignation(true, true, '', Display(opContext, context, nil));
+  list.addDesignation(true, true, '', '', Display(opContext, context, nil));
   if (FSupplements <> nil) then
   begin
     for supp in FSupplements do

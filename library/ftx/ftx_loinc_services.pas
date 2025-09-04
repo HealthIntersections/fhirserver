@@ -877,7 +877,7 @@ begin
     finally
       FLock.unlock;
     end;
-    list.addDesignation(true, true, 'en-US', (context as TLoincProviderContext).Desc);
+    list.addDesignation(true, true, '', 'en-US', (context as TLoincProviderContext).Desc);
     if (cache = nil) then
     begin
       cache := TFslList<TDescriptionCacheEntry>.create;
@@ -889,7 +889,7 @@ begin
           c.execute;
           while c.fetchNext do
           begin
-            list.addDesignation(false, 'LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']);
+            list.addDesignation(false, 'LongCommonName' = c.ColStringByName['Type'],  '', c.ColStringByName['Lang'], c.ColStringByName['Value']);
             cache.add(TDescriptionCacheEntry.create('LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']));
           end;
           c.terminate;
@@ -915,7 +915,7 @@ begin
     else
     begin
       for entry in cache do
-        list.addDesignation(false, entry.display, entry.lang, entry.value);
+        list.addDesignation(false, entry.display, '', entry.lang, entry.value);
     end;
   end;
 end;

@@ -377,8 +377,8 @@ end;
 
 procedure TUniiServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', Display(opContext, context, nil));
-  list.addDesignation(false, true, '', TUniiConcept(context).FOthers);
+  list.addDesignation(true, true, '', '', Display(opContext, context, nil));
+  list.addDesignation(false, true, '', '', TUniiConcept(context).FOthers);
 end;
 
 function TUniiServices.IsAbstract(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : boolean;

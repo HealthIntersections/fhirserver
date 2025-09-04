@@ -5231,6 +5231,13 @@ begin
     if (p.code = 'retired') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
       exit('retired');
   end;
+  if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
+  begin
+    s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+    exit(s);
+  end;
+
+
 end;
 
 { TFhirExpansionProfileHelper }

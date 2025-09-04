@@ -1073,7 +1073,7 @@ end;
 
 procedure TNDCServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', Display(opContext, context, nil));
+  list.addDesignation(true, true, '', '', Display(opContext, context, nil));
 end;
 
 function TNDCServices.doesFilter(opContext : TTxOperationContext; prop: String; op: TFhirFilterOperator; value: String): boolean;

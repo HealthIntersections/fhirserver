@@ -356,14 +356,14 @@ var
 begin
   if (context is TOMOPConcept) then
   begin
-    list.addDesignation(true, true, 'en', (context as TOMOPConcept).Display);
+    list.addDesignation(true, true, '', 'en', (context as TOMOPConcept).Display);
     conn := db.GetConnection('display');
     try
       conn.sql := 'Select concept_synonym_name, concept_name from ConceptSynonyms, Concepts where ConceptSynonyms.language_concept_id = Concepts.concept_id and ConceptSynonyms.concept_id = '''+SQLWrapString((context as TOMOPConcept).code)+'''';
       conn.Prepare;
       conn.Execute;
       while conn.FetchNext do
-        list.addDesignation(false, false, getLang(conn.ColStringByName['concept_name']), conn.ColStringByName['concept_synonym_name']);
+        list.addDesignation(false, false, '', getLang(conn.ColStringByName['concept_name']), conn.ColStringByName['concept_synonym_name']);
       conn.terminate;
       conn.Release;
     except

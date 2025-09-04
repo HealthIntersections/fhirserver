@@ -764,7 +764,7 @@ begin
     c := (context as TCPTConcept);
     c := (context as TCPTConcept);
     for d in c.designations do
-      list.addDesignation(d.kind = 'display', d.kind = 'display', 'en', d.value);
+      list.addDesignation(d.kind = 'display', d.kind = 'display', '', 'en', d.value);
   end;
 end;
 

@@ -638,45 +638,42 @@ Begin
     for i := Low(Descriptions) To High(Descriptions) Do
     Begin
       FSnomed.Desc.GetDescription(Descriptions[i], iWork, iId, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
-      if active Then
+      html.StartRow();
+      html.AddTableCell(inttostr(iId));
+      html.AddTableCell(FSnomed.Strings.GetEntry(iWork));
+      html.AddTableCell(codeForLang(lang));
+      CellConceptRef(html, sPrefix, kind, cdDesc);
+      if (active) then
+        html.AddTableCell('Active')
+      else
+        html.AddTableCell('Inactive');
+      CellConceptRef(html, sPrefix, caps, cdDesc);
+      if (module <> 0) then
+        CellConceptRef(html, sPrefix, module, cdDesc)
+      else
+        html.AddTableCell('');
+      if DOING_REFSETS_FOR_DESCS and (FSnomed.RefSetIndex.Count > 0) Then
       Begin
-        html.StartRow();
-        html.AddTableCell(inttostr(iId));
-        html.AddTableCell(FSnomed.Strings.GetEntry(iWork));
-        html.AddTableCell(codeForLang(lang));
-        CellConceptRef(html, sPrefix, kind, cdDesc);
-        if (active) then
-          html.AddTableCell('Active')
-        else
-          html.AddTableCell('Inactive');
-        CellConceptRef(html, sPrefix, caps, cdDesc);
-        if (module <> 0) then
-          CellConceptRef(html, sPrefix, module, cdDesc)
-        else
-          html.AddTableCell('');
-        if DOING_REFSETS_FOR_DESCS and (FSnomed.RefSetIndex.Count > 0) Then
-        Begin
-          iList := FSnomed.GetDescRefsets(Descriptions[i]);
-          if Length(ilist) = 0 Then
-            html.AddTableCell('')
-          Else
+        iList := FSnomed.GetDescRefsets(Descriptions[i]);
+        if Length(ilist) = 0 Then
+          html.AddTableCell('')
+        Else
+        begin
+          html.StartTableCell;
+          ConceptRef(html, sPrefix, iList[0].refset, cdDesc, 0);
+          if (iList[0].types <> 0) and (iList[0].values <> 0) then
           begin
-            html.StartTableCell;
-            ConceptRef(html, sPrefix, iList[0].refset, cdDesc, 0);
-            if (iList[0].types <> 0) and (iList[0].values <> 0) then
+            Values := FSnomed.Refs.GetReferences(iList[0].values);
+            if values[1] = 1 then
             begin
-              Values := FSnomed.Refs.GetReferences(iList[0].values);
-              if values[1] = 1 then
-              begin
-                html.AddTextPlain(': ');
-                ConceptRef(html, sPrefix, values[0], cdDesc, 0);
-              end;
+              html.AddTextPlain(': ');
+              ConceptRef(html, sPrefix, values[0], cdDesc, 0);
             end;
-            html.EndTableCell;
           end;
-        End;
+          html.EndTableCell;
+        end;
 //        html.AddTableCell(BooleanToString(flags and MASK_DESC_CAPS > 0));
-        html.EndTableRow;
+      html.EndTableRow;
       End;
     End;
     html.EndTable;

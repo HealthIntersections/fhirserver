@@ -1041,7 +1041,7 @@ begin
 
   list.baseLang := FLanguages.parse(FCs.CodeSystem.language);
   if ctxt.concept.display <> '' then
-    list.addDesignation(true, true, FCs.CodeSystem.language, ctxt.concept.displayElement);
+    list.addDesignation(true, true, '', FCs.CodeSystem.language, ctxt.concept.displayElement);
 
   for ccd in ctxt.concept.designations.forEnum do
     list.addDesignation(ccd);
@@ -1052,7 +1052,7 @@ begin
     begin
       if (cc.display <> '') then
       begin
-        list.addDesignation(false, true, css.language, cc.displayElement); {no .link}
+        list.addDesignation(false, true, '', css.language, cc.displayElement); {no .link}
       end;
       for ccd in cc.designations.forEnum do
         list.addDesignation(ccd);

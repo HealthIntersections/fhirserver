@@ -957,8 +957,8 @@ end;
 
 procedure TUMLSServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', Display(opContext, context, nil));
-  list.addDesignation(false, true, '', TUMLSConcept(context).FOthers);
+  list.addDesignation(true, true, '', '', Display(opContext, context, nil));
+  list.addDesignation(false, true, '', '', TUMLSConcept(context).FOthers);
 end;
 
 procedure TUMLSServices.extendLookup(opContext : TTxOperationContext; factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);

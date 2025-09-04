@@ -5285,6 +5285,7 @@ end;
 function TFhirCodeSystemHelper.isInactive(concept: TFhirCodeSystemConcept): boolean;
 var
   p : TFhirCodeSystemConceptProperty;
+  s : String;
 begin
   result := false;
   for p in concept.property_List do
@@ -5296,11 +5297,17 @@ begin
     if (p.code = 'status') and ((p.value.ToString = 'inactive') or (p.value.ToString = 'retired')) then
       exit(true);
   end;
+  if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
+  begin
+    s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+    exit(StringArrayExistsInsensitive(['deprecated', 'withdrawn'], s));
+  end;
 end;
 
 function TFhirCodeSystemHelper.isDeprecated(concept: TFhirCodeSystemConcept): boolean;
 var
   p : TFhirCodeSystemConceptProperty;
+  s : String;
 begin
   result := false;
   for p in concept.property_List do
@@ -5312,11 +5319,17 @@ begin
     if (p.code = 'status') and (p.value.ToString = 'deprecated') then
       exit(true);
   end;
+  if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
+  begin
+    s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+    exit('deprecated' = s);
+  end;
 end;
 
 function TFhirCodeSystemHelper.codeStatus(concept: TFhirCodeSystemConcept): String;
 var
   p : TFhirCodeSystemConceptProperty;
+  s : String;
 begin
   result := '';
   for p in concept.property_List do
@@ -5341,6 +5354,12 @@ begin
     if (p.code = 'retired') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
       exit('retired');
   end;
+    if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
+  begin
+    s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+    exit(s);
+  end;
+
 end;
 
 

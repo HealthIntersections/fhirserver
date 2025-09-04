@@ -37,7 +37,6 @@ uses
 
 const
   URI_SNOMED = 'http://snomed.info/sct';
-  URI_SNOMED_TEST = 'http://snomed.info/xsct';
   URI_LOINC = 'http://loinc.org';
   URI_UCUM = 'http://unitsofmeasure.org';
   URI_RXNORM = 'http://www.nlm.nih.gov/research/umls/rxnorm';

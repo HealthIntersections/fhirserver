@@ -139,7 +139,7 @@ end;
 
 procedure THGVSProvider.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', code(opContext, context));
+  list.addDesignation(true, true, '', '', code(opContext, context));
 end;
 
 function THGVSProvider.doesFilter(opContext : TTxOperationContext; prop: String; op: TFhirFilterOperator; value: String): boolean;

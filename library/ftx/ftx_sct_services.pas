@@ -2191,16 +2191,28 @@ var
   iDesc, iDummy, module, kind, caps : Cardinal;
   iInt : Integer;
   date : TSnomedDate;
+  first : boolean;
 begin
   if iLang <> 0 then
     aMembers := loadLang(iLang);
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
   Descs := Refs.GetReferences(Descriptions);
+  first := true;
   For iLoop := 0 to High(descs) Do
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
-    if (active) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
-      list.addDesignation(iLoop = 0, true, codeForLang(lang), Strings.GetEntry(iDesc).trim);
+    if ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
+    begin
+      if active then
+      begin                                                                                         
+        list.addDesignation(first, true, '', codeForLang(lang), Strings.GetEntry(iDesc).trim).use :=
+          list.factory.wrapCoding(list.factory.makeCoding('http://snomed.info/sct', IntToStr(Concept.getConceptId(kind)), GetPNForConcept(kind)));
+        first := false;
+      end
+      else
+        list.addDesignation(false, true, 'inactive', codeForLang(lang), Strings.GetEntry(iDesc).trim).use :=
+           list.factory.wrapCoding(list.factory.makeCoding('http://snomed.info/sct', '900000000000546006', 'Inactive value'));
+    end;
   End;
 end;
 
@@ -3545,10 +3557,7 @@ end;
 
 function TSnomedServices.systemUri: String;
 begin
-  if FEditionUri.Contains('/xsct/') then
-    result := URI_SNOMED_TEST
-  else
-    result := URI_SNOMED;
+  result := URI_SNOMED;
 end;
 
 function TSnomedServices.GetRefsetIndex: TSnomedReferenceSetIndex;
@@ -4343,7 +4352,7 @@ begin
     try
       ListDisplayNames(list, iTerm, 0, $FF);
       d := normalise(concept.description);
-      ok := (list.preferredDisplay <> '') and (normalise(list.preferredDisplay) = d);
+      ok := (list.preferredDisplay(nil) <> '') and (normalise(list.preferredDisplay(nil)) = d);
       for i := 0 to list.designations.count - 1 do
         if not ok and (normalise(list.designations[i].value.asString) = d) then
         begin
@@ -5145,7 +5154,7 @@ begin
     raise ETerminologyError.create('Unable to find context in '+systemUri, itInvalid)
   else if ctxt.isComplex then
     // there's only one display name - for now?
-    list.addDesignation(true, true, '', FSct.displayExpression(ctxt.FExpression).Trim)
+    list.addDesignation(true, true, '', '', FSct.displayExpression(ctxt.FExpression).Trim)
   else
     FSct.ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, 0, $FF);
 end;
@@ -5207,11 +5216,12 @@ begin
       for i := Low(Descriptions) To High(Descriptions) Do
       Begin
         FSct.Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active,blang);
-        if Active and (kind <> 0) Then
-        Begin
-          resp.addDesignation(codeForLang(blang), URI_SNOMED, FSct.GetConceptId(kind), FSct.GetPNForConcept(kind), FSct.Strings.GetEntry(iWork));
-        End;
-      End;
+        if (kind <> 0) Then
+          if active then
+            resp.addDesignation(codeForLang(blang), URI_SNOMED, FSct.GetConceptId(kind), FSct.GetPNForConcept(kind), FSct.Strings.GetEntry(iWork))
+          else
+            resp.addDesignation(codeForLang(blang), URI_SNOMED, '73425007', 'Inactive', FSct.Strings.GetEntry(iWork))
+       End;
     End;
 
     if hasProp(props, 'parent', true) then
@@ -5342,10 +5352,7 @@ end;
 
 function TSnomedProvider.systemUri: String;
 begin
-  if FSct.FVersionUri.Contains('/xsct/') then
-    result := URI_SNOMED_TEST
-  else
-    result := URI_SNOMED;
+  result := URI_SNOMED;
 end;
 
 function TSnomedProvider.TotalCount: integer;

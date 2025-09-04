@@ -889,7 +889,7 @@ end;
 
 procedure TUcumServices.Designations(opContext : TTxOperationContext; context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addDesignation(true, true, '', Code(opContext, context).Trim);
+  list.addDesignation(true, true, '', '', Code(opContext, context).Trim);
 end;
 
 function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;

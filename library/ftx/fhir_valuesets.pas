@@ -756,7 +756,7 @@ begin
       else
         isAbstract := cs.isAbstract(list[i]);
       displays.baseLang := FLanguages.parse(cs.language);
-      displays.addDesignation(true, true, '', list[i].displayElement); {no .link}
+      displays.addDesignation(true, true, '', '', list[i].displayElement); {no .link}
       exit;
     end;
     ccl := list[i].conceptList;
@@ -1373,7 +1373,7 @@ end;
 function TValueSetChecker.check(issuePath : String; coding: TFhirCodingW; abstractOk, inferSystem : boolean) : TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem, path, us, baseMsg : String;
+  message, ver, pd, impliedSystem, path, us, baseMsg, msg : String;
   defLang : TIETFLang;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
@@ -1411,7 +1411,7 @@ begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
              result.AddParamStr('message', 'The system "'+coding.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-          if (coding.display <> '') and (not list.hasDisplay(FParams.workingLanguages, defLang, coding.display, dcsCaseInsensitive, diff)) then
+          if (coding.display <> '') and (not list.hasDisplay(FParams.workingLanguages, defLang, coding.display, false, dcsCaseInsensitive, diff)) then
           begin
              baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
              dc := list.displayCount(FParams.workingLanguages, nil, true);
@@ -1439,6 +1439,9 @@ begin
             result.AddParamBool('inactive', inactive);
             if (vstatus <> '') and (vstatus <> 'inactive') then
               result.addParamStr('status', vstatus);
+            msg := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, coding.code]);
+            messages.add(msg);
+            op.addIssue(isWarning, itInvalid, path, 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
           end;
         end
         else if (ok = bUnknown) then
@@ -1570,7 +1573,7 @@ var
   diff : TDisplayDifference;    
   inactive, bAdd : boolean;
   vstatus : String;
-  mt, ts : TStringList;
+  mt, ts, ts2 : TStringList;
   vss : TFHIRValueSetW;
   procedure msg(s : String; clear : boolean = false);
   begin
@@ -1671,7 +1674,7 @@ begin
               end
               else if (c.display <> '') and (list.designations.count > 0) then
               begin
-                if (not list.hasDisplay(FParams.workingLanguages, defLang, c.display, dcsCaseInsensitive, diff)) then
+                if (not list.hasDisplay(FParams.workingLanguages, defLang, c.display, false, dcsCaseInsensitive, diff)) then
                 begin
                   if (diff = ddNormalised) then
                     baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
@@ -1688,7 +1691,7 @@ begin
 
                   if dc = 0 then
                   begin
-                    ds := list.preferredDisplay(nil, defLang);
+                    ds := list.preferredDisplay(nil);
                     if (ds = '') then
                     begin
                       m := FI18n.translate('NO_VALID_DISPLAY_AT_ALL', FParams.HTTPLanguages, [c.display, c.systemUri, c.code]);
@@ -1724,7 +1727,7 @@ begin
                 end
                 else
                 begin
-                  if (not list.hasDisplay(FParams.workingLanguages, nil, c.display, dcsCaseInsensitive, diff)) then
+                  if (not list.hasDisplay(FParams.workingLanguages, nil, c.display, false, dcsCaseInsensitive, diff)) then
                   begin
                     if (list.source <> nil) and (list.source.hasAnyDisplays(FParams.workingLanguages)) then
                     begin
@@ -1739,6 +1742,18 @@ begin
                         [c.systemUri, c.code, c.display, FParams.workingLanguages.source, c.display]);
                     end;
                     op.addIssue(isInformation, itInvalid, addToPath(path, 'display'), mid, m, oicDisplayComment);
+                  end
+                  else if (not list.hasDisplay(FParams.workingLanguages, nil, c.display, true, dcsCaseInsensitive, diff)) then
+                  begin
+                    ts2 := TStringList.create;
+                    try
+                      list.allowedDisplays(ts2, nil, defLang);
+                      mid := 'INACTIVE_DISPLAY_FOUND';
+                      m := FI18n.translatePlural(ts.count, mid, FParams.HTTPLanguages, [c.display, c.code, ts2.commaText, list.inactiveStatus(c.display)]);
+                      op.addIssue(isWarning, itInvalid, addToPath(path, 'display'), mid, m, oicDisplayComment);
+                    finally
+                      ts2.free;
+                    end;
                   end;
                 end;
               end;
@@ -1750,7 +1765,7 @@ begin
               if pd <> '' then
                 pdisp := pd;
               if (pdisp = '') then
-                pdisp := list.preferredDisplay;
+                pdisp := list.preferredDisplay(nil);
             end
             else if (not FParams.membershipOnly and (ws <> '')) then
             begin
@@ -1889,9 +1904,9 @@ begin
                      if pd <> '' then
                        pdisp := pd;
                      if (pdisp = '') then
-                       pdisp := list.preferredDisplay;
+                       pdisp := list.preferredDisplay(nil);
                      severity := dispWarning();
-                     if (c.display <> '') and (list.designations.Count > 0) and (not list.hasDisplay(FParams.workingLanguages, defLang, c.display, dcsCaseInsensitive, diff)) then
+                     if (c.display <> '') and (list.designations.Count > 0) and (not list.hasDisplay(FParams.workingLanguages, defLang, c.display, false, dcsCaseInsensitive, diff)) then
                      begin
                        if (diff = ddNormalised) then
                          baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
@@ -1998,6 +2013,9 @@ begin
           result.addParamBool('inactive',inactive);
           if (vstatus <> '') and (vstatus <> 'inactive') then
             result.addParamStr('status', vstatus);
+          m := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, tcode]);
+          msg(m);
+          op.addIssue(isWarning, itInvalid, path, 'INACTIVE_CONCEPT_FOUND', m, oicCodeComment);
         end;
         if mt.count > 0 then
         begin
@@ -2028,7 +2046,7 @@ end;
 function TValueSetChecker.check(issuePath, system, version, code: String; inferSystem : boolean): TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem, us : String;
+  message, ver, pd, impliedSystem, us, msg : String;
   defLang : TIETFLang;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
@@ -2073,6 +2091,9 @@ begin
               result.addParamBool('inactive', inactive);
               if (vstatus <> '') and (vstatus <> 'inactive') then
                 result.addParamStr('status', vstatus);
+              msg := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, code]);
+              messages.add(msg);
+              op.addIssue(isWarning, itInvalid, 'code', 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
             end;
           end
           else if (ok = bUnknown) then
@@ -2945,7 +2966,7 @@ begin
     if (FFactory.version in [fhirVersionRelease2, fhirVersionRelease3]) then // this policy changed in R4
       displays.Clear;
     displays.baseLang := FLanguages.parse(vs.language);
-    displays.addDesignation(true, true, '', c.displayElement); {no .link}
+    displays.addDesignation(true, true, '', '', c.displayElement); {no .link}
   end;
   for cd in c.designations.forEnum do
     // see https://chat.fhir.org/#narrow/stream/179202-terminology/topic/ValueSet.20designations.20and.20languages
@@ -3252,9 +3273,14 @@ begin
 
         if (csExtList <> nil) then
           for ext in csExtList do
+          begin
             if StringArrayExists(['http://hl7.org/fhir/StructureDefinition/coding-sctdescid', 'http://hl7.org/fhir/StructureDefinition/rendering-style',
-                                  'http://hl7.org/fhir/StructureDefinition/rendering-xhtml', 'http://hl7.org/fhir/StructureDefinition/codesystem-alternate'], ext.url) then
+               'http://hl7.org/fhir/StructureDefinition/rendering-xhtml', 'http://hl7.org/fhir/StructureDefinition/codesystem-alternate'], ext.url) then
               n.addExtensionV(ext.element.link);
+            if StringArrayExists(['http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status'], ext.url) then
+              expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#status', 'status', FFactory.makeCode(ext.valueAsString));
+
+          end;
 
         if (vsExtList <> nil) then
           for ext in vsExtList do
