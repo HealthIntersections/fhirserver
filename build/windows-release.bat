@@ -42,14 +42,6 @@ exit /b 1
 @echo off
 
 call build\windows-libraries.bat %tmp%
-rem call build\windows-fhirserver.bat %tmp%
-
-utilities\codescan\codescan.exe -check library\version.inc -message "Not run from the right directory - run in the root directory of the repo" || goto :error
-del library\version.inc
-utilities\codescan\codescan.exe -check !library\version.inc -message "setting up the version failed" || goto :error
-utilities\codescan\codescan.exe -version %1
-utilities\codescan\codescan.exe -check library\version.inc -message "saving the version failed" || goto :error
-utilities\codescan\codescan.exe -check release-notes.md -message "Please provide some release notes" || goto :error
 
 utilities\codescan\codescan.exe -proj-version c:\work\fhirserver\server\fhirconsole.lpi -version %1 -debug false || goto :error
 utilities\codescan\codescan.exe -proj-version server\fhirserver.lpi -version %1 -debug true || goto :error
