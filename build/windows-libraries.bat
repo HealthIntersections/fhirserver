@@ -67,17 +67,29 @@ cd ..
 
 Rem -- now build 
 
+echo build tzdb
 tools\lazarus\lazbuild.exe source\tzdb\dist\tzdb_fpc.lpk -q -q --build-all
+echo build extrahighlighters
 tools\lazarus\lazbuild.exe source\extrasyn\extrahighlighters.lpk  -q -q --build-all
+echo build extrahighlighters_dsgn
 tools\lazarus\lazbuild.exe source\extrasyn\extrahighlighters_dsgn.lpk  -q -q --build-all
+echo build zxing
 tools\lazarus\lazbuild.exe source\ZXing.Delphi\Lazarus\Package\zxing.lpk -q -q --build-all
+echo build idetester
 tools\lazarus\lazbuild.exe source\lazarus-ide-tester\package\idetester.lpk  -q -q --build-all
+echo build idetester_dsgn
 tools\lazarus\lazbuild.exe source\lazarus-ide-tester\ide\idetester_dsgn.lpk  -q -q --build-all
+echo build FrameViewer09
 tools\lazarus\lazbuild.exe source\HtmlViewer\package\FrameViewer09.lpk  -q -q --build-all
+echo build markdownengine
 tools\lazarus\lazbuild.exe source\delphi-markdown\packages\markdownengine.lpk  -q -q --build-all
+echo build markdowntests
 tools\lazarus\lazbuild.exe source\delphi-markdown\tests\markdowntests.lpk -q -q --build-all
+echo build Pdfium
 tools\lazarus\lazbuild.exe source\PdfiumLib\Package\Pdfium.lpk -q -q --build-all
+echo build pascalast
 tools\lazarus\lazbuild.exe source\DelphiAST\Package\pascalast.lpk -q -q --build-all
+echo all packages built
 
 
 chdir /d %FSDIR% &rem restore current directory
