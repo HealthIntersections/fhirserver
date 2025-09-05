@@ -3170,6 +3170,7 @@ object MainConsoleForm: TMainConsoleForm
                   'Belgian'
                   'Canadian English'
                   'Canadian French'
+                  'Chile',
                   'Czech'
                   'Danish'
                   'Estonian'

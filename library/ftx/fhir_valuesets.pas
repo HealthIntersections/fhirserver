@@ -1441,7 +1441,7 @@ begin
               result.addParamStr('status', vstatus);
             msg := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, coding.code]);
             messages.add(msg);
-            op.addIssue(isWarning, itInvalid, path, 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
+            op.addIssue(isWarning, itBusinessRule, path, 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
           end;
         end
         else if (ok = bUnknown) then
@@ -2015,7 +2015,7 @@ begin
             result.addParamStr('status', vstatus);
           m := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, tcode]);
           msg(m);
-          op.addIssue(isWarning, itInvalid, path, 'INACTIVE_CONCEPT_FOUND', m, oicCodeComment);
+          op.addIssue(isWarning, itBusinessRule, path, 'INACTIVE_CONCEPT_FOUND', m, oicCodeComment);
         end;
         if mt.count > 0 then
         begin
@@ -2093,7 +2093,7 @@ begin
                 result.addParamStr('status', vstatus);
               msg := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, code]);
               messages.add(msg);
-              op.addIssue(isWarning, itInvalid, 'code', 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
+              op.addIssue(isWarning, itBusinessRule, 'code', 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
             end;
           end
           else if (ok = bUnknown) then

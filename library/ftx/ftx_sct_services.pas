@@ -2130,6 +2130,7 @@ begin
   else if FEditionId = '83821000000107' then result := 'UK Edition'
   else if FEditionId = '999000021000000109' then result := 'UK Clinical Edition'
   else if FEditionId = '5631000179106' then result := 'Uruguay Edition'
+  else if FEditionId = '21000325107' then result := 'Chilean Edition'
   else if FEditionId = '731000124108' then result := 'US Edition'
   else if FEditionId = '5991000124107' then result := 'US Edition (with ICD-10-CM maps)'
   else if FEditionId = inttostr(COMBINED_MODULE_ID) then
