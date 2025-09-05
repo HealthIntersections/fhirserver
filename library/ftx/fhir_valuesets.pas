@@ -2157,7 +2157,7 @@ var
   prep : TCodeSystemProviderFilterPreparationContext;
   f : TCodeSystemProviderFilterContext;
   filters : Array of TCodeSystemProviderFilterContext;
-  msg, c : String;
+  msg, c, sstatus : String;
   cc : TFhirValueSetComposeIncludeConceptW;
   cfl : TFslList<TFhirValueSetComposeIncludeFilterW>;
 begin
@@ -2263,6 +2263,11 @@ begin
           begin
             if vcc <> nil then
               vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
+            sstatus := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+            if StringArrayExistsSensitive(['withdrawn', 'deprecated'], sstatus) then
+              op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), 'CONCEPT_DEPRECATED_IN_VALUESET', FI18n.translate('CONCEPT_DEPRECATED_IN_VALUESET', FParams.HTTPLanguages, [cs.systemUri, code, sstatus, vs.vurl]), oicCodeComment)
+            else if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-deprecated') then
+              op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), 'CONCEPT_DEPRECATED_IN_VALUESET', FI18n.translate('CONCEPT_DEPRECATED_IN_VALUESET', FParams.HTTPLanguages, [cs.systemUri, code, 'deprecated', vs.vurl]), oicCodeComment);
             result := true;
             exit;
           end;
@@ -3285,6 +3290,7 @@ begin
         if (vsExtList <> nil) then
           for ext in vsExtList do
             if StringArrayExists([EXT_VSSUPPLEMENT, 'http://hl7.org/fhir/StructureDefinition/valueset-deprecated',
+                                'http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status',
                                 'http://hl7.org/fhir/StructureDefinition/valueset-concept-definition', 'http://hl7.org/fhir/StructureDefinition/coding-sctdescid',
                                 'http://hl7.org/fhir/StructureDefinition/rendering-style', 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml'], ext.url) then
               n.addExtensionV(ext.element.link);

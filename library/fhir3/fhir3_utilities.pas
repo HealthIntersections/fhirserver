@@ -5207,6 +5207,7 @@ end;
 function TFhirCodeSystemHelper.codeStatus(concept: TFhirCodeSystemConcept): String;
 var
   p : TFhirCodeSystemConceptProperty;
+  s : String;
 begin
   result := '';
   for p in concept.property_List do
