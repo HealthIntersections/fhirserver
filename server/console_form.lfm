@@ -7,12 +7,12 @@ object MainConsoleForm: TMainConsoleForm
   ClientHeight = 625
   ClientWidth = 866
   Menu = MainMenu1
+  Position = poDefault
+  LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
-  Position = poDefault
-  LCLVersion = '3.1.0.0'
   object sBar: TStatusBar
     Left = 0
     Height = 18
@@ -58,17 +58,17 @@ object MainConsoleForm: TMainConsoleForm
       Height = 600
       Top = 1
       Width = 859
-      ActivePage = tbThreads
+      ActivePage = tbTerminologies
       Align = alClient
       ParentFont = False
-      TabIndex = 1
+      TabIndex = 4
       TabOrder = 0
       object tbConsole: TTabSheet
         Caption = 'Console'
         ClientHeight = 564
         ClientWidth = 853
-        OnContextPopup = tbConsoleContextPopup
         ParentFont = False
+        OnContextPopup = tbConsoleContextPopup
         object Panel54: TPanel
           Left = 0
           Height = 26
@@ -408,9 +408,9 @@ object MainConsoleForm: TMainConsoleForm
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
-              OnClick = BitBtn1Click
               ParentFont = False
               TabOrder = 1
+              OnClick = BitBtn1Click
             end
           end
           object pgManage: TPageControl
@@ -571,8 +571,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnLangFileClick
                   ParentFont = False
+                  OnClick = btnLangFileClick
                 end
               end
             end
@@ -949,8 +949,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnCertClick
                   ParentFont = False
+                  OnClick = btnCertClick
                 end
                 object btnCACert: TSpeedButton
                   Left = 798
@@ -994,8 +994,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnCACertClick
                   ParentFont = False
+                  OnClick = btnCACertClick
                 end
                 object btnCertKey: TSpeedButton
                   Left = 798
@@ -1039,8 +1039,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnCertKeyClick
                   ParentFont = False
+                  OnClick = btnCertKeyClick
                 end
                 object Label30: TLabel
                   Left = 8
@@ -1124,8 +1124,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnCardKeyClick
                   ParentFont = False
+                  OnClick = btnCardKeyClick
                 end
                 object edtCardPublic: TEdit
                   Left = 112
@@ -1189,8 +1189,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnCardKey1Click
                   ParentFont = False
+                  OnClick = btnCardKey1Click
                 end
               end
               object GroupBox9: TGroupBox
@@ -1265,8 +1265,8 @@ object MainConsoleForm: TMainConsoleForm
                     0000000000000000000000000000000000000000000000000000000000000000
                     0000000000000000000000000000000000000000000000000000
                   }
-                  OnClick = btnCertificatesFolderClick
                   ParentFont = False
+                  OnClick = btnCertificatesFolderClick
                 end
               end
             end
@@ -1694,7 +1694,7 @@ object MainConsoleForm: TMainConsoleForm
                   end                
                   item
                     Caption = 'Status'
-                    Width = 238
+                    Width = 255
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -1762,9 +1762,9 @@ object MainConsoleForm: TMainConsoleForm
                     FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
                     FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
                   }
-                  OnClick = btnEPAddClick
                   ParentFont = False
                   TabOrder = 0
+                  OnClick = btnEPAddClick
                 end
                 object btnEPDelete: TBitBtn
                   Left = 80
@@ -1890,7 +1890,7 @@ object MainConsoleForm: TMainConsoleForm
                   end                
                   item
                     Caption = 'Status'
-                    Width = 328
+                    Width = 345
                   end>
                 HideSelection = False
                 ParentFont = False
@@ -2000,8 +2000,8 @@ object MainConsoleForm: TMainConsoleForm
         Caption = 'Terminology Imports'
         ClientHeight = 564
         ClientWidth = 853
-        OnContextPopup = tbTerminologiesContextPopup
         ParentFont = False
+        OnContextPopup = tbTerminologiesContextPopup
         object Panel2: TPanel
           Left = 0
           Height = 564
@@ -2040,7 +2040,6 @@ object MainConsoleForm: TMainConsoleForm
               Top = 10
               Width = 48
               AutoSize = True
-              OnClick = Image2Click
               Picture.Data = {
                 1754506F727461626C654E6574776F726B47726170686963670B000089504E47
                 0D0A1A0A0000000D4948445200000030000000300802000000D8606ED0000000
@@ -2136,6 +2135,7 @@ object MainConsoleForm: TMainConsoleForm
                 9528842062956A2138B170ECC7FC3FA0B13888140156EC0000000049454E44AE
                 426082
               }
+              OnClick = Image2Click
             end
             object Label26: TLabel
               Left = 16
@@ -2170,7 +2170,6 @@ object MainConsoleForm: TMainConsoleForm
               Top = 10
               Width = 48
               AutoSize = True
-              OnClick = Image3Click
               Picture.Data = {
                 1754506F727461626C654E6574776F726B477261706869632A16000089504E47
                 0D0A1A0A0000000D49484452000000300000003008060000005702F987000000
@@ -2352,6 +2351,7 @@ object MainConsoleForm: TMainConsoleForm
                 B3A45D53CE3CE438F1BAFBF7947E37C07F03B95B25554042EE18000000004945
                 4E44AE426082
               }
+              OnClick = Image3Click
             end
             object Label25: TLabel
               Left = 8
@@ -2386,7 +2386,6 @@ object MainConsoleForm: TMainConsoleForm
               Top = 17
               Width = 48
               AutoSize = True
-              OnClick = Image4Click
               Picture.Data = {
                 1754506F727461626C654E6574776F726B47726170686963EA06000089504E47
                 0D0A1A0A0000000D49484452000000300000003008060000005702F987000000
@@ -2446,6 +2445,7 @@ object MainConsoleForm: TMainConsoleForm
                 45D59F7CFF4B008F827A013C6E8A7A00FF02FC75FEDD4B59B8F2000000004945
                 4E44AE426082
               }
+              OnClick = Image4Click
             end
             object Label24: TLabel
               Left = 8
@@ -2479,7 +2479,6 @@ object MainConsoleForm: TMainConsoleForm
               Top = 10
               Width = 48
               AutoSize = True
-              OnClick = Image5Click
               Picture.Data = {
                 1754506F727461626C654E6574776F726B47726170686963800A000089504E47
                 0D0A1A0A0000000D49484452000000300000003008060000005702F987000000
@@ -2567,6 +2566,7 @@ object MainConsoleForm: TMainConsoleForm
                 C86D78E499BC33147C99542F8847A968C416920324E52463FFAD676680DD44FE
                 EF36E7B0632FFE03DB4D79C9A3883ABC0000000049454E44AE426082
               }
+              OnClick = Image5Click
             end
             object Label27: TLabel
               Left = 16
@@ -2601,7 +2601,6 @@ object MainConsoleForm: TMainConsoleForm
               Top = 10
               Width = 48
               AutoSize = True
-              OnClick = pnlProcessNDCClick
               Picture.Data = {
                 1754506F727461626C654E6574776F726B477261706869638506000089504E47
                 0D0A1A0A0000000D494844520000003000000030080300000060DC09B5000000
@@ -2658,6 +2657,7 @@ object MainConsoleForm: TMainConsoleForm
                 A1B6E2C7CF5FBF7E2BFF07803FB598D80A2173BC2B0000000049454E44AE4260
                 82
               }
+              OnClick = pnlProcessNDCClick
             end
             object Label49: TLabel
               Left = 22
@@ -2692,7 +2692,6 @@ object MainConsoleForm: TMainConsoleForm
               Top = 10
               Width = 48
               AutoSize = True
-              OnClick = pnlProcessUNIIClick
               Picture.Data = {
                 07544269746D6170AE0C0000424DAE0C000000000000AE030000280000003000
                 000030000000010008000000000000000000C40E0000C40E0000DE000000DE00
@@ -2797,6 +2796,7 @@ object MainConsoleForm: TMainConsoleForm
                 0000000000000000000000000000000000000000000000000000000000000000
                 0000000000000000000000000000000000000000000000000000
               }
+              OnClick = pnlProcessUNIIClick
             end
             object Label62: TLabel
               Left = 22
@@ -2817,12 +2817,12 @@ object MainConsoleForm: TMainConsoleForm
           Width = 738
           ActivePage = tbSnomed
           Align = alClient
+          Options = [nboShowCloseButtons]
           ParentFont = False
           ShowTabs = False
           Style = tsButtons
           TabIndex = 0
           TabOrder = 1
-          Options = [nboShowCloseButtons]
           object tbSnomed: TTabSheet
             Caption = 'SNOMED Import'
             ClientHeight = 564
@@ -2890,9 +2890,9 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnImportSnomedClick
                 ParentFont = False
                 TabOrder = 0
+                OnClick = btnImportSnomedClick
               end
               object btnSnomedImportStop: TBitBtn
                 Left = 2
@@ -2928,10 +2928,10 @@ object MainConsoleForm: TMainConsoleForm
                   9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
                   22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnSnomedImportStopClick
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                OnClick = btnSnomedImportStopClick
               end
             end
             object Panel7: TPanel
@@ -3057,8 +3057,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnSourceClick
                 ParentFont = False
+                OnClick = btnSourceClick
               end
               object btnDestination: TSpeedButton
                 Left = 706
@@ -3094,8 +3094,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnDestinationClick
                 ParentFont = False
+                OnClick = btnDestinationClick
               end
               object Label23: TLabel
                 Left = 10
@@ -3141,8 +3141,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnBaseClick
                 ParentFont = False
+                OnClick = btnBaseClick
               end
               object edtSource: TEdit
                 Left = 105
@@ -3170,7 +3170,7 @@ object MainConsoleForm: TMainConsoleForm
                   'Belgian'
                   'Canadian English'
                   'Canadian French'
-                  'Chile',
+                  'Chile'
                   'Czech'
                   'Danish'
                   'Estonian'
@@ -3338,9 +3338,9 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnCombineGoClick
                 ParentFont = False
                 TabOrder = 0
+                OnClick = btnCombineGoClick
               end
               object btnStopCombine: TBitBtn
                 Left = 2
@@ -3376,10 +3376,10 @@ object MainConsoleForm: TMainConsoleForm
                   9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
                   22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnStopCombineClick
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                OnClick = btnStopCombineClick
               end
             end
             object Panel21: TPanel
@@ -3546,8 +3546,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnInternationalClick
                 ParentFont = False
+                OnClick = btnInternationalClick
               end
               object btnAddEdition: TSpeedButton
                 Left = 705
@@ -3583,8 +3583,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0C85180C85180C
                   85180C8518FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnAddEditionClick
                 ParentFont = False
+                OnClick = btnAddEditionClick
               end
               object btnDeleteEdition: TSpeedButton
                 Left = 705
@@ -3620,8 +3620,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnDeleteEditionClick
                 ParentFont = False
+                OnClick = btnDeleteEditionClick
               end
               object Label14: TLabel
                 Left = 10
@@ -3666,8 +3666,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnCombinedDestinationClick
                 ParentFont = False
+                OnClick = btnCombinedDestinationClick
               end
               object Label15: TLabel
                 Left = 16
@@ -3712,8 +3712,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnCombinedStoreClick
                 ParentFont = False
+                OnClick = btnCombinedStoreClick
               end
               object edtInternational: TEdit
                 Left = 112
@@ -3760,8 +3760,8 @@ object MainConsoleForm: TMainConsoleForm
             ClientHeight = 564
             ClientWidth = 738
             ImageIndex = 1
-            OnContextPopup = tbLoincContextPopup
             ParentFont = False
+            OnContextPopup = tbLoincContextPopup
             object Panel11: TPanel
               Left = 0
               Height = 104
@@ -3910,9 +3910,9 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnImportLoincClick
                 ParentFont = False
                 TabOrder = 0
+                OnClick = btnImportLoincClick
               end
               object btnLoincImportStop: TBitBtn
                 Left = 2
@@ -3948,10 +3948,10 @@ object MainConsoleForm: TMainConsoleForm
                   9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
                   22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnLoincImportStopClick
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                OnClick = btnLoincImportStopClick
               end
             end
             object Panel16: TPanel
@@ -4026,8 +4026,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnLoincSourceClick
                 ParentFont = False
+                OnClick = btnLoincSourceClick
               end
               object btnLoincDest: TSpeedButton
                 Left = 702
@@ -4063,8 +4063,8 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnLoincDestClick
                 ParentFont = False
+                OnClick = btnLoincDestClick
               end
               object Label22: TLabel
                 Left = 12
@@ -4266,9 +4266,9 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnReIndexRxNormClick
                 ParentFont = False
                 TabOrder = 0
+                OnClick = btnReIndexRxNormClick
               end
               object btnReindexRxNormStop: TBitBtn
                 Left = 2
@@ -4304,10 +4304,10 @@ object MainConsoleForm: TMainConsoleForm
                   9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
                   22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnLoincImportStopClick
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                OnClick = btnLoincImportStopClick
               end
             end
             object Panel32: TPanel
@@ -4525,9 +4525,9 @@ object MainConsoleForm: TMainConsoleForm
                   1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
                   1400010201000000000000000000000000000000000000000000
                 }
-                OnClick = btnTextRxNormClick
                 ParentFont = False
                 TabOrder = 7
+                OnClick = btnTextRxNormClick
               end
               object rbRXNSQLite: TRadioButton
                 Left = 310
@@ -4710,9 +4710,9 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnImportNDCClick
                 ParentFont = False
                 TabOrder = 0
+                OnClick = btnImportNDCClick
               end
               object btnImportNDCStop: TBitBtn
                 Left = 2
@@ -4748,10 +4748,10 @@ object MainConsoleForm: TMainConsoleForm
                   9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
                   22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnLoincImportStopClick
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                OnClick = btnLoincImportStopClick
               end
             end
             object Panel44: TPanel
@@ -4968,9 +4968,9 @@ object MainConsoleForm: TMainConsoleForm
                   1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
                   1400010201000000000000000000000000000000000000000000
                 }
-                OnClick = btnTestNDCClick
                 ParentFont = False
                 TabOrder = 7
+                OnClick = btnTestNDCClick
               end
               object rbNDCSQLite: TRadioButton
                 Left = 310
@@ -5154,9 +5154,9 @@ object MainConsoleForm: TMainConsoleForm
                   FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
                   00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnImportUNIIClick
                 ParentFont = False
                 TabOrder = 0
+                OnClick = btnImportUNIIClick
               end
               object btnImportUNIIStop: TBitBtn
                 Left = 2
@@ -5192,10 +5192,10 @@ object MainConsoleForm: TMainConsoleForm
                   9CFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0004A00917B610
                   22C30D1FC20311B401059FFF00FFFF00FFFF00FFFF00FFFF00FF
                 }
-                OnClick = btnLoincImportStopClick
                 ParentFont = False
                 TabOrder = 1
                 Visible = False
+                OnClick = btnLoincImportStopClick
               end
             end
             object Panel51: TPanel
@@ -5428,9 +5428,9 @@ object MainConsoleForm: TMainConsoleForm
                   1C00163813001B43192A295A2A5C3673396D2D632F651B401A3C0A2009061633
                   1400010201000000000000000000000000000000000000000000
                 }
-                OnClick = btnTestUNIIClick
                 ParentFont = False
                 TabOrder = 7
+                OnClick = btnTestUNIIClick
               end
               object rbUNIISQLite: TRadioButton
                 Left = 310
