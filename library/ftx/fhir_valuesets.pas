@@ -2161,6 +2161,7 @@ var
   cc : TFhirValueSetComposeIncludeConceptW;
   cfl : TFslList<TFhirValueSetComposeIncludeFilterW>;
 begin
+  inactive := false;
   result := false;
   if (not cset.hasConcepts) and (not cset.hasFilters) then
   begin
@@ -2268,6 +2269,8 @@ begin
               op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), 'CONCEPT_DEPRECATED_IN_VALUESET', FI18n.translate('CONCEPT_DEPRECATED_IN_VALUESET', FParams.HTTPLanguages, [cs.systemUri, code, sstatus, vs.vurl]), oicCodeComment)
             else if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-deprecated') then
               op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), 'CONCEPT_DEPRECATED_IN_VALUESET', FI18n.translate('CONCEPT_DEPRECATED_IN_VALUESET', FParams.HTTPLanguages, [cs.systemUri, code, 'deprecated', vs.vurl]), oicCodeComment);
+            inactive := cs.IsInactive(FOpContext, loc);
+            vstatus := cs.getCodeStatus(FOpContext, loc);
             result := true;
             exit;
           end;
