@@ -1054,6 +1054,8 @@ end;
 function TLOINCServices.getCodeStatus(opContext: TTxOperationContext; context: TCodeSystemProviderContext): String;
 begin
   Result := (context as TLoincProviderContext).Status;
+  if (Result = 'NotStated') then
+    result := '';
 end;
 
 function TLOINCServices.locate(opContext : TTxOperationContext; code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;

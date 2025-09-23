@@ -5191,16 +5191,19 @@ end;
 function TFhirCodeSystemHelper.isDeprecated(concept: TFhirCodeSystemConcept): boolean;
 var
   p : TFhirCodeSystemConceptProperty;
+  s : String;
 begin
   result := false;
   for p in concept.property_List do
   begin
     if (p.code = 'deprecated') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
       exit(true);
-    if (p.code = 'deprecated') and (p.value is TFhirCode) and (TFHIRCode(p.value).value = 'true') then
-      exit(true);
-    if (p.code = 'deprecationDate') and (p.value is TFhirDateTime) and (TFHIRDateTime(p.value).value.before(TFslDateTime.makeUTC, false)) then
-      exit(true);
+
+  end;       
+  if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
+  begin
+    s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
+    exit(StringArrayExistsInsensitive(['withdrawn'], s));
   end;
 end;
 

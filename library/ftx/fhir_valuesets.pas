@@ -217,7 +217,7 @@ Type
     function passesImports(imports : TFslList<TFHIRImportedValueSet>; system, code : String; offset : integer) : boolean;
     function passesImport(import : TFHIRImportedValueSet; system, code : String) : boolean;
 
-    function includeCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; system, version, code : String; isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW;
+    function includeCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; system, version, code : String; isAbstract, isInactive, deprecated : boolean; status : String; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW;
         imports : TFslList<TFHIRImportedValueSet>; csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; excludeInactive : boolean; srcURL : string) : TFhirValueSetExpansionContainsW;
     procedure excludeCode(cs : TCodeSystemProvider; system, version, code : String; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>; srcURL : string);
     procedure addDefinedCode(cs : TFhirCodeSystemW; system : string; c : TFhirCodeSystemConceptW; imports : TFslList<TFHIRImportedValueSet>; parent : TFhirValueSetExpansionContainsW; excludeInactive : boolean; srcURL : String);
@@ -1014,8 +1014,7 @@ begin
                 if (msg <> '') then
                   op.addIssueNoId(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
                 inactive := cs.IsInactive(FOpContext, ctxt);
-                if (inactive) then
-                  vstatus := cs.getCodeStatus(FOpContext, ctxt);
+                vstatus := cs.getCodeStatus(FOpContext, ctxt);
               end;
               if (displays <> nil) then
                 listDisplays(displays, cs, ctxt);
@@ -1444,7 +1443,15 @@ begin
             msg := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, coding.code]);
             messages.add(msg);
             op.addIssue(isWarning, itBusinessRule, path, 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
+          end
+          else if vstatus.ToLower = 'deprecated' then
+          begin
+            result.addParamStr('status', vstatus);
+            msg := FI18n.translate('DEPRECATED_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, coding.code]);
+            messages.add(msg);
+            op.addIssue(isWarning, itBusinessRule, path, 'DEPRECATED_CONCEPT_FOUND', msg, oicCodeComment);
           end;
+
         end
         else if (ok = bUnknown) then
         begin
@@ -2010,7 +2017,15 @@ begin
           m := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, tcode]);
           msg(m);
           op.addIssue(isWarning, itBusinessRule, path, 'INACTIVE_CONCEPT_FOUND', m, oicCodeComment);
+        end
+        else if vstatus.ToLower = 'deprecated' then
+        begin
+          result.addParamStr('status', 'deprecated');
+          m := FI18n.translate('DEPRECATED_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, tcode]);
+          msg(m);
+          op.addIssue(isWarning, itBusinessRule, path, 'DEPRECATED_CONCEPT_FOUND', m, oicCodeComment);
         end;
+        Logging.log('vstatus: '+vstatus);
         for iss in op.issues.forEnum do
           if iss.severity = isError then
             if (mt.IndexOf(iss.display) = -1) then
@@ -2092,6 +2107,13 @@ begin
               msg := FI18n.translate('INACTIVE_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, code]);
               messages.add(msg);
               op.addIssue(isWarning, itBusinessRule, 'code', 'INACTIVE_CONCEPT_FOUND', msg, oicCodeComment);
+            end
+            else if vstatus.ToLower = 'deprecated' then
+            begin
+              result.addParamStr('status', vstatus);
+              msg := FI18n.translate('DEPRECATED_CONCEPT_FOUND', FParams.HTTPLanguages, [vstatus, code]);
+              messages.add(msg);
+              op.addIssue(isWarning, itBusinessRule, 'code', 'DEPRECATED_CONCEPT_FOUND', msg, oicCodeComment);
             end;
           end
           else if (ok = bUnknown) then
@@ -3056,7 +3078,7 @@ begin
     cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
     try
       listDisplays(cds, c);
-      n := includeCode(nil, parent, system, '', c.Code, cs.isAbstract(c), cs.isInactive(c), cs.isDeprecated(c),  cds, c.definition, c.itemWeight,
+      n := includeCode(nil, parent, system, '', c.Code, cs.isAbstract(c), cs.isInactive(c), cs.isDeprecated(c), cs.codeStatus(c), cds, c.definition, c.itemWeight,
          nil, imports, c.getAllExtensionsW, nil, c.properties, nil, excludeInactive, srcUrl);
     finally
       cds.free;
@@ -3184,8 +3206,9 @@ begin
 end;
 
 function TFHIRValueSetExpander.includeCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; system, version, code : String;
-    isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>;
+    isAbstract, isInactive, deprecated : boolean; status : String; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>;
     csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; excludeInactive : boolean; srcURL : string) : TFhirValueSetExpansionContainsW;
+
 var
   n : TFhirValueSetExpansionContainsW;
   s, pn, vs : String;
@@ -3265,10 +3288,12 @@ begin
           n.version := version;
         if isAbstract then
           n.abstract_ := isAbstract;
-        if isInactive or deprecated then
+        if isInactive then
           n.inactive := true;
 
-        if (deprecated) then
+        if (status <> '') and (status.ToLower <> 'active') then
+          expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#status', 'status', FFactory.makeCode(status))
+        else if (deprecated) then
           expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#status', 'status', FFactory.makeCode('deprecated'));
         if (hasExtension(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-label')) then
           expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#label', 'label', FFactory.makeString(getExtensionString(csExtList, 'http://hl7.org/fhir/StructureDefinition/codesystem-label')));
@@ -3825,7 +3850,7 @@ begin
                           cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
                           try
                             listDisplays(cds, cs, c); // cs.display(c, FParams.displayLanguage)
-                            includeCode(cs, nil, cs.systemUri, cs.version, cs.code(FOpContext, c),  cs.isAbstract(FOpContext, c), cs.isInactive(FOpContext, c), cs.deprecated(FOpContext, c),
+                            includeCode(cs, nil, cs.systemUri, cs.version, cs.code(FOpContext, c),  cs.isAbstract(FOpContext, c), cs.isInactive(FOpContext, c), cs.deprecated(FOpContext, c), cs.getCodeStatus(FOpContext, c),
                             cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, valueSets, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
                           finally
                             cds.free;
@@ -3868,7 +3893,7 @@ begin
                         ov := cc.itemWeight;
                         if ov = '' then
                           ov := cs.itemWeight(FOpContext, cctxt);
-                        includeCode(cs, nil, cs.systemUri, cs.version, cc.code, cs.isAbstract(FOpContext, cctxt), cs.isInactive(FOpContext, cctxt), cs.deprecated(FOpContext, cctxt), cds,
+                        includeCode(cs, nil, cs.systemUri, cs.version, cc.code, cs.isAbstract(FOpContext, cctxt), cs.isInactive(FOpContext, cctxt), cs.deprecated(FOpContext, cctxt), cs.getCodeStatus(FOpContext, cctxt), cds,
                              cs.Definition(FOpContext, cctxt), ov, expansion, valueSets, cs.getExtensions(FOpContext, cctxt), cc.getAllExtensionsW, cs.getProperties(FOpContext, cctxt), nil, excludeInactive, vsSrc.url);
                       end;
                     end;
@@ -3950,7 +3975,7 @@ begin
                             end;
                             for code in cs.listCodes(FOpContext, c, FParams.altCodeRules) do
                               includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, c), cs.IsInactive(FOpContext, c),
-                                cs.deprecated(FOpContext, c), cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, nil, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
+                                cs.deprecated(FOpContext, c), cs.getCodeStatus(FOpContext, c), cds, cs.definition(FOpContext, c), cs.itemWeight(FOpContext, c), expansion, nil, cs.getExtensions(FOpContext, c), nil, cs.getProperties(FOpContext, c), nil, excludeInactive, vsSrc.url);
                           end;
                         finally
                           cds.free;
@@ -4328,7 +4353,7 @@ begin
       for code in cs.listCodes(FOpContext, context, FParams.altCodeRules) do
       begin
         deadCheck('processCodeAndDescendants#2');
-        t := includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, context), cs.IsInactive(FOpContext, context), cs.deprecated(FOpContext, context), cds, cs.definition(FOpContext, context),
+        t := includeCode(cs, parent, cs.systemUri, cs.version, code, cs.isAbstract(FOpContext, context), cs.IsInactive(FOpContext, context), cs.deprecated(FOpContext, context), cs.getCodeStatus(FOpContext, context), cds, cs.definition(FOpContext, context),
            cs.itemWeight(FOpContext, context), expansion, imports, cs.getExtensions(FOpContext, context), nil, cs.getProperties(FOpContext, context), nil, excludeInactive, srcUrl);
         if (t <> nil) then
           inc(result);

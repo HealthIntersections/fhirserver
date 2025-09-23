@@ -5237,7 +5237,7 @@ begin
   if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
   begin
     s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
-    exit(StringArrayExistsInsensitive(['deprecated', 'withdrawn'], s));
+    exit(StringArrayExistsInsensitive(['withdrawn'], s));
   end;
 end;
 

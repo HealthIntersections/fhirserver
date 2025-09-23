@@ -37,7 +37,7 @@ uses
   {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections, ZLib,
 
-  fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_turtle, fsl_xml, fsl_crypto, fsl_html,
+  fsl_base, fsl_utilities, fsl_http, fsl_stream, fsl_json, fsl_turtle, fsl_xml, fsl_crypto, fsl_html, fsl_logging,
   fsl_fetcher, fsl_web_stream,
 
   fhir_parser, fhir_objects, fhir_xhtml, fhir_utilities, fhir_uris,
@@ -5287,6 +5287,9 @@ var
   p : TFhirCodeSystemConceptProperty;
   s : String;
 begin
+  if (concept.code = 'CASE') then
+    Logging.log('case');
+
   result := false;
   for p in concept.property_List do
   begin
@@ -5300,7 +5303,7 @@ begin
   if (concept.hasExtension('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status')) then
   begin
     s := concept.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status');
-    exit(StringArrayExistsInsensitive(['deprecated', 'withdrawn'], s));
+    exit(StringArrayExistsInsensitive(['withdrawn'], s));
   end;
 end;
 
