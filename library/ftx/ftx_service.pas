@@ -48,11 +48,13 @@ type
   private
     FIssueType : TFhirIssueType;
     FopIssue : TOpIssueCode;
+    FMsgId : String;
   public
     constructor Create(message : String; issueType : TFhirIssueType);
-    constructor Create(message : String; issueType : TFhirIssueType; opIssue : TOpIssueCode);
+    constructor Create(message : String; issueType : TFhirIssueType; opIssue : TOpIssueCode; msgId : String);
     property IssueType : TFhirIssueType read FIssueType;
     property OpIssue : TOpIssueCode read FopIssue;
+    property MsgId : String read FMsgId;
   end;
 
   ETerminologyTodo = Class(ETerminologyError)
@@ -298,6 +300,7 @@ Type
     function getNextContext(opContext : TTxOperationContext; context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri() : String; virtual; abstract;
     function version() : String; virtual;
+    function versionAlgorithm() : TFHIRVersionAlgorithm; virtual;
     function defaultToLatest : boolean; virtual;
     function defLang() : TIETFLang; virtual;
     function hasAnyDisplays(disp : THTTPLanguageList) : boolean; virtual;
@@ -800,9 +803,9 @@ begin
       begin
         inc(c);
         if (cd.language <> nil) then
-          b.append(''''+cd.display+''' ('+cd.language.code+')')
+          b.append(''''+cd.display.Trim()+''' ('+cd.language.code+')')
         else
-          b.append(''''+cd.display+'''');
+          b.append(''''+cd.display.Trim()+'''');
       end;
     end;
     if (c = 0) then
@@ -813,9 +816,9 @@ begin
         begin
           inc(c);
           if (cd.language <> nil) then
-            b.append(''''+cd.display+''' ('+cd.language.code+')')
+            b.append(''''+cd.display.Trim()+''' ('+cd.language.code+')')
           else
-            b.append(''''+cd.display+'''');
+            b.append(''''+cd.display.Trim()+'''');
         end;
       end;
     end;
@@ -1320,6 +1323,11 @@ begin
   result := '';
 end;
 
+function TCodeSystemProvider.versionAlgorithm(): TFHIRVersionAlgorithm;
+begin
+  result := vaUnknown;
+end;
+
 function TCodeSystemProvider.defaultToLatest: boolean;
 begin
   result := false;
@@ -1553,11 +1561,12 @@ begin
   FopIssue := oicVoid;
 end;
 
-constructor ETerminologyError.Create(message: String; issueType: TFhirIssueType; opIssue: TOpIssueCode);
+constructor ETerminologyError.Create(message: String; issueType: TFhirIssueType; opIssue: TOpIssueCode; msgId : String);
 begin
   inherited Create(message);
   FIssueType := issueType;
   FopIssue := opIssue;
+  FMsgId := msgId;
 end;
 
 { ETerminologyTodo }

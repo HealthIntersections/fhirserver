@@ -594,6 +594,7 @@ type
     procedure setName(value : String); override;
     function getVersion : String; override;
     procedure setVersion(value : String); override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     function getDescription : String; override;
     procedure setDescription(value : String); override;
     function checkCompose(place, role : String) : boolean; override;
@@ -762,6 +763,7 @@ type
     function getURL : String; override;
     function getName : String; override;
     function getVersion : String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     function getDescription : String; override;
     procedure setDate(Value: TFslDateTime); override;
     procedure setDescription(Value: String); override;
@@ -860,6 +862,7 @@ type
     function cm : TFhirConceptMap;
   protected
     function getVersion: String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     procedure setVersion(Value: String); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
@@ -1218,6 +1221,7 @@ type
     function getTitle : String; override;
     procedure setTitle(value : String); override;
     function getVersion: String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     procedure setVersion(Value: String); override;
     function getExperimental : boolean; override;
     procedure setExperimental(value : boolean); override;
@@ -1318,6 +1322,7 @@ type
     function getName: String; override;
     function getStatus: TPublicationStatus; override;
     function getVersion: String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     function getDescription: String; override;
     function getDate: TFslDateTime; override;
     function getPublisher: String; override;
@@ -1384,6 +1389,28 @@ implementation
 
 uses
   fhir5_utilities;
+
+function interpretVersionAlgorithm(dt : TFhirDataType) : TFHIRVersionAlgorithm;
+var
+  s : String;
+  c : TFHIRCoding;         
+  i : integer;
+begin
+  if (dt = nil) then
+    s := ''
+  else if (dt.fhirType = 'Coding') then
+  begin
+    c := dt as TFHIRCoding;
+    s := c.code;
+  end
+  else
+    s := dt.primitiveValue;  
+  i := StringArrayIndexOf(CODES_TFHIRVersionAlgorithm, s);
+  if i < 0 then
+    result := vaUnknown
+  else
+    result := TFHIRVersionAlgorithm(i);
+end;
 
 { TFHIRPrimitive5 }
 
@@ -3208,6 +3235,11 @@ begin
   vs.Version := value;
 end;
 
+function TFHIRValueSet5.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  result := interpretVersionAlgorithm(vs.versionAlgorithm);
+end;
+
 function TFHIRValueSet5.source: String;
 begin
   result := vs.source;
@@ -4340,6 +4372,11 @@ begin
   result := cs.version;
 end;
 
+function TFhirCodeSystem5.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  result := interpretVersionAlgorithm(cs.versionAlgorithm);
+end;
+
 { TFhirValueSetExpansion5 }
 
 procedure TFhirValueSetExpansion5.addContains(item: TFhirValueSetExpansionContainsW);
@@ -4724,6 +4761,11 @@ end;
 function TFhirConceptMap5.getVersion: String;
 begin
   result := cm.version;
+end;
+
+function TFhirConceptMap5.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  result := interpretVersionAlgorithm(cm.versionAlgorithm);
 end;
 
 function TFhirConceptMap5.groups: TFslList<TFhirConceptMapGroupW>;
@@ -6383,6 +6425,11 @@ begin
   result := '';
 end;
 
+function TFHIRNamingSystem5.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  result := interpretVersionAlgorithm(nm.versionAlgorithm);
+end;
+
 function TFHIRNamingSystem5.hasOid(oid: String): boolean;
 begin
   result := nm.hasOid(oid);
@@ -7057,6 +7104,11 @@ end;
 function TFHIRTestScript5.getVersion: String;
 begin
   result := ts.version;
+end;
+
+function TFHIRTestScript5.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  result := interpretVersionAlgorithm(ts.versionAlgorithm);
 end;
 
 procedure TFHIRTestScript5.setDate(Value: TFslDateTime);

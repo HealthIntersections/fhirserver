@@ -238,6 +238,7 @@ type
     function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
     function version(): String; override;
+    function versionAlgorithm() : TFHIRVersionAlgorithm; override;
     function TotalCount : integer; override;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; override;
     function getIterator(opContext : TTxOperationContext; context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
@@ -261,6 +262,7 @@ type
     function listCodes(opContext : TTxOperationContext; ctxt : TCodeSystemProviderContext; altOpt : TAlternateCodeOptions) : TStringArray; override;
     function canParent : boolean; override;
     function hasAnyDisplays(langs : THTTPLanguageList) : boolean; override;
+    function versionIsMoreDetailed(v1, v2 : String): boolean; override;
 
     function hasSupplement(opContext : TTxOperationContext; url : String) : boolean; override;
     procedure listSupplements(opContext : TTxOperationContext; ts : TStringList); override;
@@ -280,7 +282,6 @@ type
     procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); override;
 
   end;
-
 
 implementation
 
@@ -832,6 +833,11 @@ end;
 function TFhirCodeSystemProvider.hasAnyDisplays(langs: THTTPLanguageList): boolean;
 begin
   result := fcs.CodeSystem.hasAnyDisplays(langs);
+end;
+
+function TFhirCodeSystemProvider.versionIsMoreDetailed(v1, v2: String): boolean;
+begin
+  result := TFHIRVersions.versionMatches(FCs.CodeSystem.versionAlgorithm, v1, v2);
 end;
 
 function TFhirCodeSystemProvider.description: String;
@@ -1527,6 +1533,11 @@ end;
 function TFhirCodeSystemProvider.version: String;
 begin
    result := FCs.CodeSystem.version;
+end;
+
+function TFhirCodeSystemProvider.versionAlgorithm(): TFHIRVersionAlgorithm;
+begin
+  Result := FCs.CodeSystem.versionAlgorithm;
 end;
 
 procedure TFhirCodeSystemProvider.iterateCodes(opContext : TTxOperationContext; op : String; base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);

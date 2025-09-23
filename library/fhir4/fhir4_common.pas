@@ -593,7 +593,8 @@ type
     function getName : String; override;
     procedure setName(value : String); override;
     function getVersion : String; override;
-    procedure setVersion(value : String); override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
+     procedure setVersion(value : String); override;
     function getDescription : String; override;
     procedure setDescription(value : String); override;
     function checkCompose(place, role : String) : boolean; override;      
@@ -763,6 +764,7 @@ type
     function getURL : String; override;
     function getName : String; override;
     function getVersion : String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     function getDescription : String; override;
     procedure setDate(Value: TFslDateTime); override;
     procedure setDescription(Value: String); override;
@@ -861,6 +863,7 @@ type
     function cm : TFhirConceptMap;
   protected
     function getVersion: String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     procedure setVersion(Value: String); override;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
@@ -1209,6 +1212,7 @@ type
     function getTitle : String; override;
     procedure setTitle(value : String); override;
     function getVersion: String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     procedure setVersion(Value: String); override;
     function getExperimental : boolean; override;
     procedure setExperimental(value : boolean); override;
@@ -1309,6 +1313,7 @@ type
     function getName: String; override;
     function getStatus: TPublicationStatus; override;
     function getVersion: String; override;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; override;
     function getDescription: String; override;
     function getDate: TFslDateTime; override;
     function getPublisher: String; override;
@@ -1374,6 +1379,29 @@ implementation
 
 uses
   fhir4_utilities;
+
+function interpretVersionAlgorithm(dt : TFhirType) : TFHIRVersionAlgorithm;
+var
+  s : String;
+  c : TFHIRCoding;
+  i : integer;
+begin
+  if (dt = nil) then
+    s := ''
+  else if (dt.fhirType = 'Coding') then
+  begin
+    c := dt as TFHIRCoding;
+    s := c.code;
+  end
+  else
+    s := dt.primitiveValue;
+  i := StringArrayIndexOf(CODES_TFHIRVersionAlgorithm, s);
+  if i < 0 then
+    result := vaUnknown
+  else
+    result := TFHIRVersionAlgorithm(i);
+end;
+
 
 { TFHIRPrimitive4 }
 
@@ -3234,6 +3262,14 @@ begin
   result := vs.Version;
 end;
 
+function TFHIRValueSet4.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  if (vs.hasExtension(EXT_VERSION_ALGORITHM)) then
+    result := interpretVersionAlgorithm(vs.getExtensionValue(EXT_VERSION_ALGORITHM))
+  else
+    result := vaUnknown;
+end;
+
 function TFHIRValueSet4.vs: TFhirValueSet;
 begin
   result := Resource as TFHIRValueSet;
@@ -4337,6 +4373,14 @@ begin
   result := cs.version;
 end;
 
+function TFhirCodeSystem4.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  if (cs.hasExtension(EXT_VERSION_ALGORITHM)) then
+    result := interpretVersionAlgorithm(cs.getExtensionValue(EXT_VERSION_ALGORITHM))
+  else
+    result := vaUnknown;
+end;
+
 { TFhirValueSetExpansion4 }
 
 procedure TFhirValueSetExpansion4.addContains(item: TFhirValueSetExpansionContainsW);
@@ -4727,6 +4771,14 @@ end;
 function TFhirConceptMap4.getVersion: String;
 begin
   result := cm.version;
+end;
+
+function TFhirConceptMap4.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  if (cm.hasExtension(EXT_VERSION_ALGORITHM)) then
+    result := interpretVersionAlgorithm(cm.getExtensionValue(EXT_VERSION_ALGORITHM))
+  else
+    result := vaUnknown;
 end;
 
 function TFhirConceptMap4.groups: TFslList<TFhirConceptMapGroupW>;
@@ -6384,6 +6436,14 @@ begin
   result := '';
 end;
 
+function TFHIRNamingSystem4.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  if (nm.hasExtension(EXT_VERSION_ALGORITHM)) then
+    result := interpretVersionAlgorithm(nm.getExtensionValue(EXT_VERSION_ALGORITHM))
+  else
+    result := vaUnknown;
+end;
+
 function TFHIRNamingSystem4.hasOid(oid: String): boolean;
 begin
   result := nm.hasOid(oid);
@@ -6888,6 +6948,7 @@ var
   cs : TFhirTerminologyCapabilitiesCodeSystem;
   u, v : String;
 begin
+
   StringSplit(url, '|', u, v);
   cs := tc.codeSystemList.Append;
   cs.uri := u;
@@ -7067,6 +7128,14 @@ end;
 function TFHIRTestScript4.getVersion: String;
 begin
   result := ts.version;
+end;
+
+function TFHIRTestScript4.getVersionAlgorithm: TFHIRVersionAlgorithm;
+begin
+  if (ts.hasExtension(EXT_VERSION_ALGORITHM)) then
+    result := interpretVersionAlgorithm(ts.getExtensionValue(EXT_VERSION_ALGORITHM))
+  else
+    result := vaUnknown;
 end;
 
 procedure TFHIRTestScript4.setDate(Value: TFslDateTime);

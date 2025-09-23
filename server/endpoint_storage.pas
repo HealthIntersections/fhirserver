@@ -1554,11 +1554,11 @@ Begin
       begin
         //result := result + ' (Auth needed)';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '', oicVoid)
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, e.msgId, '', oicVoid)
         else if e.IssueType = itNull then
-          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, '', '', e.OpIssue)
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported, e.msgId, '', e.OpIssue)
         else
-          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.issueType, '', '', e.OpIssue)
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.issueType, e.msgId, '', e.OpIssue)
       end;
       on e: ETerminologySetup do
       begin

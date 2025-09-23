@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, {$IFDEF FPC} zstream, {$ELSE} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions, fsl_collections,
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions, fsl_collections, fsl_logging,
   fhir_objects, fhir_uris;
 
 function mimeTypeToFormat(mt : String; hack : boolean; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
@@ -63,6 +63,11 @@ type
   public
   //  class function getMajMinFromFHIRVersion(v : TFHIRVersion) : String; overload;
     class function readVersion(s : String) : TFHIRVersion;
+
+    class function versionMatches(va : TFHIRVersionAlgorithm; criteria, candidate: String): boolean;
+    class function guessVersionFormat(v : String) : TFHIRVersionAlgorithm;
+    class function isLaterVersion(va1, va2 : TFHIRVersionAlgorithm; v1, v2 : String) : boolean;
+    class function isSubset(ver1, ver2 : String) : boolean;
   end;
 
   TResourceWithReference = class (TFslObject)
@@ -103,6 +108,8 @@ type
 
     procedure stems(content : String; stems : TFslStringList; lang, defLang : String);
   end;
+
+
 
 
 implementation
@@ -469,6 +476,789 @@ begin
     result := fhirVersionRelease2
   else
     result := fhirVersionUnknown;
+end;
+
+class function TFHIRVersions.guessVersionFormat(v : String) : TFHIRVersionAlgorithm;
+var
+  i, dotCount, dashCount, digitCount, letterCount: Integer;
+  hasDigits, hasLetters, hasDots, hasDashes: Boolean;
+  firstChar, lastChar: Char;
+  yearPart, monthPart, dayPart: string;
+  tempStr: string;
+
+  function IsDigit(c: Char): Boolean;
+  begin
+    Result := (c >= '0') and (c <= '9');
+  end;
+
+  function IsLetter(c: Char): Boolean;
+  begin
+    Result := ((c >= 'A') and (c <= 'Z')) or ((c >= 'a') and (c <= 'z'));
+  end;
+
+  function IsValidDatePart(const part: string; minVal, maxVal: Integer): Boolean;
+  var
+    v, code, i: Integer;
+  begin
+    Result := False;
+    if (Length(part) = 0) or (Length(part) > 4) then Exit;
+
+    // Check all digits
+    for i := 1 to Length(part) do
+      if not IsDigit(part[i]) then Exit;
+
+    Val(part, v, code);
+    Result := (code = 0) and (v >= minVal) and (v <= maxVal);
+  end;
+
+  function CheckDateFormat: Boolean;
+  var
+    dashPos1, dashPos2, i: Integer;
+  begin
+    Result := False;
+
+    // Look for YYYY-MM-DD format
+    if (Length(v) >= 4) and (dashCount > 0) then
+    begin
+      dashPos1 := Pos('-', v);
+      if dashPos1 = 5 then // Year should be 4 digits
+      begin
+        yearPart := Copy(v, 1, 4);
+        if IsValidDatePart(yearPart, 1000, 9999) then
+        begin
+          if Length(v) = 4 then // Just YYYY
+            Result := True
+          else if dashPos1 = Length(v) then // YYYY- (partial)
+            Result := True
+          else
+          begin
+            dashPos2 := Pos('-', v, dashPos1 + 1);
+            if dashPos2 = 0 then
+            begin
+              // YYYY-MM format
+              monthPart := Copy(v, 6, Length(v) - 5);
+              Result := IsValidDatePart(monthPart, 1, 12);
+            end
+            else if dashPos2 = dashPos1 + 3 then // YYYY-MM-DD
+            begin
+              monthPart := Copy(v, 6, 2);
+              dayPart := Copy(v, 9, Length(v) - 8);
+              Result := IsValidDatePart(monthPart, 1, 12) and IsValidDatePart(dayPart, 1, 31);
+            end;
+          end;
+        end;
+      end;
+    end
+    // Check YYYYMMDD format
+    else if (dashCount = 0) and (Length(v) >= 4) and (Length(v) <= 8) then
+    begin
+      // All digits for date format
+      for i := 1 to Length(v) do
+        if not IsDigit(v[i]) then Exit;
+
+      if Length(v) = 4 then // YYYY
+        Result := IsValidDatePart(v, 1000, 9999)
+      else if Length(v) = 6 then // YYYYMM
+      begin
+        yearPart := Copy(v, 1, 4);
+        monthPart := Copy(v, 5, 2);
+        Result := IsValidDatePart(yearPart, 1000, 9999) and IsValidDatePart(monthPart, 1, 12);
+      end
+      else if Length(v) = 8 then // YYYYMMDD
+      begin
+        yearPart := Copy(v, 1, 4);
+        monthPart := Copy(v, 5, 2);
+        dayPart := Copy(v, 7, 2);
+        Result := IsValidDatePart(yearPart, 1000, 9999) and
+                  IsValidDatePart(monthPart, 1, 12) and
+                  IsValidDatePart(dayPart, 1, 31);
+      end;
+    end;
+  end;
+
+  function CheckSemverFormat: Boolean;
+  var
+    parts: array[1..3] of string;
+    partIndex, partStart, j, i: Integer;
+    currentPart: string;
+  begin
+    Result := False;
+
+    // Must have exactly 2 dots for basic semver (major.minor.patch)
+    if dotCount <> 2 then Exit;
+
+    // Split by dots and validate each part
+    partIndex := 1;
+    partStart := 1;
+
+    for i := 1 to Length(v) do
+    begin
+      if (v[i] = '.') or (i = Length(v)) then
+      begin
+        if i = Length(v) then
+          currentPart := Copy(v, partStart, i - partStart + 1)
+        else
+          currentPart := Copy(v, partStart, i - partStart);
+
+        if partIndex > 3 then Exit; // Too many parts
+
+        // Each part should be numeric (allowing leading zeros for now), or a wildcard
+        if Length(currentPart) = 0 then Exit;
+        if not (StringArrayExists(['*', 'x', 'X'], currentPart)) then
+        begin
+          for j := 1 to Length(currentPart) do
+            if not IsDigit(currentPart[j]) then Exit;
+        end;
+
+        parts[partIndex] := currentPart;
+        Inc(partIndex);
+        partStart := i + 1;
+      end;
+    end;
+
+    Result := (partIndex = 4); // Should have exactly 3 parts
+  end;
+
+begin
+  Result := vaUnknown;
+
+  if Length(v) = 0 then Exit;
+
+  // Initialize counters
+  dotCount := 0;
+  dashCount := 0;
+  digitCount := 0;
+  letterCount := 0;
+  hasDigits := False;
+  hasLetters := False;
+  hasDots := False;
+  hasDashes := False;
+
+  firstChar := v[1];
+  lastChar := v[Length(v)];
+
+  // Count character types
+  for i := 1 to Length(v) do
+  begin
+    if IsDigit(v[i]) then
+    begin
+      Inc(digitCount);
+      hasDigits := True;
+    end
+    else if IsLetter(v[i]) then
+    begin
+      Inc(letterCount);
+      hasLetters := True;
+    end
+    else if v[i] = '.' then
+    begin
+      Inc(dotCount);
+      hasDots := True;
+    end
+    else if v[i] = '-' then
+    begin
+      Inc(dashCount);
+      hasDashes := True;
+    end;
+  end;
+
+  // Check for plain integer first (simplest case)
+  if (digitCount = Length(v)) and (Length(v) > 0) then
+  begin
+    Result := vaInteger;
+    Exit;
+  end;
+
+  // Check for date format
+  if CheckDateFormat then
+  begin
+    Result := vaDate;
+    Exit;
+  end;
+
+  // Check for semver format
+  if CheckSemverFormat then
+  begin
+    Result := vaSemver;
+    Exit;
+  end;
+
+  // Check for natural version (contains digits and has some version-like structure)
+  if hasDigits and ((hasDots and (dotCount <= 4)) or
+     (hasLetters and (letterCount <= digitCount * 2))) then
+  begin
+    // Basic heuristic: looks like it could be a natural version
+    // Contains digits, maybe some dots, maybe some letters but not too many
+    Result := vaNatural;
+    Exit;
+  end;
+
+  // Default case
+  Result := vaUnknown;
+end;
+
+class function TFHIRVersions.isLaterVersion(va1, va2: TFHIRVersionAlgorithm; v1, v2: String): boolean;
+var
+  i1, i2 : integer;
+begin
+  if va1 = vaUnknown then
+    va1 := guessVersionFormat(v1);
+  if va2 = vaUnknown then
+    va2 := guessVersionFormat(v2);
+  if (va1 <> va2) then
+    va1 := vaNatural;
+  case va1 of
+    vaSemver : result := TSemanticVersion.isMoreRecent(v2, v1);
+    vaInteger :
+      begin
+        result := false;
+        i1 := StrToIntDef(v1, 0);
+        i2 := StrToIntDef(v2, 0);
+        result := i2 > i1;
+      end;
+  else
+    // vaDate, vaNatural, vaUnknown, vaAlpha
+    result := StringCompare(v1, v2) < 0;
+  end;
+
+end;
+
+type
+  TSemVer = record
+    Major, Minor, Patch: Integer;
+    PreRelease, Build: string;
+    HasMinor, HasPatch: Boolean;
+  end;
+
+function Trim(const S: string): string;
+var
+  I, L: Integer;
+begin
+  L := Length(S);
+  I := 1;
+  while (I <= L) and (S[I] = ' ') do Inc(I);
+  if I > L then
+    Result := ''
+  else
+  begin
+    while (L > 0) and (S[L] = ' ') do Dec(L);
+    Result := Copy(S, I, L - I + 1);
+  end;
+end;
+
+function StrToIntDef(const S: string; Default: Integer): Integer;
+var
+  Code: Integer;
+begin
+  Val(S, Result, Code);
+  if Code <> 0 then
+    Result := Default;
+end;
+
+function ParseSemVer(const Version: string): TSemVer;
+var
+  WorkStr, Part: string;
+  DotPos, DashPos, PlusPos: Integer;
+  Parts: array[0..2] of string;
+  PartCount, I: Integer;
+begin
+  // Initialize result
+  Result.Major := 0;
+  Result.Minor := 0;
+  Result.Patch := 0;
+  Result.PreRelease := '';
+  Result.Build := '';
+  Result.HasMinor := False;
+  Result.HasPatch := False;
+
+  WorkStr := Trim(Version);
+  if WorkStr = '' then Exit;
+
+  // Extract build metadata (after +)
+  PlusPos := Pos('+', WorkStr);
+  if PlusPos > 0 then
+  begin
+    Result.Build := Copy(WorkStr, PlusPos + 1, Length(WorkStr));
+    WorkStr := Copy(WorkStr, 1, PlusPos - 1);
+  end;
+
+  // Extract prerelease (after -)
+  DashPos := Pos('-', WorkStr);
+  if DashPos > 0 then
+  begin
+    Result.PreRelease := Copy(WorkStr, DashPos + 1, Length(WorkStr));
+    WorkStr := Copy(WorkStr, 1, DashPos - 1);
+  end;
+
+  // Parse version parts (major.minor.patch)
+  PartCount := 0;
+  I := 1;
+  while (I <= Length(WorkStr)) and (PartCount < 3) do
+  begin
+    DotPos := Pos('.', Copy(WorkStr, I, Length(WorkStr)));
+    if DotPos > 0 then
+    begin
+      Parts[PartCount] := Copy(WorkStr, I, DotPos - 1);
+      I := I + DotPos;
+      Inc(PartCount);
+    end
+    else
+    begin
+      Parts[PartCount] := Copy(WorkStr, I, Length(WorkStr));
+      Inc(PartCount);
+      Break;
+    end;
+  end;
+
+  // Assign parsed parts - only set HasMinor/HasPatch if actually present in string
+  if PartCount >= 1 then
+    Result.Major := StrToIntDef(Parts[0], 0);
+  if PartCount >= 2 then
+  begin
+    Result.HasMinor := True;
+    if (Parts[1] <> '*') and (Parts[1] <> 'x') and (Parts[1] <> 'X') then
+      Result.Minor := StrToIntDef(Parts[1], 0);
+  end;
+  if PartCount >= 3 then
+  begin
+    Result.HasPatch := True;
+    if (Parts[2] <> '*') and (Parts[2] <> 'x') and (Parts[2] <> 'X') then
+      Result.Patch := StrToIntDef(Parts[2], 0);
+  end;
+end;
+
+function IsWildcard(const S: string): Boolean;
+begin
+  Result := (S = '*') or (S = 'x') or (S = 'X');
+end;
+
+function HasQuestionMark(const Version: string): Boolean;
+begin
+  Result := Pos('?', Version) > 0;
+end;
+
+function GetVersionPrefix(const Version: string): string;
+var
+  QPos: Integer;
+begin
+  QPos := Pos('?', Version);
+  if QPos > 0 then
+    Result := Copy(Version, 1, QPos - 1)
+  else
+    Result := Version;
+end;
+
+function StartsWith(const S, Prefix: string): Boolean;
+begin
+  Result := (Length(S) >= Length(Prefix)) and
+            (Copy(S, 1, Length(Prefix)) = Prefix);
+end;
+
+function GetVersionPart(const Version: string; PartIndex: Integer): string;
+var
+  WorkStr, Part: string;
+  DotPos, DashPos, PlusPos: Integer;
+  PartCount, I: Integer;
+begin
+  Result := '';
+  WorkStr := Trim(Version);
+
+  // Remove build metadata and prerelease for parsing core version
+  PlusPos := Pos('+', WorkStr);
+  if PlusPos > 0 then
+    WorkStr := Copy(WorkStr, 1, PlusPos - 1);
+  DashPos := Pos('-', WorkStr);
+  if DashPos > 0 then
+    WorkStr := Copy(WorkStr, 1, DashPos - 1);
+
+  // Parse version parts
+  PartCount := 0;
+  I := 1;
+  while (I <= Length(WorkStr)) and (PartCount <= PartIndex) do
+  begin
+    DotPos := Pos('.', Copy(WorkStr, I, Length(WorkStr)));
+    if DotPos > 0 then
+    begin
+      Part := Copy(WorkStr, I, DotPos - 1);
+      if PartCount = PartIndex then
+      begin
+        Result := Part;
+        Exit;
+      end;
+      I := I + DotPos;
+      Inc(PartCount);
+    end
+    else
+    begin
+      Part := Copy(WorkStr, I, Length(WorkStr));
+      if PartCount = PartIndex then
+        Result := Part;
+      Break;
+    end;
+  end;
+end;
+
+function SemVerVersionMatches(const Criteria, Candidate: string): Boolean;
+var
+  CriteriaSV, CandidateSV: TSemVer;
+  CriteriaPrefix: string;
+  MajorPart, MinorPart, PatchPart: string;
+begin
+  Result := False;
+
+  // Handle question mark wildcard - prefix matching
+  if HasQuestionMark(Criteria) then
+  begin
+    CriteriaPrefix := GetVersionPrefix(Criteria);
+    Result := StartsWith(Candidate, CriteriaPrefix);
+    Exit;
+  end;
+
+  // Parse both versions
+  CriteriaSV := ParseSemVer(Criteria);
+  CandidateSV := ParseSemVer(Candidate);
+
+  // Get original string parts for wildcard checking
+  MajorPart := GetVersionPart(Criteria, 0);
+  MinorPart := GetVersionPart(Criteria, 1);
+  PatchPart := GetVersionPart(Criteria, 2);
+
+  // Check major version - must always match if not wildcard
+  if IsWildcard(MajorPart) then
+  begin
+    Result := True; // Major wildcard matches everything
+    Exit;
+  end;
+
+  if CriteriaSV.Major <> CandidateSV.Major then
+    Exit;
+
+  // Check minor version
+  if not CriteriaSV.HasMinor then
+  begin
+    // Criteria has no minor part (e.g., "1" vs "1.0.0")
+    // This should only match if candidate also has no minor part
+    Result := not CandidateSV.HasMinor;
+    Exit;
+  end;
+
+  if IsWildcard(MinorPart) then
+  begin
+    // Minor wildcard (e.g., "2.*" or "2.x.x")
+    if not CriteriaSV.HasPatch then
+    begin
+      // "2.*" matches "2.0", "2.1" but not "2.0.0"
+      Result := CandidateSV.HasMinor and not CandidateSV.HasPatch;
+    end
+    else
+    begin
+      // "2.x.x" matches "2.0.1", "2.1.0" but not "2.0"
+      Result := CandidateSV.HasMinor and CandidateSV.HasPatch and
+                (CandidateSV.PreRelease = '') and (CandidateSV.Build = '');
+    end;
+    Exit;
+  end;
+
+  // Criteria has minor, candidate must also have minor and they must match
+  if not CandidateSV.HasMinor then
+    Exit;
+
+  if CriteriaSV.Minor <> CandidateSV.Minor then
+    Exit;
+
+  // Check patch version
+  if not CriteriaSV.HasPatch then
+  begin
+    // Criteria has no patch part (e.g., "2.0" vs "2.0.0")
+    // This should only match if candidate also has no patch part
+    Result := not CandidateSV.HasPatch;
+    Exit;
+  end;
+
+  if IsWildcard(PatchPart) then
+  begin
+    // Patch wildcard (e.g., "2.0.*")
+    Result := CandidateSV.HasPatch and
+              (CandidateSV.PreRelease = '') and (CandidateSV.Build = '');
+    Exit;
+  end;
+
+  // Criteria has patch, candidate must also have patch and they must match
+  if not CandidateSV.HasPatch then
+    Exit;
+
+  if CriteriaSV.Patch <> CandidateSV.Patch then
+    Exit;
+
+  // Check prerelease
+  if Pos('-*', Criteria) > 0 then
+  begin
+    // Prerelease wildcard (e.g., "2.0.0-*")
+    Result := (CandidateSV.PreRelease <> '') and (CandidateSV.Build = '');
+    Exit;
+  end;
+
+  if CriteriaSV.PreRelease <> CandidateSV.PreRelease then
+    Exit;
+
+  // Check build metadata
+  if Pos('+*', Criteria) > 0 then
+  begin
+    // Build wildcard (e.g., "2.0.0+*")
+    Result := (CandidateSV.Build <> '') and (CandidateSV.PreRelease = '');
+    Exit;
+  end;
+
+  // Exact match
+  Result := CriteriaSV.Build = CandidateSV.Build;
+end;
+
+class function TFHIRVersions.versionMatches(va : TFHIRVersionAlgorithm; criteria, candidate: String): boolean;
+begin
+  if va = vaUnknown then
+    va := guessVersionFormat(candidate);
+  case va of
+    vaSemver : result := SemVerVersionMatches(criteria, candidate);
+    vaInteger : result := false;
+  else
+    // vaUnknown, vaAlpha, vaDate, vaNatural :
+    Result := candidate.startsWith(criteria);
+  end;
+end;
+
+class function TFHIRVersions.isSubset(ver1, ver2: String): boolean;
+var
+  V1SV, V2SV: TSemVer;
+  V1Major, V1Minor, V1Patch: string;
+  V2Major, V2Minor, V2Patch: string;
+  V1HasQuestion, V2HasQuestion: Boolean;
+  V1Prefix, V2Prefix: string;
+  V1HasPreWild, V1HasBuildWild: Boolean;
+  V2HasPreWild, V2HasBuildWild: Boolean;
+begin
+  Result := False;
+
+  // Handle question mark wildcards first
+  V1HasQuestion := HasQuestionMark(Ver1);
+  V2HasQuestion := HasQuestionMark(Ver2);
+
+  if V1HasQuestion and V2HasQuestion then
+  begin
+    // Both have question marks - ver2 subset of ver1 if ver2 prefix starts with ver1 prefix
+    V1Prefix := GetVersionPrefix(Ver1);
+    V2Prefix := GetVersionPrefix(Ver2);
+    Result := StartsWith(V2Prefix, V1Prefix);
+    Exit;
+  end;
+
+  if V1HasQuestion and not V2HasQuestion then
+  begin
+    // Ver1 has question mark, ver2 doesn't - ver2 subset if it starts with ver1 prefix
+    V1Prefix := GetVersionPrefix(Ver1);
+    Result := StartsWith(Ver2, V1Prefix);
+    Exit;
+  end;
+
+  if not V1HasQuestion and V2HasQuestion then
+  begin
+    // Ver1 doesn't have question mark, ver2 does - can't be subset (ver2 is broader)
+    Result := False;
+    Exit;
+  end;
+
+  // Neither has question marks - parse normally
+  V1SV := ParseSemVer(Ver1);
+  V2SV := ParseSemVer(Ver2);
+
+  V1Major := GetVersionPart(Ver1, 0);
+  V1Minor := GetVersionPart(Ver1, 1);
+  V1Patch := GetVersionPart(Ver1, 2);
+  V2Major := GetVersionPart(Ver2, 0);
+  V2Minor := GetVersionPart(Ver2, 1);
+  V2Patch := GetVersionPart(Ver2, 2);
+
+  // Check for prerelease and build wildcards
+  V1HasPreWild := Pos('-*', Ver1) > 0;
+  V1HasBuildWild := Pos('+*', Ver1) > 0;
+  V2HasPreWild := Pos('-*', Ver2) > 0;
+  V2HasBuildWild := Pos('+*', Ver2) > 0;
+
+  // Major version check
+  if IsWildcard(V1Major) then
+  begin
+    // Ver1 major is wildcard - matches everything, so ver2 is always subset
+    Result := True;
+    Exit;
+  end;
+
+  if IsWildcard(V2Major) then
+  begin
+    // Ver2 major is wildcard, Ver1 is not - ver2 is broader, not subset
+    Result := False;
+    Exit;
+  end;
+
+  // Both have specific major versions - they must match
+  if V1SV.Major <> V2SV.Major then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // Minor version check
+  if not V1SV.HasMinor then
+  begin
+    // Ver1 has no minor (e.g., "1") - only matches exact "1"
+    // Ver2 can only be subset if it's also exact "1"
+    Result := not V2SV.HasMinor;
+    Exit;
+  end;
+
+  if IsWildcard(V1Minor) then
+  begin
+    // Ver1 minor is wildcard
+    if not V1SV.HasPatch then
+    begin
+      // Ver1 is "X.*" - matches "X.Y" but not "X.Y.Z"
+      if IsWildcard(V2Minor) then
+      begin
+        // Ver2 is also "X.*" - subset
+        Result := not V2SV.HasPatch;
+      end
+      else
+      begin
+        // Ver2 is specific minor - subset if it has no patch
+        Result := V2SV.HasMinor and not V2SV.HasPatch;
+      end;
+    end
+    else
+    begin
+      // Ver1 is "X.x.x" - matches "X.Y.Z"
+      if IsWildcard(V2Minor) then
+      begin
+        // Ver2 is also wildcard minor
+        if V2SV.HasPatch then
+        begin
+          Result := IsWildcard(V2Patch); // Both "X.x.x"
+        end
+        else
+        begin
+          Result := False; // Ver2 "X.*" is broader than Ver1 "X.x.x"
+        end;
+      end
+      else
+      begin
+        // Ver2 has specific minor.patch - subset
+        Result := V2SV.HasMinor and V2SV.HasPatch;
+      end;
+    end;
+    Exit;
+  end;
+
+  if not V2SV.HasMinor then
+  begin
+    // Ver1 has minor, Ver2 doesn't - Ver2 is broader
+    Result := False;
+    Exit;
+  end;
+
+  if IsWildcard(V2Minor) then
+  begin
+    // Ver1 has specific minor, Ver2 has wildcard - Ver2 is broader
+    Result := False;
+    Exit;
+  end;
+
+  // Both have specific minor versions - they must match
+  if V1SV.Minor <> V2SV.Minor then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // Patch version check
+  if not V1SV.HasPatch then
+  begin
+    // Ver1 has no patch (e.g., "1.2") - only matches exact "1.2"
+    Result := not V2SV.HasPatch;
+    Exit;
+  end;
+
+  if IsWildcard(V1Patch) then
+  begin
+    // Ver1 patch is wildcard "X.Y.*"
+    if IsWildcard(V2Patch) then
+    begin
+      Result := True; // Both "X.Y.*"
+    end
+    else
+    begin
+      Result := V2SV.HasPatch; // Ver2 is specific patch - subset
+    end;
+    Exit;
+  end;
+
+  if not V2SV.HasPatch then
+  begin
+    // Ver1 has patch, Ver2 doesn't - Ver2 is broader
+    Result := False;
+    Exit;
+  end;
+
+  if IsWildcard(V2Patch) then
+  begin
+    // Ver1 has specific patch, Ver2 has wildcard - Ver2 is broader
+    Result := False;
+    Exit;
+  end;
+
+  // Both have specific patch versions - they must match
+  if V1SV.Patch <> V2SV.Patch then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  // Prerelease check
+  if V1HasPreWild and V2HasPreWild then
+  begin
+    Result := True; // Both match any prerelease
+    Exit;
+  end;
+
+  if V1HasPreWild and not V2HasPreWild then
+  begin
+    Result := V2SV.PreRelease <> ''; // Ver2 subset if it has specific prerelease
+    Exit;
+  end;
+
+  if not V1HasPreWild and V2HasPreWild then
+  begin
+    Result := False; // Ver2 is broader
+    Exit;
+  end;
+
+  // Build metadata check
+  if V1HasBuildWild and V2HasBuildWild then
+  begin
+    Result := True; // Both match any build
+    Exit;
+  end;
+
+  if V1HasBuildWild and not V2HasBuildWild then
+  begin
+    Result := V2SV.Build <> ''; // Ver2 subset if it has specific build
+    Exit;
+  end;
+
+  if not V1HasBuildWild and V2HasBuildWild then
+  begin
+    Result := False; // Ver2 is broader
+    Exit;
+  end;
+
+  // Exact prerelease and build match
+  Result := (V1SV.PreRelease = V2SV.PreRelease) and (V1SV.Build = V2SV.Build);
 end;
 
 

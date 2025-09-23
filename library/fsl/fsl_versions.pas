@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_utilities, fsl_xml;
+  fsl_base, fsl_utilities, fsl_xml, fsl_logging;
 
 type
   ESemVerException = class (EFslException);
@@ -132,6 +132,11 @@ begin
   result := fromString(ver, true);
 end;
 
+function isWildCard(s : String) : boolean;
+begin
+  result := StringArrayExists(['*', 'x', 'X'], s);
+end;
+
 class function TSemanticVersion.fromString(ver: String; strict : boolean): TSemanticVersion;
 var
   c : integer;
@@ -196,6 +201,8 @@ begin
       begin
         if StrToIntDef(parts[0], -1) > -1 then
           result.FMajor := StrToInt(parts[0])
+        else if (isWildCard(parts[0])) then
+          result.FMajor := -1
         else if strict then
           raise ESemVerException.create('Error reading SemVer: Major "'+parts[0]+'" is not an integer')
         else
@@ -207,6 +214,8 @@ begin
       begin
         if StrToIntDef(parts[1], -1) > -1 then
           result.FMinor := StrToInt(parts[1])
+        else if (isWildCard(parts[1])) then
+          result.FMinor := -1
         else if strict then
           raise ESemVerException.create('Error reading SemVer: Minor "'+parts[1]+'" is not an integer')
         else
@@ -218,6 +227,8 @@ begin
       begin
         if StrToIntDef(parts[2], -1) > -1 then
           result.FPatch := StrToInt(parts[2])
+        else if (isWildCard(parts[2])) then
+          result.FPatch := -1
         else if strict then
           raise ESemVerException.create('Error reading SemVer: Patch "'+parts[2]+'" is not an integer')
         else
@@ -350,16 +361,34 @@ begin
 end;
 
 function TSemanticVersion.matches(other: TSemanticVersion; level: TSemanticVersionLevel): boolean;
+  function m(l1, l2 : integer) : boolean;
+  begin
+    if l1 = -1 then
+      result := true
+    else if l2 = -1 then
+      result := true
+    else
+      result := l1 = l2;
+  end;
+  function lm(l1, l2 : string) : boolean;
+  begin
+    if l1 = '*' then
+      result := true
+    else if l2 = '*' then
+      result := true
+    else
+      result := l1 = l2;
+  end;
 begin
   case level of
     semverMajor :
-        result := (FMajor = other.FMajor);
+        result := m(FMajor, other.FMajor);
     semverMinor :
-      result := (FMajor = other.FMajor) and (FMinor = other.FMinor);
+      result := m(FMajor, other.FMajor) and m(FMinor, other.FMinor);
     semverPatch :
-      result := (FMajor = other.FMajor) and (FMinor = other.FMinor) and (FPatch = other.FPatch);
+      result := m(FMajor, other.FMajor) and m(FMinor, other.FMinor) and m(FPatch, other.FPatch);
     semverLabel :
-      result := (FMajor = other.FMajor) and (FMinor = other.FMinor) and (FPatch = other.FPatch) and (FBuildLabel = other.FBuildLabel);
+      result := m(FMajor, other.FMajor) and m(FMinor, other.FMinor) and m(FPatch, other.FPatch) and lm(FBuildLabel, other.FBuildLabel);
   end;
 end;
 

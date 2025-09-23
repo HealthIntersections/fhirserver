@@ -141,6 +141,8 @@ Type
 
   TFhirIssueType = (itNull, itInvalid, itStructure, itRequired, itValue, itInvariant, itSecurity, itLogin, itUnknown, itExpired, itForbidden, itSuppressed, itProcessing, itNotSupported, itDuplicate, itNotFound, itTooLong, itCodeInvalid, itExtension, itTooCostly, itBusinessRule, itConflict, itIncomplete, itTransient, itLockError, itNoStore, itException, itTimeout, itThrottled, itInformational);
   TIssueSeverity = (isNull, isFatal, isError, isWarning, isInformation);
+  TFHIRVersionAlgorithm = (vaUnknown, vaSemver, vaInteger, vaAlpha, vaDate, vaNatural);
+
 
   EFHIRException = class (EFslException)
   public
@@ -227,6 +229,7 @@ Const
   CODES_TFHIRSummaryOption : array [TFHIRSummaryOption] of String = ('Full', 'Summary', 'Text', 'Data', 'Count');
   CODES_TFhirIssueType : array [TFhirIssueType] of String = ('null', 'invalid', 'structure', 'required', 'value', 'invariant', 'security', 'login', 'unknown', 'expired', 'forbidden', 'suppressed', 'processing', 'not-supported', 'duplicate', 'not-found', 'too-long', 'code-invalid', 'extension', 'too-costly', 'business-rule', 'conflict', 'incomplete', 'transient', 'lock-error', 'no-store', 'exception', 'timeout', 'throttled', 'informational');
   CODES_TIssueSeverity : array [TIssueSeverity] of String = ('null', 'fatal', 'error', 'warning', 'information');
+  CODES_TFHIRVersionAlgorithm : array [TFHIRVersionAlgorithm] of String = ('unknown','semver', 'integer', 'alpha', 'date', 'natural');
 
   NON_STD_COMMANDS = [fcmdUnknown, fcmdWebUI, fcmdTask, fcmdDeleteTask, fcmdNull];
 type

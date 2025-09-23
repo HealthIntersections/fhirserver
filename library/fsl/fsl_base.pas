@@ -686,6 +686,7 @@ Type
     Function Link : TFslStringDictionary; Overload;
     procedure assign(source : TFslStringDictionary);
     property Values[const Key: String]: String read GetValue write SetValue; default;
+    function hasValue(const key : String): boolean;
     function sizeInBytes(magic : integer) : cardinal;
   end;
 
@@ -3359,6 +3360,11 @@ function TFslStringDictionary.GetValue(const Key: String): String;
 begin
   if not TryGetValue(key, result) then
     result := '';
+end;
+
+function TFslStringDictionary.hasValue(const Key: String): boolean;
+begin
+  result := ContainsKey(key);
 end;
 
 function TFslStringDictionary.Link: TFslStringDictionary;

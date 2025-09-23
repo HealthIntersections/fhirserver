@@ -1141,7 +1141,6 @@ var
   cs : TFHIRCodeSystemEntry;
 begin
   result := nil;
-  version := checkVersion(system, version, profile);
   if (profile = nil) then
     defToLatest := false
   else

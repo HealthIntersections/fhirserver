@@ -61,13 +61,15 @@ Type
   TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
   TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
-  TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicCodeComment, oicDisplay, oicDisplayComment, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck, oicInvalidData, oicProcessingNote);
+  TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicCodeComment, oicDisplay, oicDisplayComment, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck, oicInvalidData, oicProcessingNote, oicVersionError);
 
 const
   CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf', 'of');
   CODES_TPublicationStatus: Array[TPublicationStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
-  CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'code-comment', 'invalid-display', 'display-comment', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data', 'process-note');
+  CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'code-comment', 'invalid-display', 'display-comment', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data', 'process-note', 'version-error');
+
+  EXT_VERSION_ALGORITHM = 'http://hl7.org/fhir/5.0/StructureDefinition/extension-CanonicalResource.versionAlgorithm';
 
 type
   EFHIROperationException = class (EFslException)
@@ -777,6 +779,8 @@ const
 type
   TFHIRValueSetW = class;
 
+  { TFHIRMetadataResourceW }
+
   TFHIRMetadataResourceW = class (TFHIRXVersionResourceWrapper)
   private
     function GetVUrl: String;
@@ -799,6 +803,7 @@ type
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
+    function getVersionAlgorithm : TFHIRVersionAlgorithm; virtual; abstract;
     procedure setExperimental(value : boolean); virtual; abstract;
   public
     function link : TFHIRMetadataResourceW; overload;
@@ -807,6 +812,7 @@ type
     property name : String read GetName write SetName;
     property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
+    property versionAlgorithm : TFHIRVersionAlgorithm read GetVersionAlgorithm;
     property vurl : String read GetVUrl;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
@@ -994,6 +1000,8 @@ type
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; virtual; abstract;
   end;
 
+  { TFhirValueSetComposeIncludeW }
+
   TFhirValueSetComposeIncludeW = class (TFHIRXVersionElementWrapper)
   protected
     function getSystem : String; virtual; abstract;
@@ -1003,6 +1011,7 @@ type
   public
     function link : TFhirValueSetComposeIncludeW; overload;
 
+    function VURL : String;
     property systemUri : String read GetSystem write SetSystem;
     property version : String read GetVersion write SetVersion;
     function hasValueSets : boolean; virtual; abstract;
@@ -2289,6 +2298,14 @@ begin
   result := TFhirValueSetComposeIncludeW(inherited link);
 end;
 
+function TFhirValueSetComposeIncludeW.VURL: String;
+begin
+  if version = '' then
+    result := systemUri+'|'+version
+  else
+    result := systemUri;
+end;
+
 { TFhirValueSetW }
 
 function TFhirValueSetW.link: TFhirValueSetW;
@@ -2702,6 +2719,7 @@ begin
   else
     result := url + '|'+version;
 end;
+
 
 function TFHIRMetadataResourceW.link: TFHIRMetadataResourceW;
 begin

@@ -8,7 +8,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n, fsl_versions, fsl_threads,
-  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions, fhir_uris, fhir_parser,
+  fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions, fhir_uris, fhir_parser, fhir_utilities,
   fhir_codesystem_service;
 
  type
@@ -101,12 +101,14 @@ uses
   public
     constructor Create(system, version : String); overload;
     constructor Create(system, version : String; mode : TFhirExpansionParamsVersionRuleMode); overload;
+    function link : TFhirExpansionParamsVersionRule; overload;
 
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property mode : TFhirExpansionParamsVersionRuleMode read FMode write FMode;
 
     function asString : String;
+    function asParam : String;
   end;
 
   { TFHIRTxOperationParams }
@@ -185,6 +187,7 @@ uses
     property versionRules : TFslList<TFhirExpansionParamsVersionRule> read FVersionRules;
 
     function getVersionForRule(systemURI : String; mode : TFhirExpansionParamsVersionRuleMode) : String;
+    function rulesForSystem(systemURI : String) : TFslList<TFhirExpansionParamsVersionRule>;
     procedure seeVersionRule(url : String; mode : TFhirExpansionParamsVersionRuleMode);
 
     property activeOnly : boolean read FactiveOnly write SetActiveOnly;
@@ -252,6 +255,7 @@ uses
     FNoCacheThisOne : boolean;
     FParams : TFHIRTxOperationParams;
     FRequiredSupplements : TStringList;
+    FFoundParameters : TStringList;
 
     function costDiags(e : ETooCostly) : ETooCostly;
     function opName : String; virtual;
@@ -259,7 +263,10 @@ uses
     function vsHandle : TFHIRValueSetW; virtual; abstract;
     procedure deadCheck(place : String); virtual;
     function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRCachedMetadataResource;
-    function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk : boolean) : TCodeSystemProvider;
+    function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk, checkVer, noVParams : boolean; op: TFhirOperationOutcomeW) : TCodeSystemProvider;
+    function determineVersion(url, version : String; params : TFHIRTxOperationParams; va : TFHIRVersionAlgorithm):String;
+    procedure checkVersion(url, version : String; params : TFHIRTxOperationParams; va : TFHIRVersionAlgorithm; op: TFhirOperationOutcomeW);
+    function getVersionList(url : String) : TStringList;
     function listVersions(url : String) : String;
     function  loadSupplements(url, version : String) : TFslList<TFhirCodeSystemW>;
     procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
@@ -278,6 +285,7 @@ uses
 
 const
    CODES_TFhirExpansionParamsVersionRuleMode : array [TFhirExpansionParamsVersionRuleMode] of String = ('Default', 'Check', 'Override');
+   NAMES_TFhirExpansionParamsVersionRuleMode : array [TFhirExpansionParamsVersionRuleMode] of String = ('system-version', 'check-system-version', 'force-system-version');
 
    LOOKUP_DEAD_TIME_SECS = 30;
 
@@ -498,10 +506,12 @@ begin
   FLanguages := languages;
   FI18n := i18n;
   FRequiredSupplements := TStringList.create;
+  FFoundParameters := TStringList.create;
 end;
 
 destructor TTerminologyWorker.Destroy;
 begin
+  FFoundParameters.free;
   FLangList.free;
   FLanguages.free;
   FAdditionalResources.free;
@@ -513,13 +523,14 @@ begin
   inherited;
 end;
 
-
-function isLaterVersion(test, base : String) : boolean;
+function versionMatches(rrrr : TFHIRCachedMetadataResource; version : String) : boolean;
 begin
-  if TSemanticVersion.isValid(test) and TSemanticVersion.isValid(base) then
-    result := TSemanticVersion.isMoreRecent(test, base)
-  else
-    result := StringCompare(test, base) > 0;
+  result := TFHIRVersions.versionMatches(rrrr.resource.versionAlgorithm, version, rrrr.Resource.version);
+end;
+                       
+function isLaterVersion(r1, r2 : TFHIRCachedMetadataResource) : boolean;
+begin
+  result := TFHIRVersions.isLaterVersion(r1.resource.versionAlgorithm, r2.resource.versionAlgorithm, r1.Resource.version, r2.Resource.version);
 end;
 
 function TTerminologyWorker.findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRCachedMetadataResource;
@@ -536,7 +547,8 @@ begin
     for rrrr in FAdditionalResources do
     begin
       deadCheck('findInAdditionalResources');
-      if (url <> '') and ((rrrr.resource.url = url) or (rrrr.resource.vurl = url)) and ((version = '') or (version = rrrr.resource.version)) then
+      if (url <> '') and ((rrrr.resource.url = url) or (rrrr.resource.vurl = url))
+        and ((version = '') or (version = rrrr.resource.version) or versionMatches(rrrr, version)) then
       begin
         if rrrr.resource.fhirType <> resourceType then
           if error then
@@ -544,16 +556,18 @@ begin
           else
             exit(nil);
         matches.add(rrrr.link);
-        end;
       end;
+    end;
     if matches.Count = 0 then
       exit(nil)
     else
     begin
       t := 0;
       for i := 1 to matches.count - 1 do
-        if isLaterVersion(matches[i].resource.version, matches[t].resource.version) then
+      begin
+        if isLaterVersion(matches[t], matches[i]) then
           t := i;
+      end;
       exit(matches[t]);
     end;
   finally
@@ -561,7 +575,7 @@ begin
   end;
 end;
 
-function TTerminologyWorker.findCodeSystem(url, version: String; params: TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk: boolean): TCodeSystemProvider;
+function TTerminologyWorker.findCodeSystem(url, version: String; params: TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk, checkVer, noVParams : boolean; op: TFhirOperationOutcomeW): TCodeSystemProvider;
 var
   r, r2 : TFHIRMetadataResourceW;
   csh : TFHIRCachedMetadataResource;
@@ -569,9 +583,13 @@ var
   ts : TStringlist;
   supplements : TFslList<TFhirCodeSystemW>;
   prov : TCodeSystemProvider;
+  msg, mid : String;
 begin
   if (url = '') then
     exit(nil);
+
+  if not noVParams then
+    version := determineVersion(url, version, params, vaUnknown);
 
   result := nil;
   csh := nil;
@@ -607,27 +625,125 @@ begin
       finally
         supplements.free;
       end;
+      if (checkVer) then
+        checkVersion(url, prov.version, params, prov.versionAlgorithm, op);
     end
     else if not nullok then
     begin
       if version = '' then
-        raise ETerminologySetup.create('Unable to provide support for code system '+url)
+      begin
+        mid := 'UNKNOWN_CODESYSTEM_EXP';
+        msg := FI18n.translate(mid, FParams.HTTPLanguages, [url]);
+      end
       else
       begin
         ts := TStringList.Create;
         try
           FOnListCodeSystemVersions(self, url, ts);
+          for csh in FAdditionalResources do
+            if (csh.Resource.url = url) and (csh.Resource.version <> '') then
+              ts.add(csh.Resource.version);
           if (ts.Count = 0) then
-            raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version)
+          begin
+            mid := 'UNKNOWN_CODESYSTEM_VERSION_EXP_NONE';
+            msg := FI18n.translate(mid, FParams.HTTPLanguages, [url, version]);
+          end
           else
-            raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version+' (known versions = '+ts.CommaText+')');
+          begin
+            ts.Sort;
+            mid := 'UNKNOWN_CODESYSTEM_VERSION_EXP';
+            msg := FI18n.translate(mid, FParams.HTTPLanguages, [url, version, ts.CommaText]);
+          end
         finally
           ts.free;
         end;
       end;
+      raise ETerminologyError.create(msg, itNotFound, oicNotFound, mid);
     end;
   finally
     prov.free;
+  end;
+end;
+
+function TTerminologyWorker.determineVersion(url, version: String; params: TFHIRTxOperationParams; va : TFHIRVersionAlgorithm): String;
+var
+  list : TFslList<TFhirExpansionParamsVersionRule>;
+  t : TFhirExpansionParamsVersionRule;
+  b : boolean;
+  msg : String;
+begin
+  if (params = nil) then
+    exit(version);
+
+  result := version;
+  list := params.rulesForSystem(url);
+  try
+    b := false;
+    for t in list do
+      if t.FMode = fvmOverride then
+        if not b then
+        begin
+          result := t.version;
+          FFoundParameters.add(t.asParam);
+        end
+        else if result <> t.version then
+          raise ETerminologyError.create(FI18n.translate('SYSTEM_VERSION_MULTIPLE_OVERRIDE', params.FHTTPLanguages, [url, result, t.version]),
+            itException, oicVersionError, 'SYSTEM_VERSION_MULTIPLE_OVERRIDE');
+    if (result = '') then
+    begin
+      b := false;
+      for t in list do
+        if t.FMode = fvmDefault then
+          if not b then
+          begin
+            result := t.version;
+          FFoundParameters.add(t.asParam);
+          end
+          else if version <> t.version then
+            raise ETerminologyError.create(FI18n.translate('SYSTEM_VERSION_MULTIPLE_DEFAULT', params.FHTTPLanguages, [url, result, t.version]),
+            itException, oicVersionError, 'SYSTEM_VERSION_MULTIPLE_DEFAULT');
+    end;
+      for t in list do
+        if t.FMode = fvmCheck then
+          if (result = '') then
+          begin
+            result := t.version;
+            FFoundParameters.add(t.asParam);
+          end
+          // if we decide to allow check to guide the selection.
+          // waiting for discussion
+          //else if TFHIRVersions.isSubset(result, t.version) then
+          //  result := t.version;
+  finally
+    list.free;
+  end;
+end;
+
+procedure TTerminologyWorker.checkVersion(url, version: String; params: TFHIRTxOperationParams; va : TFHIRVersionAlgorithm; op: TFhirOperationOutcomeW);
+var
+  list : TFslList<TFhirExpansionParamsVersionRule>;
+  t : TFhirExpansionParamsVersionRule;
+  b : boolean;
+  msg : String;
+begin
+  if (params <> nil) then
+  begin
+    list := params.rulesForSystem(url);
+    try
+      for t in list do
+        if t.FMode = fvmCheck then
+          if not TFHIRVersions.versionMatches(va, version, t.version) then
+          begin
+            msg := FI18n.translate('VALUESET_VERSION_CHECK', params.FHTTPLanguages, [url, version, t.version]);
+            if op <> nil then
+              op.addIssue(isError, itException, '', 'VALUESET_VERSION_CHECK', msg, oicVersionError)
+            else
+              raise ETerminologyError.create(msg, itException, oicVersionError, 'VALUESET_VERSION_CHECK');
+          end;
+
+    finally
+      list.free;
+    end;
   end;
 end;
 
@@ -663,25 +779,31 @@ begin
   end;
 end;
 
-function TTerminologyWorker.listVersions(url: String): String;
+function TTerminologyWorker.getVersionList(url: String): TStringList;
 var
-  ts : TStringList;
   matches : TFslMetadataResourceList;
   r : TFHIRCachedMetadataResource;
 begin
-  ts := TStringList.Create;
-  try
-    ts.Sorted := true;
-    ts.Duplicates := Classes.dupIgnore;
-    if FAdditionalResources <> nil then
+  result := TStringList.Create;
+  result.Sorted := true;
+  result.Duplicates := Classes.dupIgnore;
+  if FAdditionalResources <> nil then
+  begin
+    for r in FAdditionalResources do
     begin
-      for r in FAdditionalResources do
-      begin
-        if (r.resource.url = url) then
-          ts.Add(r.resource.version);
-      end;
+      if (r.resource.url = url) then
+        result.Add(r.resource.version);
     end;
-    FOnListCodeSystemVersions(self, url, ts);
+  end;
+  FOnListCodeSystemVersions(self, url, result);
+end;
+
+function TTerminologyWorker.listVersions(url: String): String;
+var
+  ts : TStringList;
+begin
+  ts := getVersionList(url);
+  try
     result := ts.CommaText;
   finally
     ts.free;
@@ -748,7 +870,7 @@ begin
   params := TFHIRTxOperationParams.Create(FLanguages.link);
   try
     params.defaultToLatestVersion := true;
-    provider := findCodeSystem(coding.systemUri, coding.version, profile, [cscmComplete, cscmFragment], false);
+    provider := findCodeSystem(coding.systemUri, coding.version, profile, [cscmComplete, cscmFragment], false, true, false, nil);
     try
       resp.name := provider.name(nil);
       resp.systemUri := provider.systemUri;
@@ -938,6 +1060,21 @@ begin
     if (rule.system = systemUri) and (rule.mode = mode) then
       exit(rule.version);
   result := '';
+end;
+
+function TFHIRTxOperationParams.rulesForSystem(systemURI: String): TFslList<TFhirExpansionParamsVersionRule>;
+var
+  t : TFhirExpansionParamsVersionRule;
+begin
+  result := TFslList<TFhirExpansionParamsVersionRule>.create;
+  try
+    for t in FVersionRules do
+      if t.system = systemURI then
+        result.add(t.link);
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 procedure TFHIRTxOperationParams.seeVersionRule(url: String; mode: TFhirExpansionParamsVersionRuleMode);
@@ -1162,9 +1299,19 @@ begin
   FMode := mode;
 end;
 
+function TFhirExpansionParamsVersionRule.link: TFhirExpansionParamsVersionRule;
+begin
+  result := TFhirExpansionParamsVersionRule(inherited link);
+end;
+
 function TFhirExpansionParamsVersionRule.asString: String;
 begin
   result := Fsystem+'#'+Fversion+'/'+inttostr(ord(FMode));
+end;
+
+function TFhirExpansionParamsVersionRule.asParam: String;
+begin
+  result := NAMES_TFhirExpansionParamsVersionRuleMode[FMode]+'='+FSystem+'|'+FVersion;
 end;
 
 constructor TFhirExpansionParamsVersionRule.Create(system, version: String);

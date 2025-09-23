@@ -487,7 +487,7 @@ function TFhirValueSetValidationOperation.Execute(context : TOperationContext; m
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  cacheId, url, summary, issuePath, version, msg : String;
+  cacheId, url, summary, issuePath, version, msg, vurl : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
   abstractOk, inferSystem : boolean;
@@ -543,6 +543,9 @@ begin
                       result := result+' in vs '+url+'|'+version+' (ref)'
                     else
                       result := result+' in vs '+url+' (ref)';
+                    vurl := url;
+                    if (version <> '') then
+                      vurl := url+'|'+version;
                     txResources := processAdditionalResources(context, manager, nil, params);
                     for mr in txResources do
                       if (canonicalMatches(mr.resource, url, version)) and (mr.resource is TFHIRValueSetW) then
@@ -557,7 +560,7 @@ begin
                         vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
                     if vs = nil then
                     begin
-                      msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.HTTPLanguages, [url]);
+                      msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.HTTPLanguages, [vurl]);
                       oOut := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
                       oOut.addIssue(isError, itNotFound, '', 'Unable_to_resolve_value_Set_', msg, oicNotFound);
                     end
@@ -747,7 +750,7 @@ function TFhirValueSetBatchValidationOperation.Execute(context : TOperationConte
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  cacheId, url, summary, issuePath, version, msg : String;
+  cacheId, url, summary, issuePath, version, msg, vurl : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
   abstractOk, inferSystem : boolean;
@@ -810,6 +813,10 @@ begin
                       vs := (mr.resource as TFHIRValueSetW).link;
                       break;
                     end;
+                  vurl := url;
+                  if (version <> '') then
+                    vurl := url+'|'+version;
+
                   if vs = nil then
                     vs := FServer.getValueSetByUrl(url, version);
                   if vs = nil then
@@ -817,7 +824,7 @@ begin
                       vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
                   if vs = nil then
                   begin
-                    msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.HTTPLanguages, [url]);
+                    msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.HTTPLanguages, [vurl]);
                     oOut := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
                     oOut.addIssue(isError, itNotFound, '', 'Unable_to_resolve_value_Set_', msg, oicNotFound);
                   end
