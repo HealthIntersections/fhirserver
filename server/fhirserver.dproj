@@ -90,9 +90,9 @@
     <VerInfo_Locale>3081</VerInfo_Locale>
     <VerInfo_Keys>CompanyName=;FileVersion=2.1.3.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-    <VerInfo_MajorVer>3</VerInfo_MajorVer>
-    <VerInfo_MinorVer>9</VerInfo_MinorVer>
-    <VerInfo_Release>1</VerInfo_Release>
+    <VerInfo_MajorVer>4</VerInfo_MajorVer>
+    <VerInfo_MinorVer>0</VerInfo_MinorVer>
+    <VerInfo_Release>0</VerInfo_Release>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Base_Win32)&apos;!=&apos;&apos;">
@@ -166,10 +166,10 @@
     <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
     <DCC_RangeChecking>true</DCC_RangeChecking>
     <DCC_DebugDCUs>false</DCC_DebugDCUs>
-    <VerInfo_MajorVer>3</VerInfo_MajorVer>
-    <VerInfo_Release>1</VerInfo_Release>
+    <VerInfo_MajorVer>4</VerInfo_MajorVer>
+    <VerInfo_Release>0</VerInfo_Release>
     <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
-    <VerInfo_MinorVer>9</VerInfo_MinorVer>
+    <VerInfo_MinorVer>0</VerInfo_MinorVer>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Cfg_2)&apos;!=&apos;&apos;">
