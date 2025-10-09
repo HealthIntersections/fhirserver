@@ -2025,7 +2025,6 @@ begin
           msg(m);
           op.addIssue(isWarning, itBusinessRule, path, 'DEPRECATED_CONCEPT_FOUND', m, oicCodeComment);
         end;
-        Logging.log('vstatus: '+vstatus);
         for iss in op.issues.forEnum do
           if iss.severity = isError then
             if (mt.IndexOf(iss.display) = -1) then
