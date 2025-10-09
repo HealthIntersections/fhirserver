@@ -549,26 +549,14 @@ end;
 function TTerminologyServer.handlePrepareException(e : EFHIROperationException; profile : TFHIRTxOperationParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
 var
   op : TFhirOperationOutcomeW;
-  msg, mid : String;
 begin
   result := factory.makeParameters;
   try
     op := Factory.wrapOperationOutcome(Factory.buildOperationOutcome(i18n, profile.HTTPLanguages, e));
     try
-      if unknownValueSets.Count > 0 then
-      begin
-        mid := 'UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_VS';
-        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_VS', profile.HTTPLanguages, [url, unknownValueSets.CommaText])
-      end
-      else
-      begin
-        mid := 'UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET';
-        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET', profile.HTTPLanguages, [url]);
-      end;
-      op.addIssue(isWarning, itNotFound, '', mid, msg, oicVSProcessing);
       result.addParam('issues').resource := op.Resource.link;
       result.addParamBool('result', false);
-      result.addParamStr('message', e.message+'; '+msg);
+      result.addParamStr('message', e.message); // +'; '+msg);
     finally
       op.free;
     end;
