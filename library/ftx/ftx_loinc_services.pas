@@ -436,7 +436,7 @@ var
   c : TFDBConnection;
   i, k : integer;
   ci : TLoincProviderContext;
-  s : String;
+  s, props, rels : String;
 begin
   FDB := TFDBSQLiteManager.create(ExtractFileName(sFilename), sFilename, true, false, 10);
   c := FDB.GetConnection('load');
@@ -458,23 +458,32 @@ begin
     end;
     c.terminate;
 
+    rels := '';
     c.sql := 'Select RelationshipTypeKey, Description from RelationshipTypes';
     c.prepare;
     c.Execute;
     while c.fetchnext do
     begin
       FRelationships.Add(c.ColStringByName['Description'], c.ColStringByName['RelationshipTypeKey']);
+      CommaAdd(rels, c.ColStringByName['Description']);
       s := c.ColStringByName['Description'];
       if (s <> c.ColStringByName['Description']) then
+      begin
         FRelationships.Add(s, c.ColStringByName['RelationshipTypeKey']);
+        CommaAdd(rels, s);
+      end;
     end;
     c.terminate;
 
+    props := '';
     c.sql := 'Select PropertyTypeKey, Description from PropertyTypes';
     c.prepare;
     c.Execute;
     while c.fetchnext do
+    begin
       FProperties.Add(c.ColStringByName['Description'], c.ColStringByName['PropertyTypeKey']);
+      CommaAdd(props, c.ColStringByName['Description']);
+    end;
     c.terminate;
 
     FCodeList.add(nil); // keys start from 1
@@ -519,6 +528,8 @@ begin
     FVersion := c.Lookup('Config', 'ConfigKey', '2', 'Value', '');
     FRoot := c.Lookup('Config', 'ConfigKey', '3', 'Value', '');
     c.Release;
+    Logging.log('LOINC Properties = '+props);
+    Logging.log('LOINC Relationships = '+rels);
   except
     on e : exception do
     begin
@@ -1095,6 +1106,7 @@ var
   t : UInt64;
 begin
   l := 0;
+  Logging.log(sql);
   if (forExpansion) then
   begin
     t := GetTickCount64;
