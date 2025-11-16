@@ -137,7 +137,7 @@ Type
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; unknownSystems : TStringList; messages : TStringList) : string; overload;
     function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var ver : String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string; unkCodes, messages : TStringList; out defLang : TIETFLang) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
-    function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var normalForm : String; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
+    function checkConceptSet(path, role : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var normalForm : String; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var vstatus : String; op : TFHIROperationOutcomeW) : boolean;
     function fixedSystemFromValueSet: String;
     procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; unknownValueSets : TStringList);
@@ -668,11 +668,14 @@ begin
   else
   begin
     seeValueSet(vs);
-    FOpContext.addNote(vs, 'Analysing');
-    FOpContext.addNote(vs, 'Parameters: '+params.summary);
-    vrs := params.verSummary;
-    if (vrs <> '') then
-      FOpContext.addNote(vs, 'Version Rules: '+vrs);
+    FOpContext.addNote(vs, 'Analysing '+vs.vurl+' for validation purposes', FIndentCount);
+    if (FIndentCount = 0) then
+    begin
+      FOpContext.addNote(vs, 'Parameters: '+params.summary, FIndentCount);
+      vrs := params.verSummary;
+      if (vrs <> '') then
+        FOpContext.addNote(vs, 'Version Rules: '+vrs, FIndentCount);
+    end;
     FRequiredSupplements.clear;
     for ext in vs.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
       FRequiredSupplements.add(ext.valueAsString);
@@ -709,6 +712,7 @@ var
 begin
   deadCheck('prepareConceptSet');
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
+  FOpContext.addNote(FValueSet, 'Prepare '+desc+': "'+TTerminologyOperationContext.renderInclude(cc)+'"', FIndentCount);
   for u in cc.valueSets do
   begin
     s := pinValueSet(u);
@@ -725,6 +729,7 @@ begin
         end;
         checker := TValueSetChecker.create(FFactory.link, FOpContext.copy, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
         try
+          checker.FIndentCount := FIndentCount+1;
           checker.prepare(other, FParams, nil);
           FOthers.AddOrSetValue(s, checker.Link);
         finally
@@ -740,7 +745,7 @@ begin
   try
     if cs <> nil then
     begin
-      FOpContext.addNote(FValueSet, 'CodeSystem found: "'+TTerminologyOperationContext.renderCoded(cs)+'"');
+      FOpContext.addNote(FValueSet, 'CodeSystem found: "'+TTerminologyOperationContext.renderCoded(cs)+'"', FIndentCount);
       for i := FRequiredSupplements.count - 1 downto 0 do
         if cs.hasSupplement(FOpContext, FRequiredSupplements[i]) then
           FRequiredSupplements.delete(i);
@@ -754,7 +759,7 @@ begin
       end;
     end
     else if cc.systemUri <> '' then
-      FOpContext.addNote(FValueSet, 'CodeSystem version '+v+' not found: "'+ TTerminologyOperationContext.renderCoded(cc.systemUri, cc.version)+'"');
+      FOpContext.addNote(FValueSet, 'CodeSystem version '+v+' not found: "'+ TTerminologyOperationContext.renderCoded(cc.systemUri, cc.version)+'"', FIndentCount);
   finally
     cs.free;
   end;
@@ -809,9 +814,9 @@ var
 begin
   FOpContext.clearContexts;
   if (inferSystem) then
-    FOpContext.addNote(FValueSet, 'Validate "'+code+'" and infer system')
+    FOpContext.addNote(FValueSet, 'Validate "'+code+'" and infer system', FIndentCount)
   else
-    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"');
+    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"', FIndentCount);
   unknownSystems := TStringList.create;
   ts := TStringList.create;
   msgs := TStringList.create;
@@ -854,7 +859,7 @@ var
   vl, vn : String;
 begin
   defLang := FLanguages.parse('en');
-  FOpContext.addNote(FValueSet, 'Check "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"');
+  FOpContext.addNote(FValueSet, 'Check "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"', FIndentCount);
   if (system = '') and not inferSystem then
   begin
     msg := FI18n.translate('Coding_has_no_system__cannot_validate', FParams.HTTPLanguages, []);
@@ -882,7 +887,7 @@ begin
       try
         if cs = nil then
         begin
-          FOpContext.addNote(FValueSet, 'Didn''t find CodeSystem "'+TTerminologyOperationContext.renderCoded(system, version)+'"');
+          FOpContext.addNote(FValueSet, 'Didn''t find CodeSystem "'+TTerminologyOperationContext.renderCoded(system, version)+'"', FIndentCount);
           result := bUnknown;
           cause := itNotFound;
           FLog := 'Unknown code system';
@@ -948,7 +953,7 @@ begin
         else
         begin
           defLang := cs.defLang();
-          FOpContext.addNote(FValueSet, 'Using CodeSystem "'+TTerminologyOperationContext.renderCoded(cs)+'" (content = '+CODES_TFhirCodeSystemContentMode[cs.contentMode]+')');
+          FOpContext.addNote(FValueSet, 'Using CodeSystem "'+TTerminologyOperationContext.renderCoded(cs)+'" (content = '+CODES_TFhirCodeSystemContentMode[cs.contentMode]+')', FIndentCount);
           checkCanonicalStatus(path, op, cs, FValueSet);
           ver := cs.version;
           contentMode := cs.contentMode;
@@ -1152,7 +1157,7 @@ begin
         else
         begin
           impliedSystem := system;
-          FOpContext.addNote(FValueSet, 'Inferred CodeSystem = "'+system+'"');
+          FOpContext.addNote(FValueSet, 'Inferred CodeSystem = "'+system+'"', FIndentCount);
         end;
       end;
 
@@ -1173,7 +1178,7 @@ begin
             cs := findCodeSystem(system, v, FParams, [cscmComplete, cscmFragment], true, true, false, op);
             if (cs = nil) then
             begin
-              FOpContext.addNote(FValueSet, 'CodeSystem not found: '+TTerminologyOperationContext.renderCoded(cc.systemUri, v));
+              FOpContext.addNote(FValueSet, 'CodeSystem not found: '+TTerminologyOperationContext.renderCoded(cc.systemUri, v), FIndentCount);
               if (not FParams.membershipOnly) then
               begin
                 bAdd := true;
@@ -1211,14 +1216,14 @@ begin
             end;
             try
               defLang := cs.defLang();
-              FOpContext.addNote(FValueSet, 'CodeSystem found: '+TTerminologyOperationContext.renderCoded(cs)+' for '+TTerminologyOperationContext.renderCoded(cc.systemUri, v));
+              FOpContext.addNote(FValueSet, 'CodeSystem found: '+TTerminologyOperationContext.renderCoded(cs)+' for '+TTerminologyOperationContext.renderCoded(cc.systemUri, v), FIndentCount);
               checkCanonicalStatus(path, op, cs, FValueSet);
               ver := cs.version;
               checkSupplements(cs, cc);
               contentMode := cs.contentMode;
 
               msg := '';
-              if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, msg, inactive, normalForm, vstatus, op, vcc) then
+              if ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, 'in', cs, cc, code, abstractOk, displays, FValueSet, msg, inactive, normalForm, vstatus, op, vcc) then
                 result := bTrue
               else
                 result := bFalse;
@@ -1234,7 +1239,7 @@ begin
           begin
             deadCheck('check#3');
             s := pinValueSet(u);
-            FOpContext.addNote(FValueSet, 'Check included value set '+s);
+            FOpContext.addNote(FValueSet, 'Check included value set '+s, FIndentCount);
             checker := FOthers[s];
             if checker = nil then
               raise ETerminologyError.Create('No Match for '+s+' in '+FOthers.SortedKeys.CommaText, itUnknown);
@@ -1261,7 +1266,7 @@ begin
               ver := cs.version;
               contentMode := cs.contentMode;
               msg := '';
-              excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, cs, cc, code, abstractOk, displays, FValueSet, msg, inactive, normalForm, vstatus, op, vcc);
+              excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.systemUri = system)) and checkConceptSet(path, 'not in', cs, cc, code, abstractOk, displays, FValueSet, msg, inactive, normalForm, vstatus, op, vcc);
               if (msg <> '') then
                 messages.add(msg);
             end;
@@ -1388,9 +1393,9 @@ var
 begin
   FOpContext.clearContexts;
   if (inferSystem) then
-    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(coding)+'" and infer system')
+    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(coding)+'" and infer system', FIndentCount)
   else
-    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(coding)+'"');
+    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(coding)+'"', FIndentCount);
 
   inactive := false;
   path := issuePath;
@@ -1597,9 +1602,9 @@ var
 begin
   FOpContext.clearContexts;
   if (inferSystem) then
-    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(code)+'" and infer system')
+    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(code)+'" and infer system', FIndentCount)
   else
-    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(code)+'"');
+    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(code)+'"', FIndentCount);
 
   inactive := false;
   cause := itNull;
@@ -2070,9 +2075,9 @@ var
 begin
   FOpContext.clearContexts;
   if (inferSystem) then
-    FOpContext.addNote(FValueSet, 'Validate "'+code+'" and infer system')
+    FOpContext.addNote(FValueSet, 'Validate "'+code+'" and infer system', FIndentCount)
   else
-    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"');
+    FOpContext.addNote(FValueSet, 'Validate "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"', FIndentCount);
   unknownSystems := TStringList.create;
   unkCodes := TStringList.create;
   messages := TStringList.create;
@@ -2167,7 +2172,7 @@ begin
     ctxt.free;
 end;
 
-function TValueSetChecker.checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var normalForm : String; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW): boolean;
+function TValueSetChecker.checkConceptSet(path, role : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var normalForm : String; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW): boolean;
 var
   i : integer;
   fc : TFhirValueSetComposeIncludeFilterW;
@@ -2180,6 +2185,7 @@ var
   cc : TFhirValueSetComposeIncludeConceptW;
   cfl : TFslList<TFhirValueSetComposeIncludeFilterW>;
 begin
+  opContext.addNote(vs, 'check code '+role+' '+TTerminologyOperationContext.renderInclude(cset)+' at '+path, FIndentCount);
   inactive := false;
   result := false;
   if (not cset.hasConcepts) and (not cset.hasFilters) then
@@ -2189,7 +2195,7 @@ begin
       result := false;
       if loc = nil then
       begin
-        FOpContext.addNote(FValueSet, 'Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
+        FOpContext.addNote(FValueSet, 'Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
         if (not FParams.membershipOnly) then
           if cs.contentMode <> cscmComplete then
             op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), 'UNKNOWN_CODE_IN_FRAGMENT', FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
@@ -2198,13 +2204,13 @@ begin
       end
       else if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
       begin
-        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
+        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract', FIndentCount);
         if (not FParams.membershipOnly) then
           op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
       end
       else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
       begin
-        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
+        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive', FIndentCount);
         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'STATUS_CODE_WARNING_CODE', FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
         result := false;
         if (not FParams.membershipOnly) then
@@ -2216,7 +2222,7 @@ begin
       end
       else if FParams.activeOnly and cs.IsInactive(FOpContext, loc) then
       begin
-        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
+        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive', FIndentCount);
         result := false;
         inactive := true;
         vstatus := cs.getCodeStatus(FOpContext, loc);
@@ -2224,7 +2230,7 @@ begin
       end
       else
       begin
-        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+        FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
         result := true;
         if (cs.Code(FOpContext, loc) <> code) then
         begin
@@ -2262,7 +2268,7 @@ begin
       try
         if Loc <> nil then
         begin
-          FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+          FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
           listDisplays(displays, cs, loc);
           listDisplays(displays, cc, vs);
           if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
@@ -2295,7 +2301,7 @@ begin
           end;
         end
         else
-          FOpContext.addNote(FValueSet, 'Code "'+code+'" in concept list, but not found in '+ TTerminologyOperationContext.renderCoded(cs));
+          FOpContext.addNote(FValueSet, 'Code "'+code+'" in concept list, but not found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
       finally
         loc.free;
       end;
@@ -2318,7 +2324,7 @@ begin
           f := cs.filter(FOpContext, false, false, fc.prop, fc.Op, fc.value, prep);
           if f = nil then
             raise ETerminologyError.create(FI18n.translate('FILTER_NOT_UNDERSTOOD', FParams.HTTPLanguages, [fc.prop, CODES_TFhirFilterOperator[fc.Op], fc.value, vs.vurl, cs.systemUri])+' (2)', itNotSupported, oicVSProcessing, 'FILTER_NOT_UNDERSTOOD');
-          f.summary := '"'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'"';
+          f.summary := '"'+fc.prop +CODES_TFhirFilterOperatorVCL[fc.Op]+fc.value+'"';
           filters[i] := f;
           inc(i);
         end;
@@ -2332,14 +2338,14 @@ begin
               listDisplays(displays, cs, loc);
               if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
               begin
-                OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
+                OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract', FIndentCount);
                 if (not FParams.membershipOnly) then
                   op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
               end
               else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
               begin
                 result := false;
-                OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
+                OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive', FIndentCount);
                 if (not FParams.membershipOnly) then
                 begin
                   inactive := true;
@@ -2348,7 +2354,7 @@ begin
               end
               else
               begin  
-                OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+                OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
                 if vcc <> nil then
                   vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                 result := true;
@@ -2356,7 +2362,7 @@ begin
               end;
             end
             else
-              OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
+              OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
           finally
             loc.free;
           end;
@@ -2377,13 +2383,13 @@ begin
                   listDisplays(displays, cs, loc);
                   if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                   begin
-                    OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
+                    OpContext.addNote(FValueSet, 'Filter "'+fc.prop +''+ CODES_TFhirFilterOperatorVCL[fc.Op]+ ''+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract', FIndentCount);
                     if (not FParams.membershipOnly) then
                       op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
                   else
                   begin    
-                    OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+                    OpContext.addNote(FValueSet, 'Filter "'+fc.prop +CODES_TFhirFilterOperatorVCL[fc.Op]+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
                     if vcc <> nil then
                       vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                     result := true;
@@ -2393,7 +2399,7 @@ begin
                 else
                 begin
                   result := false;
-                  OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
+                  OpContext.addNote(FValueSet, 'Filter "'+fc.prop +CODES_TFhirFilterOperatorVCL[fc.Op]+ fc.value+'": Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
                 end;
               finally
                 loc.free;
@@ -2412,13 +2418,13 @@ begin
                     listDisplays(displays, cs, loc);
                     if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                     begin
-                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
+                      OpContext.addNote(FValueSet, 'Filter '+fc.prop + CODES_TFhirFilterOperatorVCL[fc.Op]+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract', FIndentCount);
                       if (not FParams.membershipOnly) then
                         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                     end
                     else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                     begin
-                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
+                      OpContext.addNote(FValueSet, 'Filter '+fc.prop + CODES_TFhirFilterOperatorVCL[fc.Op]+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive', FIndentCount);
                       result := false;
                       if (not FParams.membershipOnly) then
                       begin
@@ -2428,7 +2434,7 @@ begin
                     end
                     else
                     begin   
-                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+                      OpContext.addNote(FValueSet, 'Filter '+fc.prop +CODES_TFhirFilterOperatorVCL[fc.Op]+fc.value+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
                       if vcc <> nil then
                         vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                       result := true;
@@ -2437,7 +2443,7 @@ begin
                   end;
                 end
                 else
-                  OpContext.addNote(FValueSet, 'Filter '+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
+                  OpContext.addNote(FValueSet, 'Filter '+fc.prop + CODES_TFhirFilterOperatorVCL[fc.Op]+fc.value+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
               finally
                 loc.free;
               end;
@@ -2455,13 +2461,13 @@ begin
                   listDisplays(displays, cs, loc);
                   if not (abstractOk or not cs.IsAbstract(FOpContext, loc)) then
                   begin
-                    OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
+                    OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract', FIndentCount);
                     if (not FParams.membershipOnly) then
                       op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), 'ABSTRACT_CODE_NOT_ALLOWED', FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
                   else if FValueSet.excludeInactives and cs.IsInactive(FOpContext, loc) then
                   begin
-                    OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
+                    OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive', FIndentCount);
                     result := false;
                     if (not FParams.membershipOnly) then
                     begin
@@ -2471,7 +2477,7 @@ begin
                   end
                   else
                   begin       
-                    OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
+                    OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
                     if vcc <> nil then
                       vcc.addCoding(cs.systemUri, cs.version, cs.code(FOpContext, loc), displays.preferredDisplay(FParams.workingLanguages));
                     result := true;
@@ -2479,7 +2485,7 @@ begin
                   end;
                 end
                 else
-                  OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
+                  OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs), FIndentCount);
               finally
                 loc.free;
               end;
@@ -3749,6 +3755,7 @@ begin
             // nothing
           else if not cs.checkCodeSystem(FLangList, m) then
           begin
+            checkCanonicalStatus(expansion, cs, FValueSet);
             raise ETerminologyError.create(m);
           end
           else
