@@ -1888,7 +1888,7 @@ begin
       result.free;
     end;
   end
-  else if (op = foEqual) and (prop = 'code') then
+  else if (op = foEqual) and ((prop = 'code') or (prop = 'concept')) then
   begin
     result := TFhirCodeSystemProviderFilterContext.Create;
     try
