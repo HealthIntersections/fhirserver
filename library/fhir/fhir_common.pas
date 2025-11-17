@@ -65,6 +65,7 @@ Type
 
 const
   CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf', 'of');
+  CODES_TFhirFilterOperatorVCL: Array[TFilterOperator] of String = ('', '=', '<<', '<', '~<<', '/', '^', '~^', '>>', '?', '<!', '!!<', '.');
   CODES_TPublicationStatus: Array[TPublicationStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
   CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'code-comment', 'invalid-display', 'display-comment', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data', 'process-note', 'version-error');

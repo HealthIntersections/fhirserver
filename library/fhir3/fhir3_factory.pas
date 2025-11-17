@@ -221,6 +221,10 @@ begin
     TFHIRDomainResource(res).checkNoModifiers(method, param)
   else if res is TFHIRBackboneElement then
     TFHIRBackboneElement(res).checkNoModifiers(method, param)
+  else if res is TFHIRXVersionElementWrapper then 
+    checkNoModifiers((res as TFHIRXVersionElementWrapper).Element, method, param, allowed) 
+  else if res is TFHIRXVersionResourceWrapper then 
+    checkNoModifiers((res as TFHIRXVersionResourceWrapper).Resource, method, param, allowed) 
 end;
 
 function TFHIRFactoryR3.corePackage: String;

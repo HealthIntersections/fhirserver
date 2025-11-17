@@ -43,7 +43,7 @@ uses
     procedure clearContexts;
 
     procedure log(note : String); override;
-    procedure addNote(vs : TFHIRValueSetW; note : String);
+    procedure addNote(vs : TFHIRValueSetW; note : String; indentCount : integer);
     function diagnostics : String;
     property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
 
@@ -53,6 +53,7 @@ uses
     class function renderCoded(system, version, code, display : String) : String; overload;
     class function renderCoded(code : TFhirCodingW) : String; overload;
     class function renderCoded(code : TFhirCodeableConceptW) : String; overload;
+    class function renderInclude(inc : TFhirValueSetComposeIncludeW) : String; overload;
   end;
 
   { TFHIRCachedMetadataResource }
@@ -244,6 +245,7 @@ uses
 
   TTerminologyWorker = class (TFslObject)
   protected
+    FIndentCount : integer;
     FOpContext : TTerminologyOperationContext;
     FFactory : TFHIRFactory;
     FOnGetCSProvider : TGetProviderEvent;
@@ -313,7 +315,6 @@ begin
     FTimeTracker := TFslTimeTracker.create
   else
     FTimeTracker := tt;
-  FTimeTracker.step('tx-op');
 end;
 
 destructor TTerminologyOperationContext.Destroy;
@@ -387,11 +388,12 @@ begin
   FTimeTracker.step(s);
 end;
 
-procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note : String);
+procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note : String; indentCount : integer);
 var
   s : string;
 begin
-  s := inttostr(GetTickCount64 - FStartTime)+'ms '+vs.vurl+': '+note;
+  s := StringPadRight(inttostr(GetTickCount64 - FStartTime)+'ms', ' ', 4)+' '+
+     StringPadLeft('', ' ', indentCount*2)+'#'+inttostr(SerialNumber)+': '+note;
   //if UnderDebugger then
   //  Logging.log(s);
   FTimeTracker.step(s);
@@ -440,6 +442,62 @@ begin
   for c in code.codings.forEnum do
     CommaAdd(result, renderCoded(c));
   result := '['+result+']';
+end;
+
+class function TTerminologyOperationContext.renderInclude(inc: TFhirValueSetComposeIncludeW): String;
+var
+  first : boolean;
+  cc : TFhirValueSetComposeIncludeConceptW;
+  ci : TFhirValueSetComposeIncludeFilterW;
+  s : String;
+begin
+  if inc.systemUri <> '' then
+  begin
+    result := '('+inc.systemUri+')';
+    if inc.hasConcepts then
+    begin
+      result := result + '(';
+      first := true;
+      for cc in inc.concepts.forEnum do
+      begin
+        if first then
+          first := false
+        else
+          result := result + ',';
+        result := result + cc.code;
+      end;
+      result := result+')';
+    end;
+    if (inc.hasFilters) then
+    begin
+      result := result + '(';
+      first := true;
+      for ci in inc.filters.forEnum do
+      begin
+        if first then
+          first := false
+        else
+          result := result + ',';
+        result := result + ci.prop+CODES_TFhirFilterOperatorVCL[ci.op]+ci.value;
+      end;
+      result := result+')';
+    end;
+  end
+  else
+  begin
+    result := '';
+      result := result + '(';
+      first := true;
+      for s in inc.valueSets do
+      begin
+        if first then
+          first := false
+        else
+          result := result + ',';
+        result := result + '^'+s;
+      end;
+      result := result+')';
+  end;
 end;
 
 { TFHIRCachedMetadataResource }
@@ -773,7 +831,7 @@ begin
   SetThreadStatus(ClassName+'.'+place);
   if FOpContext.deadCheck(time) then
   begin
-    FOpContext.addNote(vsHandle, 'Operation took too long @ '+place+' ('+className+')');
+    FOpContext.addNote(vsHandle, 'Operation took too long @ '+place+' ('+className+')', FIndentCount);
     Logging.log('Operation took too long @ '+place+' ('+className+')');
     raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time), opName])));
   end;
@@ -1306,7 +1364,7 @@ end;
 
 function TFhirExpansionParamsVersionRule.asString: String;
 begin
-  result := Fsystem+'#'+Fversion+'/'+inttostr(ord(FMode));
+  result := NAMES_TFhirExpansionParamsVersionRuleMode[FMode]+':'+Fsystem+'#'+Fversion;
 end;
 
 function TFhirExpansionParamsVersionRule.asParam: String;
