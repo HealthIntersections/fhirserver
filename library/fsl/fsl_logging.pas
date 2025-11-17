@@ -884,7 +884,7 @@ var
   t : int64;
 begin
   t := GetTickCount64;
-  Flog.append(inttostr(t-FStart)+' '+inttostr(t - FLast)+': '+name+#13#10);
+  Flog.append(StringPadRight(inttostr(t-FStart)+' '+inttostr(t - FLast), ' ', 8)+': '+name+#13#10);
   FLast := t;
 end;
 

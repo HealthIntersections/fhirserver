@@ -48,8 +48,8 @@ uses
   fsl_fpc_memory, fsl_utilities,
 
   kernel, server_testing, server_stats, zero_config, telnet_server,
-  tx_registry_spider, tx_omop, tx_registry_model,
-  endpoint_txregistry, endpoint_icao, tests_cpt, tx_cpt,
+  tx_omop,
+  endpoint_icao, tests_cpt, tx_cpt,
   web_server, web_cache;
 
 {$R *.res}

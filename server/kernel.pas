@@ -53,8 +53,7 @@ Uses
   tx_manager, telnet_server, web_source, web_server, web_cache, zero_config,
   server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr,
-  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao,
-  endpoint_txregistry;
+  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao;
 
 
 // how the kernel works:
@@ -393,7 +392,7 @@ begin
   Logging.log('Load End Points');
   for section in FIni['endpoints'].sections do
   begin
-    if (section['active'].valueBool) and (versionOk(section)) then
+    if (section['active'].valueBool) and (versionOk(section)) and (section['type'].value <> 'tx-registry') then
       FEndPoints.Add(makeEndPoint(section));
   end;
 
@@ -599,9 +598,7 @@ end;
 function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 begin
   // we generate by type and mode
-  if config['type'].value = 'tx-registry' then
-    result := TTxRegistryServerEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
-  else if config['type'].value = 'folder' then
+  if config['type'].value = 'folder' then
     result := TFolderWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
   else if config['type'].value = 'icao' then
     result := TICAOWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
