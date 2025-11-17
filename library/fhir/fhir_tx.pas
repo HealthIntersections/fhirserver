@@ -393,7 +393,7 @@ var
   s : string;
 begin
   s := StringPadRight(inttostr(GetTickCount64 - FStartTime)+'ms', ' ', 4)+' '+
-     StringPadLeft('', ' ', indentCount*2)+'#'+inttostr(SerialNumber)+': '+note;
+     StringPadLeft('', ' ', indentCount*2)+{$IFDEF OBJECT_TRACKING}'#'+inttostr(SerialNumber)+{$ENDIF}': '+note;
   //if UnderDebugger then
   //  Logging.log(s);
   FTimeTracker.step(s);
