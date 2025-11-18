@@ -132,8 +132,8 @@ Type
     procedure checkCanonicalStatus(path : string; op : TFhirOperationOutcomeW; rtype, vurl, pid : String; status: TPublicationStatus; standardsStatus: String; experimental : boolean; source : TFHIRMetadataResourceW); overload;
 
     function dispWarning : TIssueSeverity;
-    function determineSystemFromExpansion(code: String): String;
-    function determineSystem(opContext : TTxOperationContext; code : String) : String;
+    function determineSystemFromExpansion(code: String; systems : TStringList): String;
+    function determineSystem(opContext : TTxOperationContext; code : String; systems : TStringList) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; unknownSystems : TStringList; messages : TStringList) : string; overload;
     function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var ver : String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string; unkCodes, messages : TStringList; out defLang : TIETFLang) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
@@ -437,7 +437,7 @@ begin
     result := isError;
 end;
 
-function TValueSetChecker.determineSystemFromExpansion(code: String): String;
+function TValueSetChecker.determineSystemFromExpansion(code: String; systems : TStringList): String;
 var
   exp : TFHIRValueSetExpander;
   dep : TStringList;
@@ -457,10 +457,13 @@ begin
           begin
             deadCheck('determineSystemFromExpansion');
             if (c.code = code) then
+            begin
+              systems.add(c.systemUri);
               if result = '' then
                 result := c.systemUri
               else
                 exit('');
+            end;
           end;
         finally
           vse.free;
@@ -497,7 +500,7 @@ begin
   end;
 end;
 
-function TValueSetChecker.determineSystem(opContext : TTxOperationContext; code: String): String;
+function TValueSetChecker.determineSystem(opContext : TTxOperationContext; code: String; systems : TStringList): String;
 var
   vsi : TFhirValueSetComposeIncludeW;
   cs : TCodeSystemProvider;
@@ -520,7 +523,7 @@ begin
 
   if needDoExpansion then
   begin
-    result := determineSystemFromExpansion(code);
+    result := determineSystemFromExpansion(code, systems);
   end
   else
   begin
@@ -540,6 +543,7 @@ begin
             match := cc.code = code;
             if (match) then
             begin
+              systems.add(vsi.systemUri);
               if (result = '') then
                 result := vsi.systemUri
               else if (result <> vsi.systemUri) then
@@ -553,6 +557,7 @@ begin
           if loc <> nil then
           begin
             loc.free;
+            systems.add(vsi.systemUri);
             if (result = '') then
               result := vsi.systemUri
             else if (result <> vsi.systemUri) then
@@ -854,7 +859,7 @@ var
   ics : TFHIRValueSetCodeSystemW;
   ccl : TFhirCodeSystemConceptListW;
   ccc : TFhirValueSetExpansionContainsW;
-  ts : TStringList;
+  ts, systems : TStringList;
   vss : TFHIRValueSetW;
   vl, vn : String;
 begin
@@ -1146,18 +1151,33 @@ begin
     begin
       if (system = '') and inferSystem then
       begin
-        system := determineSystem(FOpContext, code);
-        if (system = '') then
-        begin
-          msg := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.HTTPLanguages, [code, FValueSet.vurl]);
-          messages.add(msg);
-          op.addIssue(isError, itNotFound, 'code', 'UNABLE_TO_INFER_CODESYSTEM', msg, oicInferFailed);
-          exit(bFalse);
-        end
-        else
-        begin
-          impliedSystem := system;
-          FOpContext.addNote(FValueSet, 'Inferred CodeSystem = "'+system+'"', FIndentCount);
+        systems := TStringList.create;
+        try
+          systems.Duplicates := dupIgnore;
+          system := determineSystem(FOpContext, code, systems);
+          if (system = '') then
+          begin
+            if (systems.count > 1) then
+            begin
+              msg := FI18n.translate('Unable_to_resolve_system__value_set_has_multiple_matches', FParams.HTTPLanguages, [code, FValueSet.vurl, systems.commaText]);
+              messages.add(msg);
+              op.addIssue(isError, itNotFound, 'code', 'Unable_to_resolve_system__value_set_has_multiple_matches', msg, oicInferFailed);
+            end
+            else
+            begin
+              msg := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.HTTPLanguages, [code, FValueSet.vurl]);
+              messages.add(msg);
+              op.addIssue(isError, itNotFound, 'code', 'UNABLE_TO_INFER_CODESYSTEM', msg, oicInferFailed);
+            end;
+            exit(bFalse);
+          end
+          else
+          begin
+            impliedSystem := system;
+            FOpContext.addNote(FValueSet, 'Inferred CodeSystem = "'+system+'"', FIndentCount);
+          end;
+        finally
+          systems.free;
         end;
       end;
 
