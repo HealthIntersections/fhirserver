@@ -440,6 +440,52 @@ begin
   doLoad('ZM', 'Zambia');
   doLoad('ZW', 'Zimbabwe');
 
+  // ISO 3166-1 User-assigned code elements
+  // These codes are reserved for user assignment and will never be used for country names
+  // See: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#User-assigned_code_elements
+  doLoad('AA', 'User-assigned');
+  doLoad('QM', 'User-assigned');
+  doLoad('QN', 'User-assigned');
+  doLoad('QO', 'User-assigned');
+  doLoad('QP', 'User-assigned');
+  doLoad('QQ', 'User-assigned');
+  doLoad('QR', 'User-assigned');
+  doLoad('QS', 'User-assigned');
+  doLoad('QT', 'User-assigned');
+  doLoad('QU', 'User-assigned');
+  doLoad('QV', 'User-assigned');
+  doLoad('QW', 'User-assigned');
+  doLoad('QX', 'User-assigned');
+  doLoad('QY', 'User-assigned');
+  doLoad('QZ', 'User-assigned');
+  doLoad('XA', 'User-assigned');
+  doLoad('XB', 'User-assigned');
+  doLoad('XC', 'User-assigned');
+  doLoad('XD', 'User-assigned');
+  doLoad('XE', 'User-assigned');
+  doLoad('XF', 'User-assigned');
+  doLoad('XG', 'User-assigned');
+  doLoad('XH', 'User-assigned');
+  doLoad('XI', 'User-assigned');
+  doLoad('XJ', 'User-assigned');
+  doLoad('XK', 'User-assigned');  // Note: XK is also used for Kosovo by the European Commission
+  doLoad('XL', 'User-assigned');
+  doLoad('XM', 'User-assigned');
+  doLoad('XN', 'User-assigned');
+  doLoad('XO', 'User-assigned');
+  doLoad('XP', 'User-assigned');
+  doLoad('XQ', 'User-assigned');
+  doLoad('XR', 'User-assigned');
+  doLoad('XS', 'User-assigned');
+  doLoad('XT', 'User-assigned');
+  doLoad('XU', 'User-assigned');
+  doLoad('XV', 'User-assigned');
+  doLoad('XW', 'User-assigned');
+  doLoad('XX', 'User-assigned');  // Commonly used for "Unknown" or "Unspecified"
+  doLoad('XY', 'User-assigned');  // Commonly used for "Anonymous" (privacy)
+  doLoad('XZ', 'User-assigned');
+  doLoad('ZZ', 'User-assigned');  // Commonly used for "Unknown" or "International"
+
   doLoad('ABW', 'Aruba');
   doLoad('AFG', 'Afghanistan');
   doLoad('AGO', 'Angola');
