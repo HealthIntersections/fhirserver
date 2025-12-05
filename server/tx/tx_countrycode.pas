@@ -468,7 +468,7 @@ begin
   doLoad('XH', 'User-assigned');
   doLoad('XI', 'User-assigned');
   doLoad('XJ', 'User-assigned');
-  doLoad('XK', 'User-assigned');  // Note: XK is also used for Kosovo by the European Commission
+  doLoad('XK', 'Kosovo');
   doLoad('XL', 'User-assigned');
   doLoad('XM', 'User-assigned');
   doLoad('XN', 'User-assigned');
@@ -481,10 +481,10 @@ begin
   doLoad('XU', 'User-assigned');
   doLoad('XV', 'User-assigned');
   doLoad('XW', 'User-assigned');
-  doLoad('XX', 'User-assigned');  // Commonly used for "Unknown" or "Unspecified"
-  doLoad('XY', 'User-assigned');  // Commonly used for "Anonymous" (privacy)
-  doLoad('XZ', 'User-assigned');
-  doLoad('ZZ', 'User-assigned');  // Commonly used for "Unknown" or "International"
+  doLoad('XX', 'Unknown');
+  doLoad('XY', 'User-assigned');
+  doLoad('XZ', 'International Waters');
+  doLoad('ZZ', 'Unknown or Invalid Territory');
 
   doLoad('ABW', 'Aruba');
   doLoad('AFG', 'Afghanistan');
