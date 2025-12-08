@@ -1,3 +1,4 @@
+
 unit ftx_sct_services;
 
 {
@@ -539,6 +540,7 @@ operations
     FEditionName : String;
 
     function filterIn(id : UInt64): TCodeSystemProviderFilterContext;
+    function filterInList(ids : TStringArray): TCodeSystemProviderFilterContext;
     function filterEquals(id : UInt64): TCodeSystemProviderFilterContext;
     function filterIsA(id : UInt64; includeBase : boolean): TCodeSystemProviderFilterContext;
 
@@ -3524,6 +3526,36 @@ begin
   end;
 end;
 
+function TSnomedServices.filterInList(ids: TStringArray): TCodeSystemProviderFilterContext;
+var
+  res : TSnomedFilterContext;
+  name, index, members, types, iFieldNames : cardinal;
+  s : String;
+  id : UInt64;
+  list : TMatchArray;
+begin
+  SetLength(list, 0);
+  for s in ids do
+  begin
+    if not StringIsId(s, id) then
+      raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not valid', itInvalid);
+    if not Concept.FindConcept(id, index) then
+      raise ETerminologyError.Create('The SNOMED CT Concept '+inttostr(id)+' is not known', itInvalid);
+    if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
+    begin
+      SetLength(list, length(list)+1);
+      list[length(list)-1].index := index;
+      list[length(list)-1].term := id;
+      list[length(list)-1].Priority := 0;
+    end
+    else
+      raise Exception.create('not done yet');
+      // list = addToList(list, RefSetMembers.GetMembers(members);
+  end;
+  res := TSnomedFilterContext.Create;
+  TSnomedFilterContext(result).matches := list;
+end;
+
 function TSnomedServices.GetPNForConcept(iIndex: Cardinal): String;
 var
   Identity : UInt64;
@@ -5373,6 +5405,7 @@ begin
   SetThreadStatus(ClassName+'.filter('+prop+CODES_TFhirFilterOperator[op]+value+')');
   result := nil;
   if (prop = 'concept') and FSct.StringIsId(value, id) then
+  begin
     if op = foIsA then
       result := FSct.filterIsA(id, true)
     else if op = foDescendentOf then
@@ -5381,6 +5414,9 @@ begin
       result := FSct.filterIn(id)
     else if op = foEqual then
       result := FSct.filterEquals(id)
+  end
+  else if (prop = 'concept') and (op = foIn) then
+    result := FSct.filterInList(value.Split([',']));
 end;
 
 function TSnomedProvider.FilterConcept(opContext : TTxOperationContext; ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

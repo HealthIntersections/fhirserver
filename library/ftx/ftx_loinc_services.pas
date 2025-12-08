@@ -965,7 +965,7 @@ begin
     result := true
   else if (FProperties.ContainsKey(prop)) and (op = foRegex) then
     result := true
-  else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
+  else if (prop = 'concept') and (op in [foIsA, foDescendentOf, foIn, foNotIn]) then
     result := true
   else if (prop = 'copyright') and (op = foEqual) and (value = 'LOINC') then
     result := true

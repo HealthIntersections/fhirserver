@@ -1394,7 +1394,7 @@ begin
                 if (v = '') then
                 begin
                   mid := 'UNKNOWN_CODESYSTEM';
-                  msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]) ;
+                  msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
                   unknownSystems.add(system);
                 end
                 else
