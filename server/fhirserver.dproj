@@ -92,7 +92,7 @@
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <VerInfo_MajorVer>4</VerInfo_MajorVer>
     <VerInfo_MinorVer>0</VerInfo_MinorVer>
-    <VerInfo_Release>5</VerInfo_Release>
+    <VerInfo_Release>6</VerInfo_Release>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Base_Win32)&apos;!=&apos;&apos;">
@@ -167,7 +167,7 @@
     <DCC_RangeChecking>true</DCC_RangeChecking>
     <DCC_DebugDCUs>false</DCC_DebugDCUs>
     <VerInfo_MajorVer>4</VerInfo_MajorVer>
-    <VerInfo_Release>5</VerInfo_Release>
+    <VerInfo_Release>6</VerInfo_Release>
     <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     <VerInfo_MinorVer>0</VerInfo_MinorVer>
     <VerInfo_Debug>false</VerInfo_Debug>
